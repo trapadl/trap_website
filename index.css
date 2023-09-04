@@ -3,7 +3,7 @@
 body {
     padding:0px;
     margin:0px;
-    background:linear-gradient(0deg,rgba(0,0,0,0.5),rgba(0,0,0,0.5)),url("https://images.unsplash.com/photo-1491956175078-460aea0914ca?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1550&q=80") center center;
+    background:linear-gradient(0deg,rgba(0,0,0,0),rgba(0,0,0,0.5)),url("/assets/background.jpg") center center;
     background-size:cover;
     width:100vw;
     height:100vh;
@@ -14,7 +14,7 @@ body {
     width: 100vw;
     height: 100vh;
     position: fixed;
-    background:rgb(255, 50, 50);
+    background:rgb(0, 0, 0);
     z-index: 999;
     display: flex;
     justify-content: center;
@@ -26,7 +26,7 @@ body {
     width:50px;
     height:50px;
     border:12px solid #fff;
-    border-bottom:12px solid rgb(255, 50, 50);
+    border-bottom:12px solid rgb(0, 0, 0);
     border-radius:50%;
     margin:0;
 }
@@ -47,10 +47,10 @@ body {
     display:inline-block;
 }
 .box1 {
-    background:rgb(255, 50, 50);
+    background:rgb(0, 0, 0);
 }
 .box2 {
-    background:rgb(255, 50, 50);
+    background:rgb(0, 0, 0);
     margin-left:-5px;
 }
 #menu {
@@ -75,11 +75,11 @@ body {
     top:0;
     text-align:center;
     z-index:1;
-    color:#fff;
+    color:black;
     padding-bottom:10vh;
 }
 #middle h1 {
-    color:rgb(255, 50, 50);
+    color:rgb(0, 0, 0);
     font-size:70px;
     text-decoration:underline;
 }
@@ -89,7 +89,7 @@ body {
     text-align: center;
     font-size: 25px;
     background: transparent;
-    color: #fff;
+    color: black;
     position: fixed;
     top: 0;
     right: 45vw;
@@ -108,7 +108,7 @@ body {
     font-size:25px;
     transform:rotate(-90deg);
     background:transparent;
-    color:#fff;
+    color:black;
     position:fixed;
     left:0;
     bottom:40vh;
@@ -126,13 +126,14 @@ body {
     font-size:25px;
     transform:rotate(90deg);
     background:transparent;
-    color:#fff;
+    color:black;
     position:fixed;
     right:0;
     bottom:40vh;
     display:flex;
     flex-direction: column;
     justify-content:center;
+
     z-index:4;
     transition:0.4s ease-in-out;
     border-radius:0px 0px 100px 100px;
@@ -143,7 +144,7 @@ body {
     text-align:center;
     font-size:25px;
     background:transparent;
-    color:#fff;
+    color: black;   
     position:fixed;
     bottom:0;
     left:45vw;
@@ -155,20 +156,27 @@ body {
     border-radius:100px 100px 0px 0px;
 }
 #projects:hover {
-    background:rgba(255,50,50,0.9);
+    background:rgba(0,0,0,0.9);
     cursor:pointer;
+        color: white;
+
 }
 #about:hover {
-    background:rgba(255,50,50,0.9);
+    background:rgba(1,1,1,0.9);
     cursor:pointer;
+    color: white;
 }
 #work:hover {
-    background:rgba(255,50,50,0.9);
+    background:rgba(0,0,0,0.9);
     cursor:pointer;
+        color: white;
+
 }
 #contact:hover {
-    background:rgba(255,50,50,0.9);
+    background:rgba(0,0,0,0.9);
     cursor:pointer;
+        color: white;
+
 }
 #middle table {
     width:30%;
@@ -178,7 +186,7 @@ body {
     text-align:center;
 }
 .social {
-    color:#fff;
+    color:black;
     font-size:22px;
     border-radius:50%;
     transition:0.4s ease-in-out;
@@ -187,13 +195,13 @@ body {
 }
 .social:hover { 
     cursor: pointer;
-    color:rgb(255, 50, 50);
+    color:rgb(0, 0, 0);
 }
 .container {
     width:90vw;
     height:90vh;
     padding:5vh 5vw;
-    background:rgb(255, 50, 50);
+    background:rgb(0, 0, 0);
     color:#fff;
     z-index:9;
     position:fixed;
@@ -247,13 +255,13 @@ body {
 }
 .btn_one:hover {
     cursor:pointer;
-    color:rgb(255, 50, 50);
+    color:rgb(0, 0, 0);
     background:#fff;
 }
 .btn_two {
     font-size:18px;
     font-family: 'Josefin Sans', sans-serif;
-    color:rgb(255, 50, 50);
+    color:rgb(0, 0, 0);
     background:#fff;
     border:3px solid #fff;
     padding:8px 40px;
@@ -317,7 +325,7 @@ body {
     font-weight:bold;
 }
 #footer a {
-    color:rgb(255, 50, 50) ;
+    color:rgb(0, 0, 0) ;
 }
 #particles-js {
     position:fixed;
@@ -332,14 +340,14 @@ body {
     background: #fff; 
 }
 ::-webkit-scrollbar-thumb {
-    background: rgb(255, 50, 50); 
+    background: rgb(0, 0, 0); 
 }
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 50, 50,0.8); 
 }
 ::selection {
 	color: #fff;
-	background: rgb(255, 50, 50);
+	background: rgb(0, 0, 0);
 }
 
 @media (max-width: 800px){ 
@@ -383,4 +391,21 @@ body {
     #box div {
         width:100%;
     }
+}
+#logoimg {
+
+    max-width: 200px;
+}
+
+#middlediv {
+    background-color: white;
+    max-width: 220px;
+}
+
+#logoheader {
+    margin-bottom: -30px;
+}
+
+.linky {
+    color: white;
 }
