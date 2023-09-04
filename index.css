@@ -3,7 +3,7 @@
 body {
     padding:0px;
     margin:0px;
-    background:linear-gradient(0deg,rgba(0,0,0,0),rgba(0,0,0,0.5)),url("./assets/background.jpg") center center;
+    background:linear-gradient(0deg,rgba(0,0,0,0),rgba(0,0,0,0.1)),url("/assets/background.jpg") center center;
     background-size:cover;
     width:100vw;
     height:100vh;
@@ -62,7 +62,7 @@ body {
 #menu a {
     margin:0px 6%;
     font-size:19px;
-    color:#fff;
+    color:black;
     text-decoration:underline;
 }
 #middle {
@@ -381,6 +381,7 @@ body {
     }
     #menu {
         display:inline-block;
+        color: black;
     }
     #onlywide {
         display:none !important;
@@ -409,3 +410,5 @@ body {
 .linky {
     color: white;
 }
+
+
