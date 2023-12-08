@@ -359,6 +359,13 @@ body {
 }
 
 @media (max-width: 800px){ 
+    body{
+         padding:0px;
+    margin:0px;
+    background:linear-gradient(0deg,rgba(0,0,0,0),rgba(0,0,0,0)),url("/assets/background.jpg") top center;
+            height:3700px;
+
+    }
     #projects {
         display:none;
     }
@@ -446,3 +453,5 @@ body {
     overflow: hidden;
     z-index: -1; /* Keep it behind all other content */
 }
+
+
