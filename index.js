@@ -1,3 +1,15 @@
+$(document).ready(function() {
+    $(window).scroll(function() {
+        if ($(this).scrollTop() > 800) {
+            $('#middle').css('color', 'white');
+            $('#logoimg').attr('src', '/assets/traplogowhite.png');
+        } else {
+            $('#middle').css('color', 'black'); // or any other default color
+             $('#logoimg').attr('src', '/assets/traplogo.png'); // original logo path
+        }
+    });
+});
+
 function showprojects(){
     $("#projects_container").css("display","inherit");
     $("#projects_container").addClass("animated slideInDown");
