@@ -75,7 +75,7 @@ body {
     top:0;
     text-align:center;
     z-index:1;
-    color:black;
+/*    color:black;*/
     padding-bottom:10vh;
 }
 #middle h1 {
@@ -366,18 +366,98 @@ body {
             height:3700px;
 
     }
-    #projects {
-        display:none;
-    }
-    #about {
-        display:none;
-    }
-    #contact {
-        display:none;
-    }
-    #work {
-        display:none;
-    }
+   #projects {
+    width: 90%;
+    height: 10vw;
+    text-align: center;
+    font-size: 25px;
+    background: white;
+    color: black;
+    position: fixed;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 4;
+        left: 50%; /* Position the left edge at the center of the screen */
+    transform: translateX(-50%); /* Move it back by half of its width */
+    transition: 0.4s ease-in-out;
+    border: 2px solid black;
+    border-top: none;
+    border-radius: 0px 0px 100px 100px;
+}
+
+#about {
+   width: 150px; /* This is now simply the width of the button */
+    height: 50px; /* This is the height of the button */
+    text-align: center;
+    font-size: 25px;
+    background: white;
+    color: black;
+    top: 45%;
+    left: -50px;
+    position: fixed;
+    display: flex;
+    align-items: center; /* Vertically center the content in the button */
+    justify-content: center; /* Horizontally center the content in the button */
+    z-index: 4;
+    border: 2px solid black;
+    border-top: none;
+    transition: 0.4s ease-in-out;
+    border-radius: 0px 0px 100px 100px;
+}
+
+#work {
+   width: 150px; /* This is now simply the width of the button */
+    height: 50px; /* This is the height of the button */
+    text-align: center;
+    font-size: 25px;
+    background: white;
+    color: black;
+    right: -50px;
+    position: fixed;
+    display: flex;
+    align-items: center; /* Vertically center the content in the button */
+    justify-content: center; /* Horizontally center the content in the button */
+    z-index: 4;
+    border: 2px solid black;
+    border-top: none;
+    transition: 0.4s ease-in-out;
+    border-radius: 0px 0px 100px 100px;
+    top: 45%;
+}
+#contact {
+    width: 90%;
+    height: 50px;
+    text-align: center;
+    font-size: 25px;
+    background: white;
+    color: black;
+    position: fixed;
+    display: flex;
+    bottom: 100px;
+    left: 50%; /* Position the left edge at the center of the screen */
+    transform: translateX(-50%); /* Move it back by half of its width */
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    transition: 0.4s ease-in-out;
+    overflow: hidden; /* Added to contain the pseudo-element */
+}
+
+#contact::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white; /* Match the background of the button */
+    border-radius: 100px 100px 0px 0px;
+/*    transform: rotate(180deg);*/
+    z-index: -1; /* Place it behind the text */
+}
     #footer {
         text-align:center;
     }
