@@ -1,11 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
 
 body {
-    padding:0px;
     margin:0px;
     background-size:cover;
     width:100vw;
-    height:5000px;
     overflow: scroll;
     font-family: "acumin-pro", sans-serif;
 font-weight: 700;
@@ -18,6 +16,11 @@ header {
     padding: 10px 0;
     text-align: center;
 }
+ .container {
+            width: 80%;
+            margin: auto;
+            padding: 20px;
+        }
 
 header h1 {
     margin: 0;
@@ -52,3 +55,5 @@ iframe {
 .headerimg {
     max-width: 200px;
 }
+
+
