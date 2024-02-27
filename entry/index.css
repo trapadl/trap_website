@@ -1,3 +1,85 @@
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
+
+body {
+    padding:0px;
+    margin:0px;
+    width:100vw;
+    height:5000px;
+    overflow: scroll;
+    font-family: "acumin-pro", sans-serif;
+font-weight: 700;
+font-style: normal;
+}
+#loading {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    background:rgb(0, 0, 0);
+    z-index: 999;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+#spinner {
+    animation: rotate 0.56s infinite linear;
+    width:50px;
+    height:50px;
+    border:12px solid #fff;
+    border-bottom:12px solid rgb(0, 0, 0);
+    border-radius:50%;
+    margin:0;
+}
+@keyframes rotate {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
+#box {
+    width:100vw;
+    height:100vh;
+    z-index:9;
+    position:fixed;
+    top:0;
+}
+#box div {
+    width:16.66vw;
+    height:100%;
+    display:inline-block;
+}
+.box1 {
+    background:rgb(0, 0, 0);
+}
+.box2 {
+    background:rgb(0, 0, 0);
+    margin-left:-5px;
+}
+#menu {
+    width:100%;
+    text-align:center;
+    margin:6vh 0px;
+    display:none;
+}
+#menu a {
+    margin:0px 6%;
+    font-size:19px;
+    color:black;
+    text-decoration:underline;
+}
+#middle {
+    width:100vw;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:fixed;
+    top:0;
+    text-align:center;
+    z-index:1;
+/*    color:black;*/
+    padding-bottom:10vh;
+}
+#middle h1 {
+    color:rgb(0, 0, 0);
     font-size:70px;
     text-decoration:underline;
 }
