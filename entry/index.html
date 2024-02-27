@@ -1,42 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Ping Zapier Webhook on Load</title>
-    <script>
-        // Function to send data to the Zapier webhook
-        function sendDataToZapier(data) {
-            fetch('https://hooks.zapier.com/hooks/catch/17033388/3c45ixt/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                alert("Data sent successfully!");
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                alert("Failed to send data.");
-            });
-        }
+<meta charset="UTF-8">
+<title>Webhook Ping with Local Time</title>
+<script>
+window.onload = function() {
+  const localDateTime = new Date().toISOString(); // This will give you the local date and time in ISO 8601 format
 
-        // Automatically send data when the page loads
-        window.onload = function() {
-            const exampleData = {
-                name: "Auto Ping",
-                email: "autoping@example.com"
-            };
-            sendDataToZapier(exampleData);
-        }
-    </script>
+  fetch('https://hooks.zapier.com/hooks/catch/17033388/3c45ixt/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ localDateTime: localDateTime })
+  })
+  .then(response => {
+    if (response.ok) {
+      return response.text();
+    } else {
+      throw new Error('Network response was not ok.');
+    }
+  })
+  .then(data => console.log('Ping sent successfully with local time:', data))
+  .catch((error) => {
+    console.error('Ping failed:', error);
+  });
+};
+</script>
 </head>
 <body>
-    <h2>Auto Ping to Zapier Webhook</h2>
-    <p>Sending data to Zapier webhook on page load...</p>
+<h1>Webhook Ping Page</h1>
+<p>This page will send a ping with local date and time to the configured webhook when loaded.</p>
 </body>
 </html>
