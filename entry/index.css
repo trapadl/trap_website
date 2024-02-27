@@ -11,5 +11,5 @@ font-style: normal;
 }
 
 img {
-width:10%;
+    max-width: 300px; /* Adjust the value as needed */
 }
