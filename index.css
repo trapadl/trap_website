@@ -322,6 +322,8 @@ font-style: normal;
 }
 
 #middle #entrycontainer{
+	margin: 0 auto; /* Center the div */
+  padding: 0; /* Remove any padding */
  background-color: #fff;
 	width: 85%;
   text-align: center;
