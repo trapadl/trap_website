@@ -320,11 +320,8 @@ font-style: normal;
     outline:none;
     border-bottom:3px solid rgba(255, 255, 255,1);
 }
-#conatinerforentry{
-	text-align:center;
-}
 
-#entrycontainer{
+#middle #entrycontainer{
  background-color: #fff;
 	width: 85%;
   text-align: center;
