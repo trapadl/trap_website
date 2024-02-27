@@ -1,1 +1,470 @@
-`
+    font-size:70px;
+    text-decoration:underline;
+}
+#projects {
+    width: 10vw;
+    height: 10vw;
+    text-align: center;
+    font-size: 25px;
+    background: rgb(255,255,255,.9);
+    color: black;
+    position: fixed;
+    top: 0;
+    right: 45vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 4;
+    transition: 0.4s ease-in-out;
+    border: 2px solid black;
+    border-top: none;
+    border-radius: 0px 0px 100px 100px;
+}
+
+#about {
+    width:10vw;
+    height:10vw;
+    text-align:center;
+    font-size:25px;
+    transform:rotate(-90deg);
+    background: rgb(255,255,255,.9);
+    color:black;
+    position:fixed;
+    left:0;
+    bottom:40vh;
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    z-index:4;
+        border: 2px solid black;
+    border-top: none;
+    transition:0.4s ease-in-out;
+    border-radius:0px 0px 100px 100px;
+}
+#work {
+    width:10vw;
+    height:10vw;
+    text-align:center;
+    font-size:25px;
+    transform:rotate(90deg);
+    background: rgb(255,255,255,.9);
+    color:black;
+    position:fixed;
+    right:0;
+    bottom:40vh;
+    display:flex;
+    border: 2px solid black;
+    border-top: none;
+    flex-direction: column;
+    justify-content:center;
+
+    z-index:4;
+    transition:0.4s ease-in-out;
+    border-radius:0px 0px 100px 100px;
+}
+#contact {
+    width:10vw;
+    height:10vw;
+    text-align:center;
+    font-size:25px;
+    background: rgb(255,255,255,.9);
+    color: black;   
+    position:fixed;
+    bottom:0;
+    left:45vw;
+    display:flex;
+    flex-direction: column;
+    justify-content:center;
+    z-index:4;
+    border: 2px solid black;
+    border-bottom: none;
+    transition:0.4s ease-in-out;
+    border-radius:100px 100px 0px 0px;
+}
+#projects:hover {
+    background:rgba(0,0,0,0.9);
+    cursor:pointer;
+        color: white;
+
+}
+#about:hover {
+    background:rgba(1,1,1,0.9);
+    cursor:pointer;
+    color: white;
+}
+#work:hover {
+    background:rgba(0,0,0,0.9);
+    cursor:pointer;
+        color: white;
+
+}
+#contact:hover {
+    background:rgba(0,0,0,0.9);
+    cursor:pointer;
+        color: white;
+
+}
+#middle table {
+    width:30%;
+    margin:6vh auto;
+}
+#middle table tr td {
+    text-align:center;
+}
+.social {
+    color:black;
+    font-size:22px;
+    border-radius:50%;
+    transition:0.4s ease-in-out;
+    margin:0px 8px;
+    text-align:center;
+}
+.social:hover { 
+    cursor: pointer;
+    color:rgb(0, 0, 0);
+}
+.container {
+    width:90vw;
+    height:90vh;
+    padding:5vh 5vw;
+    background:rgb(0, 0, 0);
+    color:#fff;
+    z-index:9;
+    position:fixed;
+    max-height:100vh;
+    overflow-y:auto;
+    display:none;
+}
+.container div {
+    font-size:25px;
+    margin:20px 0px;
+    transition:0.4s ease-in-out;
+}
+.container div:hover {
+    cursor:pointer;
+}
+.container section {
+    margin:8vh 0px;
+}
+#used div{
+    font-size:14px !important;
+    display:inline-block;
+    padding:8px 10px;
+    border:2px solid #fff;
+    margin:0px 10px;
+    border-radius:50px;
+}
+#used:hover {
+    cursor:text;
+}
+#used div:hover {
+    cursor:text;
+}
+.container h1 {
+    font-size:60px;
+    text-decoration:underline;
+}
+.container p {
+    font-size:21px;
+}
+.btn_one {
+    font-size:18px;
+    font-family: 'Josefin Sans', sans-serif;
+    color:#fff;
+    background:transparent;
+    border:3px solid #fff;
+    padding:8px 40px;
+    border-radius:80px;
+    font-weight:bold;
+    margin:2vh 10px;
+    transition:0.4s ease-in-out;
+}
+.btn_one:hover {
+    cursor:pointer;
+    color:rgb(0, 0, 0);
+    background:#fff;
+}
+.btn_two {
+    font-size:18px;
+    font-family: 'Josefin Sans', sans-serif;
+    color:rgb(0, 0, 0);
+    background:#fff;
+    border:3px solid #fff;
+    padding:8px 40px;
+    border-radius:80px;
+    font-weight:bold;
+    margin:2vh 10px;
+    transition:0.4s ease-in-out;
+}
+.btn_two:hover {
+    cursor:pointer;
+    padding:8px 60px;
+}
+.container form input {
+    width:46%;
+    margin:20px 1%;
+    background:transparent;
+    border:0px;
+    border-bottom:3px solid rgba(255,255,255,0.5);
+    padding:8px 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size:18px;
+    transition:0.4s ease-in-out;
+    color:#fff;
+    font-weight:bold;
+}
+.container form textarea {
+    width:96%;
+    margin:20px 1%;
+    padding:8px 10px;
+    border:0px;
+    border-bottom:3px solid rgba(255,255,255,0.5);
+    padding:8px 10px;
+    font-family: 'Poppins', sans-serif;
+    font-size:18px;
+    background:transparent;
+    resize:none;
+    transition:0.4s ease-in-out;
+    color:#fff;
+    font-weight:bold;
+}
+.container form input:focus {
+    outline:none;
+    border-bottom:3px solid rgba(255, 255, 255,1);
+}
+.container form textarea:focus {
+    outline:none;
+    border-bottom:3px solid rgba(255, 255, 255,1);
+}
+
+#entrycontainer{
+	margin: 0 auto; /* Center the div */
+ background-color: #fff;
+	width: 100%;
+  text-align: center;
+
+	
+}
+::placeholder {
+    color:#fff;
+}
+#footer {
+    color:#fff;
+    width:92vw;
+    padding:5vh 4vw;
+    text-align:right;
+    position:fixed;
+    z-index:1;
+    bottom:0;
+    font-size:16px;
+    font-weight:bold;
+}
+#footer a {
+    color:rgb(0, 0, 0) ;
+}
+#particles-js {
+    position:fixed;
+    width:100vw;
+    height:100vh;
+}
+::-webkit-scrollbar {
+    width:5px;
+    height:5px;
+}
+::-webkit-scrollbar-track {
+    background: #fff; 
+}
+::-webkit-scrollbar-thumb {
+    background: rgb(0, 0, 0); 
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 50, 50,0.8); 
+}
+::selection {
+	color: #fff;
+	background: rgb(0, 0, 0);
+}
+
+@media (max-width: 800px){ 
+    body{
+         padding:0px;
+    margin:0px;
+    background:linear-gradient(0deg,rgba(0,0,0,0),rgba(0,0,0,0)),url("/assets/background.jpg") top center;
+            height:3700px;
+
+    }
+   #projects {
+    width: 100%;
+    height: 10vw;
+    text-align: center;
+    font-size: 25px;
+    background: rgb(255,255,255,.9);
+    color: black;
+    position: fixed;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    z-index: 4;
+        left: 50%; /* Position the left edge at the center of the screen */
+    transform: translateX(-50%); /* Move it back by half of its width */
+    transition: 0.4s ease-in-out;
+    border: 2px solid black;
+    border-top: none;
+    border-radius: 0px 0px 100px 100px;
+}
+
+#about {
+   width: 150px; /* This is now simply the width of the button */
+    height: 50px; /* This is the height of the button */
+    text-align: center;
+    font-size: 25px;
+    background: rgb(255,255,255,.9);
+    color: black;
+    top: 45%;
+    left: -50px;
+    position: fixed;
+    display: flex;
+    align-items: center; /* Vertically center the content in the button */
+    justify-content: center; /* Horizontally center the content in the button */
+    z-index: 4;
+    border: 2px solid black;
+    border-top: none;
+    transition: 0.4s ease-in-out;
+    border-radius: 0px 0px 100px 100px;
+}
+
+#work {
+   width: 150px; /* This is now simply the width of the button */
+    height: 50px; /* This is the height of the button */
+    text-align: center;
+    font-size: 25px;
+    background: rgb(255,255,255,.9);
+    color: black;
+    right: -50px;
+    position: fixed;
+    display: flex;
+    align-items: center; /* Vertically center the content in the button */
+    justify-content: center; /* Horizontally center the content in the button */
+    z-index: 4;
+    border: 2px solid black;
+    border-top: none;
+    transition: 0.4s ease-in-out;
+    border-radius: 0px 0px 100px 100px;
+    top: 45%;
+}
+#contact {
+    width: 100%;
+    height: 50px;
+    text-align: center;
+    font-size: 25px;
+    background: rgb(255,255,255,.9);
+    color: black;
+    position: fixed;
+    display: flex;
+/*    bottom: 100px;*/
+    left: 50%; /* Position the left edge at the center of the screen */
+    transform: translateX(-50%); /* Move it back by half of its width */
+    align-items: center;
+    justify-content: center;
+    z-index: 4;
+    transition: 0.4s ease-in-out;
+    overflow: hidden; /* Added to contain the pseudo-element */
+}
+
+#contact::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: white; /* Match the background of the button */
+    border-radius: 100px 100px 0px 0px;
+/*    transform: rotate(180deg);*/
+    z-index: -1; /* Place it behind the text */
+}
+    #footer {
+        text-align:center;
+    }
+    #middle {
+        width:90vw;
+        padding:0px 5vw;
+    }
+    #middle table {
+        width:80%;
+    }
+    .container form input {
+        width:90%;
+    }
+    .container form textarea {
+        width:90%;
+    }
+    #menu {
+        display:inline-block;
+        color: black;
+    }
+    #onlywide {
+        display:none !important;
+    }
+    .box2 {
+        margin-left:0px !important;
+    }
+    #box div {
+        width:100%;
+    }
+}
+#logoimg {
+
+    max-width: 200px;
+}
+
+#middlediv {
+    background-color: white;
+    max-width: 220px;
+}
+
+#logoheader {
+    margin-bottom: -30px;
+}
+
+.linky {
+    color: white;
+}
+
+
+
+.background-img {
+        position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none; /* Hide images by default */
+}
+
+
+
+.background-img.active {
+     display: block; /* Show active image */
+}
+
+#bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1; /* Keep it behind all other content */
+}
+
+
+
+
+
+#moveheader {
+    margin-bottom: -60px;
+}
