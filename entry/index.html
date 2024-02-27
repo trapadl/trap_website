@@ -3,6 +3,20 @@ y<!DOCTYPE html>
 <head>
 <meta charset="UTF-8">
 <title>Entry</title>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image" href="./assets/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Comfortaa:700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.typekit.net/cgk8fct.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-uto9mlQzrs59VwILeo8FxP44gNpCdiM+G2l6lbuAPcw=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+        integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+    <link rel="stylesheet" href="index.css">
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-TPKRG58EYV"></script>
 <script>
@@ -15,6 +29,176 @@ y<!DOCTYPE html>
 
 </head>
 <body>
+
+
+
+      <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5SZ4LPWJ"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+    <div id="loading">
+        <div id="spinner"></div>
+    </div>
+    <div id="particles-js"></div>
+    <div id="box">
+        <div class="box1 onlywide animated bounceOutLeft" style="animation-delay: 1700ms;"></div>
+        <div class="box2 onlywide animated bounceOutLeft" style="animation-delay: 1800ms;"></div>
+        <div class="box2 onlywide animated bounceOutLeft" style="animation-delay: 1900ms;"></div>
+        <div class="box2 animated bounceOutRight" style="animation-delay: 1900ms;"></div>
+        <div class="box2 onlywide animated bounceOutRight" style="animation-delay: 1800ms;"></div>
+        <div class="box2 onlywide animated bounceOutRight" style="animation-delay: 1700ms;"></div>
+    </div>
+    <a id="about" onclick="showabout()" class="animated fadeIn" style="animation-delay: 1000ms;">about</a>
+    <a id="work" onclick="showwork()" class="animated fadeIn" style="animation-delay: 1000ms;">menu</a>
+    <a id="contact" onclick="showcontact()" class="animated fadeIn" style="animation-delay: 1000ms;">book</a>
+    <a id="projects" onclick="showprojects()" class="animated fadeIn" style="animation-delay: 1000ms;">find us</a>
+    <div id="middle" class="animated slideInDown" style="animation-delay: 2000ms;">
+        <h1 id="logoheader"><img id="logoimg" src="/assets/traplogo.png"/></h1>
+        <h2>cocktail bar.<br><br>thu 6pm - late<br>fri, sat 4pm - late<br>sun 7pm-late</h2>
+        <h3 id="moveheader">enter via Cold Chisel Ln,<br> Adelaide</h3>
+
+        <table>
+            <tr><td> <h3>↓↓ scroll for vibe check ↓↓</h3></td></tr>
+            <tr>
+                <td class="animated zoomIn" style="animation-delay:2.6s;"><a class="social"
+                        href="https://instagram.com/trap.adl"><i class="fab fa-instagram"></i></a></td>
+            </tr>
+        </table>
+    </div>
+    <div id="projects_container" class="container">
+        <div onclick="closeprojects()"><i class="fas fa-angle-right"></i></div>
+        <h1>find us.</h1>
+        <section>
+            <h2>physically. or virtually.</h2>
+
+            <ul>
+                <div class="project_card">
+                    <div class="project_info">
+                        <h3>Google Maps</h3>
+                        <p>Some people struggle to find us. Get to trap. by first going down Burnett Strett (via Currie St) and then turning into Cold Chisel Lane. Towards the end of the colourful lane on the right is the entrance to trap.</p>
+                        <button class="btn_one"><a
+                                href="https://goo.gl/maps/VhpvbUnFJJcuuQAt8"
+                                style="color: inherit; text-decoration: none">Get Directions </a></button>
+                    </div>
+                </div>
+                <div class="project_card">
+                    <div class="project_info">
+                        <h3>Instagram</h3>
+                        <p>Check out our pipes.</p>
+                        <button class="btn_one"><a href="https://www.instagram.com/trap.adl/"
+                                style="color: inherit; text-decoration: none"> Follow Us </a></button>
+                    </div>
+                </div>
+
+                <div class="project_card">
+                    <div class="project_info">
+                        <h3>Leave a Review</h3>
+                        <p>Reviews tell the world about your experience. We hope it was a good one!</p>
+                        <button class="btn_one"><a href="https://g.page/r/CRk_gv0XMJCzEAI/review"
+                                style="color: inherit; text-decoration: none"> Rate Us </a></button>
+                    </div>
+                </div>
+            </ul>
+        </section>
+    </div>
+    <div id="work_container" class="container">
+        <div onclick="closework()"><i class="fas fa-angle-right"></i></div>
+        <h1>menu.</h1>
+        <section>
+            <h2></h2>
+            <p>
+               Our menu is constantly changing, but we're in constant supply of 5 house cocktails, three beers and two wines.
+            </p>
+            
+            <h1>MENU 01 - TOY SOLDIERS</h1>
+            <p>long before we opened our doors for the first time as trap. cocktail bar, the space we occupy was claimed as a gallery by one of adelaide’s first successful art groups specialising in graffiti and street art known as the toy soldiers. 
+disbanding in the mid-2010's, their commission work can still be found at miscellaneous places around adelaide. for our first official menu, we inspire five characters commonly found in their work and bring them back to life in the space that was once their home. 
+<br><br>enjoy!</p>
+        </section>
+<section>
+<h3>mermaid, $25</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;archie rose vodka</div>
+                <div><i class="fas fa-circle"></i>&nbsp;coastal rosemary</div>
+                <div><i class="fas fa-circle"></i>&nbsp;blue</div>
+                <div><i class="fas fa-circle"></i>&nbsp;foam</div>
+            </div>
+    <h3>pigeon, $25</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;patron tequila</div>
+                <div><i class="fas fa-circle"></i>&nbsp;pepper</div>
+                <div><i class="fas fa-circle"></i>&nbsp;horchata</div>
+                <div><i class="fas fa-circle"></i>&nbsp;feathery</div>
+            </div>
+    <h3>monkey, $25</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;plantation rum</div>
+                <div><i class="fas fa-circle"></i>&nbsp;sugarcane</div>
+                <div><i class="fas fa-circle"></i>&nbsp;3-stonefruit</div>
+                <div><i class="fas fa-circle"></i>&nbsp;banana</div>
+            </div>
+    <h3>dragon, $26</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;bombay citon gin</div>
+                <div><i class="fas fa-circle"></i>&nbsp;dragonfruit</div>
+                <div><i class="fas fa-circle"></i>&nbsp;lemon myrtle</div>
+                <div><i class="fas fa-circle"></i>&nbsp;smoke</div>
+            </div>
+    <h3>robot, $26</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;suntory toki whisky</div>
+                <div><i class="fas fa-circle"></i>&nbsp;sesame</div>
+                <div><i class="fas fa-circle"></i>&nbsp;matcha</div>
+                <div><i class="fas fa-circle"></i>&nbsp;shochu</div>
+            </div>
+
+</section>
+    </div>
+    <div id="about_container" class="container">
+        <div onclick="closeabout()"><i class="fas fa-angle-left"></i></div>
+        <h1>about.</h1>
+        <section>
+            <h2>why trap. ??</h2>
+            <p>
+                There's an idea out there that being in a trap is always a bad thing. We're here to show you that it's not the case. Some people who live at home still think they're trapped - but quite often they're not paying bills, they're not cooking or barely even cleaning - ironically, sounds like freedom to us.
+            </p>
+            <p>
+                This reminds us of good hospitality.
+            </p>
+            <p>
+                The idea that you can walk into a bar like trap. - give up a little freedom to be guided on an experience - and feel the feeling of being free. Free from the grind. Free from the multitude of choice of what to do next. Free of the responsibilities of everything on the otherside of that door you just walked in from. At trap. let us look after you. 
+            </p>
+
+            
+            <h2><a class="linky" href="mailto:cocktails@trapadl.com">email us</a></h2>
+            <h2><a class="linky" href="http://www.instagram.com/trap.adl">slide in our DMs</a></h2>
+
+        </section>
+    </div>
+    <div id="contact_container" class="container">
+        <div onclick="closecontact()"><i class="fas fa-angle-down"></i></div>
+        <h1>book.</h1>
+        <section>
+            <h3>to guarantee a good time at trap. , please fill out the form using the link below</h3>
+
+            <h2 id="googleform"><a class="linky" href="https://forms.gle/YRD8qtPnJxGCTMdf8" target="_blank">make a booking.</a></h2>
+
+
+
+        </section>
+    </div>
+    <div id="footer">
+<!--        made with ❤️ in india <br> <a href="https://thekaushikgoswami.github.io">thekaushikgoswami</a>-->
+    </div>
+    
+    <script src="particles.js"></script>
+    <script src="app.js"></script>
+
+
+
+
+
+  
  <div class="container">
         <div class="logo">trap.</div>
         <h1>We're Currently Closed</h1>
