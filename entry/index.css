@@ -1,16 +1,1 @@
-@import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
 
-body {
-    padding:0px;
-    margin:0px;
-    width:100vw;
-	background-color:red;
-    font-family: "acumin-pro", sans-serif;
-font-weight: 700;
-font-style: normal;
-	 text-align: center;
-}
-
-img {
-    max-width: 300px; /* Adjust the value as needed */
-}
