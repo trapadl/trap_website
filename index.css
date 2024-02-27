@@ -321,7 +321,7 @@ font-style: normal;
     border-bottom:3px solid rgba(255, 255, 255,1);
 }
 
-#middle #entrycontainer{
+#entrycontainer{
 	margin: 0 auto; /* Center the div */
  background-color: #fff;
 	width: 100%;
