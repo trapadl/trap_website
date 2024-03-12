@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hip Hop Hennessy Open Mic Nights</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <img src="/logo.png" alt="Logo" class="logo">
+    <p>The next open mic night will be on:</p>
+    <P>wednesday, 27th march @7pm</P>
+    <div class="countdown" id="countdown">
+        <!-- Countdown timer will be inserted here -->
+    </div>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdFmOfF2AHM7uu_scjsiTioLfCxKfyRhFFVsxyaYNzFrAKOJw/viewform?usp=sf_link" class="cta-button">Sign Up Now</a>
+    <div class="divider"></div> <!-- Divider -->
+
+    
+    <div class="event-photo">
+        <img class="bodyimg" src="/image1.jpg" alt="Event Photo">
+        <div class="event-details">
+             <img src="/Asset 2.png" alt="Logo" class="logo2">
+            <p>cocktail bar<br><br>Enter via Cold Chisel Ln, ADELAIDE, 5000</p>
+            <p>LAST WEDNESDAY OF EVERY MONTH</p>
+        </div>
+    </div>
+
+    <div class="how-it-works">
+        <h2>THE NIGHT</h2>
+        <p>Each hip hop open mic night runs on the last wednesday of every month. Hosted by our resident MC Dom (@cazeauxoslo) alongside resident band, the night is broken up into two jam sessions and a late night showcase.</p>
+        <p>Jam sessions: sign up using the form below. the band and MC spin a beat. the mic is yours. quick rotations to the next performer.</p>
+        <p>Late night Showcase: 1. sign up using the form below. submit a beat or track. wait for your moment.</p>
+        <p>7:00 - 7:45 PM: JAM SESSION 1<br>8:00 PM - 8:15 PM: BREAK<br>8:15 PM - 9:00 PM: JAM SESSION 2<br>9:15 PM - LATE: SHOWCASE</p>
+    </div>
+    <div class="divider"></div> <!-- Divider -->
+
+    <div class="video-section">
+        <h2>Check Out the Latest Event</h2>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/ewRvNbRUYeE?si=AIieOeyVdlxoDIMj" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+
+    <div class="signup-section" id="signup">
+        <h2>Artist Sign Up</h2>
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdFmOfF2AHM7uu_scjsiTioLfCxKfyRhFFVsxyaYNzFrAKOJw/viewform?usp=sf_link" class="cta-button">Sign Up Now</a>
+
+    </div>
+</div>
+
+<script>
+// Countdown script
+const countdown = document.getElementById('countdown');
+const countdownDate = new Date("03/27/2024 19:00").getTime();
+
+let x = setInterval(function() {
+    let now = new Date().getTime();
+    let distance = countdownDate - now;
+    let days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    countdown.innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+    
+    if (distance < 0) {
+        clearInterval(x);
+        countdown.innerHTML = "EXPIRED";
+    }
+}, 1000);
+</script>
+
+</body>
+</html>
