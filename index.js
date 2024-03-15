@@ -78,3 +78,19 @@ setTimeout(function(){
       $("#work").removeClass("animated fadeIn");
     },1000);
 },1500);
+
+// Function to show the pop-up
+function showPopup() {
+  document.getElementById('popup').classList.add('active');
+}
+
+// Function to close the pop-up
+function closePopup() {
+  document.getElementById('popup').classList.remove('active');
+}
+
+// Automatically show the pop-up after a delay (e.g., 3 seconds)
+window.onload = function() {
+  setTimeout(showPopup, 3000); // Adjust time as needed
+};
+
