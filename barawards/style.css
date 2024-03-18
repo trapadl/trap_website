@@ -1,0 +1,95 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    color: #333;
+}
+
+.steps {
+    list-style-type: decimal;
+    margin-left: 20px;
+}
+
+.voting-section table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.voting-section td {
+    vertical-align: top;
+    padding: 10px;
+}
+
+.form-embed {
+    width: 50%;
+}
+
+.suggestions {
+    width: 50%;
+    height: 50px;
+    overflow-y: scroll; /* Allows vertical scrolling */
+    border-left: 2px solid #ddd;
+    padding-left: 10px;
+}
+
+.suggestion p {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+}
+
+.suggestion button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.suggestion button:hover {
+    background-color: #45a049;
+}
+
+.voting-section {
+    
+}
+
+#tablevote {
+    
+}
+
+.scroll-container {
+    height: 450px;
+    overflow-y: auto; /* Enables vertical scrolling inside this container */
+}
+
+@media (max-width: 768px) {
+    .voting-section .suggestions {
+        display: none;
+    }
+    .voting-section .suggdupes {
+        display: block;
+    }
+    form-embed iframe, .scroll-container {
+        height: 500px;
+    }
+}
+
+@media (min-width: 769px) {
+    .voting-section .suggdupes {
+        display: none;
+    }
+    
+}
