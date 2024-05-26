@@ -33,7 +33,7 @@ src="https://www.facebook.com/tr?id=489643380156899&ev=PageView&noscript=1"
     <div class="countdown" id="countdown">
         <!-- Countdown timer will be inserted here -->
     </div>
-    <a id="signuplink" href="https://docs.google.com/forms/d/e/1FAIpQLSdFmOfF2AHM7uu_scjsiTioLfCxKfyRhFFVsxyaYNzFrAKOJw/viewform?usp=sf_link" target="_blank" class="cta-button">Sign Up Now</a>
+    <a id="hiphoplink" href="https://docs.google.com/forms/d/e/1FAIpQLSdFmOfF2AHM7uu_scjsiTioLfCxKfyRhFFVsxyaYNzFrAKOJw/viewform?usp=sf_link" target="_blank" class="cta-button">Sign Up Now</a>
     <div class="divider"></div> <!-- Divider -->
 
     
@@ -62,7 +62,7 @@ src="https://www.facebook.com/tr?id=489643380156899&ev=PageView&noscript=1"
 
     <div class="signup-section" id="signup">
         <h2>Artist Sign Up</h2>
-            <a href="https://docs.google.com/forms/d/e/1FAIpQLSdFmOfF2AHM7uu_scjsiTioLfCxKfyRhFFVsxyaYNzFrAKOJw/viewform?usp=sf_link" target="_blank" class="cta-button">Sign Up Now</a>
+            <a id="hiphoplink" href="https://docs.google.com/forms/d/e/1FAIpQLSdFmOfF2AHM7uu_scjsiTioLfCxKfyRhFFVsxyaYNzFrAKOJw/viewform?usp=sf_link" target="_blank" class="cta-button">Sign Up Now</a>
 
     </div>
     
@@ -111,7 +111,14 @@ let x = setInterval(function() {
 }, 1000);
 </script>
 <script>
-    fbq('trackCustom', 'ShareDiscount', {promotion: 'share_discount_10%'});
+document.addEventListener('DOMContentLoaded', function() {
+    var hiphoplink = document.getElementById('hiphoplink');
+    if (hiphoplink) {
+        hiphoplink.addEventListener('click', function() {
+            fbq('trackCustom', 'hiphoplink');
+        });
+    }
+});
 </script>
     
 </body>
