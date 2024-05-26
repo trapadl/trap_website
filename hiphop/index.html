@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var hiphoplink = document.getElementById('hiphoplink');
     if (hiphoplink) {
         hiphoplink.addEventListener('click', function() {
-            fbq('trackCustom', 'hiphoplink');
+            fbq('trackCustom', 'hiphoplink', {Signed: "Signed"});
         });
     }
 });
