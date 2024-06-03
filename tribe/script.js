@@ -68,7 +68,7 @@ $(document).ready(function() {
     
     // Change material color every 5 seconds
     let colorIndex = 0;
-    const colors = [0xffffff, 0x4c4c4c, 0xffd700]; // White, black, gold
+    const colors = [0xffffff, 0x4c4c4c, 0xFF0000]; // White, black, gold
     setInterval(function() {
       model.traverse(function(child) {
         if (child.isMesh) {
