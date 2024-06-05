@@ -1,14 +1,32 @@
-@import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
+@font-face {
+    font-family: 'Futura';
+    src: url('fonts/Futura Bold Italic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Acumin-Pro';
+    src: url('fonts/Acumin_Pro_Bold.ttf') format('ttf');
+}
+
+
 
 body {
     margin: 0px;
     width: 100vw;
-    font-family: "Josefin Sans", sans-serif;
+    font-family: "acumin-pro", sans-serif;
     font-weight: 700;
     font-style: normal;
     background-color: black;
     color: white;
 }
+
+
+h2,h1 {
+    font-family: 'Futura', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+}
+
 
 .container {
     width: 80%;
@@ -25,6 +43,10 @@ body {
 .countdown {
     text-align: center;
     margin: 20px 0;
+    font-family: 'Futura', sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+    font-style: italic;
 }
 
 .cta-button {

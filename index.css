@@ -1,4 +1,12 @@
-@import url('https://fonts.googleapis.com/css?family=Josefin+Sans');
+@font-face {
+    font-family: 'Futura';
+    src: url('fonts/Futura Bold Italic.otf') format('opentype');
+}
+
+@font-face {
+    font-family: 'Acumin-Pro';
+    src: url('fonts/Acumin_Pro_Bold.ttf') format('ttf');
+}
 
 body {
     padding:0px;
@@ -12,6 +20,14 @@ body {
 font-weight: 700;
 font-style: normal;
 }
+
+h2,h1 {
+    font-family: 'Futura', sans-serif;
+    font-weight: bold;
+    font-style: italic;
+}
+
+
 #loading {
     width: 100vw;
     height: 100vh;
@@ -83,8 +99,8 @@ font-style: normal;
 #middle h1 {
     color:rgb(0, 0, 0);
     font-size:70px;
-    text-decoration:underline;
 }
+
 #projects {
     width: 10vw;
     height: 10vw;
@@ -246,7 +262,7 @@ font-style: normal;
 }
 .container h1 {
     font-size:60px;
-    text-decoration:underline;
+/*    text-decoration:underline;*/
 }
 .container p {
     font-size:21px;
