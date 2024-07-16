@@ -2,10 +2,41 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>trap. | cocktail bar</title>
+    <title>trap. | cocktail bar in adelaide, south australia</title>
+    <meta name="description" content="Discover trap., a unique cocktail bar in Adelaide, South Australia. Open Thu-Sun, offering craft cocktails, beers, and wines. Book your experience now!">
+    <meta name="keywords" content="cocktail bar, Adelaide, South Australia, craft cocktails, bar near me">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BarOrPub",
+      "name": "trap.",
+      "description": "A unique cocktail bar in Adelaide offering craft cocktails, beers, and wines.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Cold Chisel Lane",
+        "addressLocality": "Adelaide",
+        "addressRegion": "South Australia",
+        "postalCode": "5000",
+        "addressCountry": "AU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": -34.9234947,
+        "longitude": 138.5963972
+      },
+      "openingHours": [
+        "Thu 18:00-23:59",
+        "Fri 16:00-23:59",
+        "Sat 16:00-23:59",
+        "Sun 19:00-23:59"
+      ],
+      "telephone": "+61xxxxxxxxx",
+      "url": "https://www.trapadl.com",
+      "priceRange": "$$"
+    }
+    </script>
     <link rel="icon" type="image" href="./assets/favicon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
     <link href="https://fonts.googleapis.com/css?family=Comfortaa:700" rel="stylesheet">
@@ -57,10 +88,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="box2 onlywide animated bounceOutRight" style="animation-delay: 1800ms;"></div>
         <div class="box2 onlywide animated bounceOutRight" style="animation-delay: 1700ms;"></div>
     </div>
+<!--
     <a id="about" onclick="showabout()" class="animated fadeIn" style="animation-delay: 1000ms;">about</a>
     <a id="work" onclick="showwork()" class="animated fadeIn" style="animation-delay: 1000ms;">menu</a>
     <a id="contact" onclick="showcontact()" class="animated fadeIn" style="animation-delay: 1000ms;">book</a>
-    <a id="projects" onclick="showprojects()" class="animated fadeIn" style="animation-delay: 1000ms;">find us</a>
+-->
+    <a id="projects" onclick="showprojects()" class="animated fadeIn" style="animation-delay: 1000ms;">menu.</a>
     <div id="middle" class="animated slideInDown" style="animation-delay: 2000ms;">
         <h1 id="logoheader"><img id="logoimg" src="/assets/traplogo.png"/></h1>
         <h2>cocktail bar.<br><br>thu 6pm - late<br>fri, sat 4pm - late<br>sun 7pm-late</h2>
@@ -75,15 +108,113 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         </table>
     </div>
     <div id="projects_container" class="container">
-        <div onclick="closeprojects()"><i class="fas fa-angle-right"></i></div>
+        <div onclick="closeprojects()"><i class="fas fa-angle-up"></i></div>
+        <h1>menu.</h1>
+        <section>
+             <a id="submenubutton"  onclick="showabout()"  style="animation-delay: 1000ms;"><table><tr><td><h2>about.</h2></td><td><div onclick="showabout()"><i class="fas fa-angle-right" style="padding: 10px"></i></div></td></tr></table></a><br><br>
+            <a id="submenubutton"  onclick="showwork()"  style="animation-delay: 1000ms;"><table><tr><td><h2>drinks.</h2></td><td><div onclick="showwork()"><i class="fas fa-angle-right" style="padding: 10px"></i></div></td></tr></table></a><br><br>
+            <a id="submenubutton"  onclick="showcontact()"  style="animation-delay: 1000ms;"><table><tr><td><h2>book.</h2></td><td><div onclick="showcontact()"><i class="fas fa-angle-right" style="padding: 10px"></i></div></td></tr></table></a><br><br>
+            <a id="submenubutton"  onclick="showfindus()"  style="animation-delay: 1000ms;"><table><tr><td><h2>find us.</h2></td><td><div onclick="showfindus()"><i class="fas fa-angle-right" style="padding: 10px"></i></div></td></tr></table></a><br><br>
+             <a id="submenubutton"  onclick="showreviews()"  style="animation-delay: 1000ms;"><table><tr><td><h2>reviews.</h2></td><td><div onclick="showreviews()"><i class="fas fa-angle-right" style="padding: 10px"></i></div></td></tr></table></a><br><br>
+
+        </section>
+    </div>
+    <div id="work_container" class="container">
+        <div onclick="closework()"><i class="fas fa-angle-left"></i></div>
+        <h1>drinks.</h1>
+        <section>
+            <h2></h2>
+            <p>
+               our menu is constantly changing, but we're in constant supply of 5 house cocktails, three beers and two wines.
+            </p>
+            
+            <h1>MENU 01 - TOY SOLDIERS</h1>
+            <p>long before we opened our doors for the first time as trap. cocktail bar, the space we occupy was claimed as a gallery by one of adelaide’s first successful art groups specialising in graffiti and street art known as the toy soldiers. 
+disbanding in the mid-2010's, their commission work can still be found at miscellaneous places around adelaide. for our first official menu, we inspire five characters commonly found in their work and bring them back to life in the space that was once their home. 
+<br><br>enjoy!</p>
+        </section>
+<section>
+    <h3>winter soldier, $19</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;ice cold rum</div>
+                <div><i class="fas fa-circle"></i>&nbsp;ice cold pineapple cordial</div>
+                <div><i class="fas fa-circle"></i>&nbsp;hot coconut cream</div>
+            </div>
+<h3>mermaid, $25</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;archie rose vodka</div>
+                <div><i class="fas fa-circle"></i>&nbsp;coastal rosemary</div>
+                <div><i class="fas fa-circle"></i>&nbsp;blue</div>
+                <div><i class="fas fa-circle"></i>&nbsp;foam</div>
+            </div>
+    <h3>pigeon, $25</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;patron tequila</div>
+                <div><i class="fas fa-circle"></i>&nbsp;pepper</div>
+                <div><i class="fas fa-circle"></i>&nbsp;horchata</div>
+                <div><i class="fas fa-circle"></i>&nbsp;feathery</div>
+            </div>
+    <h3>monkey, $25</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;plantation rum</div>
+                <div><i class="fas fa-circle"></i>&nbsp;sugarcane</div>
+                <div><i class="fas fa-circle"></i>&nbsp;3-stonefruit</div>
+                <div><i class="fas fa-circle"></i>&nbsp;banana</div>
+            </div>
+
+    <h3>robot, $26</h3>
+            <div id="used">
+                <div><i class="fas fa-circle"></i>&nbsp;suntory toki whisky</div>
+                <div><i class="fas fa-circle"></i>&nbsp;sesame</div>
+                <div><i class="fas fa-circle"></i>&nbsp;matcha</div>
+                <div><i class="fas fa-circle"></i>&nbsp;shochu</div>
+            </div>
+
+</section>
+    </div>
+
+
+
+    <div id="reviews_container" class="container">
+        <div onclick="closereviews()"><i class="fas fa-angle-left"></i></div>
+        <h1>reviews.</h1>
+        <section>
+             <h3>Adrian, ⭐⭐⭐⭐⭐</h3>
+            <div id="used">
+                <div style="padding: 20px;"><h3>Heard music filtering up from underground (literally) and followed the sound into Cold Chisel Alley to find the coolest /artiest/funkiest little cocktail bar I’ve been in for years. By happy coincidence it was ‘Hip Hop Open Mic Night’ (last Wed of each month). Cosy chic place with a great crowd, fabulous band and intimate energy. Cocktails were delicious. Spent a couple of hours enjoying guys and gals passing the mic around and busting rhymes. Felt like everyone knew each other and we were among friends. I’ve already put it my calendar for next month. Highly recommended!</h3><button class="btn_one"><a target=”_blank” href="https://g.co/kgs/DGQiA3y"
+                                style="color: inherit; text-decoration: none">Link to Review</a></button></div>
+            </div>
+             <h3>M T, ⭐⭐⭐⭐⭐</h3>
+            <div id="used">
+                <div style="padding: 20px;"><h3>For those seeking a one-of-a-kind drinking experience, this hidden gem delivers in spades, offering a haven for cocktail enthusiasts looking to escape the ordinary and indulge in something extraordinary.</h3><button class="btn_one"><a target=”_blank href="https://g.co/kgs/PpZ1AeB" style="color: inherit; text-decoration: none">Link to Review</a></button></div>
+            </div>
+             <h3>4chillies, ⭐⭐⭐⭐⭐</h3>
+            <div id="used">
+                <div style="padding: 20px;"><h3>This is a great concept. A bar that deliberately has a small amount of seats so that everyone gets great attention! The cocktails were delicious and the atmosphere was welcoming. I love that you can draw on a coaster and then those become the drink coasters - a very personal touch.</h3><button class="btn_one"><a href="https://g.co/kgs/uT1AzRg" target=”_blank”  style="color: inherit; text-decoration: none">Link to Review</a></button></div>
+            </div>
+             <h3>Varvara, ⭐⭐⭐⭐⭐</h3>
+            <div id="used">
+                <div style="padding: 20px;"><h3>Love this place. Dark, intimate vibe with phenomenal drinks. It is clear that the team put their heart and soul into creating something new and unique.</h3><button class="btn_one"><a href="https://g.co/kgs/Z8MRq8H" target=”_blank” style="color: inherit; text-decoration: none">Link to Review</a></button></div>
+            </div>
+</section>
+    </div>
+
+
+
+
+
+
+    <div id="findus_container" class="container">
+        <div onclick="closefindus()"><i class="fas fa-angle-left"></i></div>
         <h1>find us.</h1>
         <section>
-            <h2>physically. or virtually.</h2>
+                           <h2>physically. or virtually.</h2>
 
             <ul>
                 <div class="project_card">
                     <div class="project_info">
                         <h3>google maps</h3>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1635.6424143092486!2d138.59494196735943!3d-34.92439293589837!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ab0cf9e67f541df%3A0xb3903017fd823f19!2strap.!5e0!3m2!1sen!2sau!4v1721084810286!5m2!1sen!2sau" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                         <p>some people struggle to find us. get to trap. by first going down burnett street (via currie St) and then turning into cold chisel lane. towards the end of the colourful lane on the right is the entrance to trap.</p>
                         <button class="btn_one"><a
                                 href="https://goo.gl/maps/VhpvbUnFJJcuuQAt8"
@@ -108,66 +239,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     </div>
                 </div>
             </ul>
-        </section>
-    </div>
-    <div id="work_container" class="container">
-        <div onclick="closework()"><i class="fas fa-angle-right"></i></div>
-        <h1>menu.</h1>
-        <section>
-            <h2></h2>
-            <p>
-               our menu is constantly changing, but we're in constant supply of 5 house cocktails, three beers and two wines.
-            </p>
-            
-            <h1>MENU 01 - TOY SOLDIERS</h1>
-            <p>long before we opened our doors for the first time as trap. cocktail bar, the space we occupy was claimed as a gallery by one of adelaide’s first successful art groups specialising in graffiti and street art known as the toy soldiers. 
-disbanding in the mid-2010's, their commission work can still be found at miscellaneous places around adelaide. for our first official menu, we inspire five characters commonly found in their work and bring them back to life in the space that was once their home. 
-<br><br>enjoy!</p>
-        </section>
-<section>
-<h3>mermaid, $25</h3>
-            <div id="used">
-                <div><i class="fas fa-circle"></i>&nbsp;archie rose vodka</div>
-                <div><i class="fas fa-circle"></i>&nbsp;coastal rosemary</div>
-                <div><i class="fas fa-circle"></i>&nbsp;blue</div>
-                <div><i class="fas fa-circle"></i>&nbsp;foam</div>
-            </div>
-    <h3>pigeon, $25</h3>
-            <div id="used">
-                <div><i class="fas fa-circle"></i>&nbsp;patron tequila</div>
-                <div><i class="fas fa-circle"></i>&nbsp;pepper</div>
-                <div><i class="fas fa-circle"></i>&nbsp;horchata</div>
-                <div><i class="fas fa-circle"></i>&nbsp;feathery</div>
-            </div>
-    <h3>monkey, $25</h3>
-            <div id="used">
-                <div><i class="fas fa-circle"></i>&nbsp;plantation rum</div>
-                <div><i class="fas fa-circle"></i>&nbsp;sugarcane</div>
-                <div><i class="fas fa-circle"></i>&nbsp;3-stonefruit</div>
-                <div><i class="fas fa-circle"></i>&nbsp;banana</div>
-            </div>
-    <h3>dragon, $26</h3>
-            <div id="used">
-                <div><i class="fas fa-circle"></i>&nbsp;bombay citon gin</div>
-                <div><i class="fas fa-circle"></i>&nbsp;dragonfruit</div>
-                <div><i class="fas fa-circle"></i>&nbsp;lemon myrtle</div>
-                <div><i class="fas fa-circle"></i>&nbsp;smoke</div>
-            </div>
-    <h3>robot, $26</h3>
-            <div id="used">
-                <div><i class="fas fa-circle"></i>&nbsp;suntory toki whisky</div>
-                <div><i class="fas fa-circle"></i>&nbsp;sesame</div>
-                <div><i class="fas fa-circle"></i>&nbsp;matcha</div>
-                <div><i class="fas fa-circle"></i>&nbsp;shochu</div>
-            </div>
 
-</section>
+        </section>
     </div>
+
+
+
+
+
+
     <div id="about_container" class="container">
         <div onclick="closeabout()"><i class="fas fa-angle-left"></i></div>
         <h1>about.</h1>
         <section>
-            <h2>why trap. ??</h2>
+            <h2>trap. ??</h2>
+            <p>
+                if you're in adelaide, trap. is a cocktal bar near you -
+            </p>
             <p>
                 there's an idea out there that being in a trap is always a bad thing. we're here to show you that it's not the case. some people who live at home still think they're trapped - but quite often they're not paying bills, they're not cooking or barely even cleaning - ironically, sounds like freedom to us.
             </p>
@@ -187,7 +275,7 @@ disbanding in the mid-2010's, their commission work can still be found at miscel
         </section>
     </div>
     <div id="contact_container" class="container">
-        <div onclick="closecontact()"><i class="fas fa-angle-down"></i></div>
+        <div onclick="closecontact()"><i class="fas fa-angle-left"></i></div>
         <h1>book.</h1>
         <section>
             <h3>to guarantee a good time at trap. , please fill out the form using the link below</h3>

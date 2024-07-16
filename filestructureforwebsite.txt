@@ -1,0 +1,106 @@
+PS C:\Users\Lachl\desktop\trap_website> Get-ChildItem -Recurse -Depth 2 | Format-List FullName
+>>
+>>
+
+
+FullName : C:\Users\Lachl\desktop\trap_website\assets
+
+FullName : C:\Users\Lachl\desktop\trap_website\barawards
+
+FullName : C:\Users\Lachl\desktop\trap_website\entry
+
+FullName : C:\Users\Lachl\desktop\trap_website\fonts
+
+FullName : C:\Users\Lachl\desktop\trap_website\hiphop
+
+FullName : C:\Users\Lachl\desktop\trap_website\mbc
+
+FullName : C:\Users\Lachl\desktop\trap_website\speaksans
+
+FullName : C:\Users\Lachl\desktop\trap_website\trapdatenight
+
+FullName : C:\Users\Lachl\desktop\trap_website\tribe
+
+FullName : C:\Users\Lachl\desktop\trap_website\404.css
+
+FullName : C:\Users\Lachl\desktop\trap_website\404.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\404.js
+
+FullName : C:\Users\Lachl\desktop\trap_website\app.js
+
+FullName : C:\Users\Lachl\desktop\trap_website\CNAME
+
+FullName : C:\Users\Lachl\desktop\trap_website\filestructureforwebsite.txt
+
+FullName : C:\Users\Lachl\desktop\trap_website\index.css
+
+FullName : C:\Users\Lachl\desktop\trap_website\index.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\index.js
+
+FullName : C:\Users\Lachl\desktop\trap_website\particles.js
+
+FullName : C:\Users\Lachl\desktop\trap_website\README.md
+
+FullName : C:\Users\Lachl\desktop\trap_website\assets\background.jpg
+
+FullName : C:\Users\Lachl\desktop\trap_website\assets\favicon.png
+
+FullName : C:\Users\Lachl\desktop\trap_website\assets\traplogo.png
+
+FullName : C:\Users\Lachl\desktop\trap_website\assets\traplogowhite.png
+
+FullName : C:\Users\Lachl\desktop\trap_website\barawards\index.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\barawards\style.css
+
+FullName : C:\Users\Lachl\desktop\trap_website\entry\index.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\fonts\Acumin_Pro_Bold.ttf
+
+FullName : C:\Users\Lachl\desktop\trap_website\fonts\Futura Bold Italic.otf
+
+FullName : C:\Users\Lachl\desktop\trap_website\hiphop\Asset 2.png
+
+FullName : C:\Users\Lachl\desktop\trap_website\hiphop\image1.jpg
+
+FullName : C:\Users\Lachl\desktop\trap_website\hiphop\index.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\hiphop\logo.png
+
+FullName : C:\Users\Lachl\desktop\trap_website\hiphop\style.css
+
+FullName : C:\Users\Lachl\desktop\trap_website\hiphop\trapimg.jpg
+
+FullName : C:\Users\Lachl\desktop\trap_website\mbc\Asset 1.png
+
+FullName : C:\Users\Lachl\desktop\trap_website\mbc\competitions.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\mbc\index.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\mbc\logo.ico
+
+FullName : C:\Users\Lachl\desktop\trap_website\mbc\logo.png
+
+FullName : C:\Users\Lachl\desktop\trap_website\mbc\results.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\mbc\style.css
+
+FullName : C:\Users\Lachl\desktop\trap_website\speaksans\index.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\speaksans\websiteimage.jpg
+
+FullName : C:\Users\Lachl\desktop\trap_website\trapdatenight\index.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\trapdatenight\style.css
+
+FullName : C:\Users\Lachl\desktop\trap_website\trapdatenight\title.png
+
+FullName : C:\Users\Lachl\desktop\trap_website\tribe\index.html
+
+FullName : C:\Users\Lachl\desktop\trap_website\tribe\model.gltf
+
+FullName : C:\Users\Lachl\desktop\trap_website\tribe\script.js
+
+FullName : C:\Users\Lachl\desktop\trap_website\tribe\style.css

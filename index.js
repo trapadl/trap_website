@@ -40,30 +40,59 @@ function closeabout(){
 }
 function showwork(){
     $("#work_container").css("display","inherit");
-    $("#work_container").addClass("animated slideInRight");
+    $("#work_container").addClass("animated slideInLeft");
     setTimeout(function(){
-        $("#work_container").removeClass("animated slideInRight");
+        $("#work_container").removeClass("animated slideInLeft");
     },800);
 }
 function closework(){
-    $("#work_container").addClass("animated slideOutRight");
+    $("#work_container").addClass("animated slideOutLeft");
     setTimeout(function(){
-        $("#work_container").removeClass("animated slideOutRight");
+        $("#work_container").removeClass("animated slideOutLeft");
         $("#work_container").css("display","none");
+    },800);
+}
+    function showfindus(){
+    $("#findus_container").css("display","inherit");
+    $("#findus_container").addClass("animated slideInLeft");
+    setTimeout(function(){
+        $("#findus_container").removeClass("animated slideInLeft");
+    },800);
+}
+function closefindus(){
+    $("#findus_container").addClass("animated slideOutLeft");
+    setTimeout(function(){
+        $("#findus_container").removeClass("animated slideOutLeft");
+        $("#findus_container").css("display","none");
     },800);
 }
 function showcontact(){
     $("#contact_container").css("display","inherit");
-    $("#contact_container").addClass("animated slideInUp");
+    $("#contact_container").addClass("animated slideInLeft");
     setTimeout(function(){
-        $("#contact_container").removeClass("animated slideInUp");
+        $("#contact_container").removeClass("animated slideInLeft");
     },800);
 }
 function closecontact(){
-    $("#contact_container").addClass("animated slideOutDown");
+    $("#contact_container").addClass("animated slideOutLeft");
     setTimeout(function(){
-        $("#contact_container").removeClass("animated slideOutDown");
+        $("#contact_container").removeClass("animated slideOutLeft");
         $("#contact_container").css("display","none");
+    },800);
+}
+
+function showreviews(){
+    $("#reviews_container").css("display","inherit");
+    $("#reviews_container").addClass("animated slideInLeft");
+    setTimeout(function(){
+        $("#reviews_container").removeClass("animated slideInLeft");
+    },800);
+}
+function closereviews(){
+    $("#reviews_container").addClass("animated slideOutLeft");
+    setTimeout(function(){
+        $("#reviews_container").removeClass("animated slideOutLeft");
+        $("#reviews_container").css("display","none");
     },800);
 }
 setTimeout(function(){
@@ -77,7 +106,7 @@ setTimeout(function(){
       $("#contact").removeClass("animated fadeIn");
       $("#work").removeClass("animated fadeIn");
     },1000);
-},1500);
+},10);
 
 // Function to show the pop-up
 function showPopup() {
@@ -93,4 +122,3 @@ function closePopup() {
 window.onload = function() {
   setTimeout(showPopup, 3000); // Adjust time as needed
 };
-
