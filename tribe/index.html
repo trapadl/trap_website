@@ -1,118 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>trap. - tribe. Loyalty Program</title>
-<link rel="stylesheet" href="style.css">
-        <link rel="icon" type="image" href="https://www.trapadl.com/assets/favicon.png">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="script.js"></script>
-<!--    coming soon homapage styling below-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tribe. - Connect Your Group</title>
     <style>
         body {
+            font-family: 'Futura', sans-serif;
             margin: 0;
             padding: 0;
-            background-color: white;
-            color: black;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            text-align: center;
+            background-color: #f0f0f0;
+            color: #333;
         }
         .container {
-            max-width: 600px;
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
         }
-        img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 30px;
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
         }
         h1 {
             font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .cta-form {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 40px auto;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        .features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        .feature {
+            flex-basis: 30%;
+            text-align: center;
             margin-bottom: 20px;
         }
+        .feature img {
+            width: 100px;
+            height: 100px;
+        }
     </style>
-
-<!--    End coming soon styling-->
 </head>
 <body>
+    <header>
         <div class="container">
-        <img src="https://www.trapadl.com/assets/traplogo.png" alt="Company Logo">
-        <h1>COMING SOON</h1>
-    </div>
-<!--
-<div class="container">
-    <div class="keyring-container"></div>
-    <h1>find your tribe.</h1>
-    <p>unlock rewards at trap. cocktail bar.<br>with your new tribe. keyring</p>
-    <a href="https://airtable.com/appXuBXoqbfZEwFtY/pagQ1oRxTAg9k8R89/form" target="_blank" class="cta-button">Sign Up Now</a>
-        <div class="instructions">
-        <h2>How to Join</h2>
-        <ol>
-            <li>Sign up using the button above</li>
-            <li>Come to the bar to pick up your tribe. keyring ✔️</li>
-            <li>Show your keyring to redeem your rewards</li>
-        </ol>
-    </div>
-<div id="countmembers">
-    <h2>Current Members:</h2>
-    <iframe class="airtable-embed" src="https://airtable.com/embed/appXuBXoqbfZEwFtY/shrFFwnyA7bs1YMXE" frameborder="10" onmousewheel="" width="100%" height="100%" style="background: transparent; border: none;"></iframe>
-</div>
-    <div class="tiers">
-      
-      <div class="tier black">
-        <h2>Black</h2>
-        <h3>Features</h3>
-        <ul>
-          <li>Everything in red</li>
-                        <li>tribe. black keyring ✔️</li>
-          <li>10% off all menu items</li>
-          <li>Free access to paid events</li>
-          <li>Access to the vault menu featuring past favorites</li>
-        </ul>
-        <h3>Eligibility</h3>
-        <p>Refer two new red members</p>
-        <p>Visit more than 3 times per month to retain</p>
-                        <a class="cta-button">You must be a red tier member to access.</a>
+            <h1>tribe.</h1>
+            <p>Connect Your Group with Others Nearby</p>
+        </div>
+    </header>
 
-      </div>
-        
-      <div class="tier red">
-        <h2>Red</h2>
-        <h3>Features</h3>
-        <ul>
-          <li>Everything in white</li>
-            <li>tribe. red keyring ✔️</li>
-          <li>Access to the red cocktail menu</li>
-        </ul>
-        <h3>Eligibility</h3>
-        <p>Refer two new white members</p>
-        <p>Visit more than twice per month to retain</p>
-              <a class="cta-button">You must be a white tier member to access.</a>
+    <main class="container">
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
+        </div>
 
-      </div>
-        <div class="tier white">
-        <h2>White</h2>
-        <h3>Features</h3>
-        <ul>
-          <li>Free cocktail on sign up</li>
-            <li>tribe. white keyring ✔️</li>
-          <li>Join the exclusive club</li>
-          <li>Monthly meetups after 30 members</li>
-          <li>Random rewards + meetups</li>
-          <li>access to tribe. members only days at trap.</li>
-        </ul>
-    <a href="https://airtable.com/appXuBXoqbfZEwFtY/pagQ1oRxTAg9k8R89/form" target="_blank" class="cta-button">Sign Up to the White Tier Now</a>
+        <div class="cta-form">
+            <h2>Reserve Your Username</h2>
+            <p>Be one of the first to join tribe. and secure your preferred username!</p>
+            <form id="signup-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+                <input type="text" name="username" placeholder="Desired Username" required>
+                <input type="email" name="email" placeholder="Your Email" required>
+                <input type="text" name="referral_code" placeholder="Referral Code (optional)">
+                <button type="submit">Join the Waitlist</button>
+            </form>
+        </div>
 
-      </div>
-    </div>
+        <div class="features">
+            <div class="feature">
+                <img src="/api/placeholder/100/100" alt="Group Chat Icon">
+                <h3>Group Chats</h3>
+                <p>Create and manage your tribes with ease.</p>
+            </div>
+            <div class="feature">
+                <img src="/api/placeholder/100/100" alt="Location Icon">
+                <h3>Location-based</h3>
+                <p>Find other tribes nearby for meetups and events.</p>
+            </div>
+            <div class="feature">
+                <img src="/api/placeholder/100/100" alt="Security Icon">
+                <h3>Safe & Secure</h3>
+                <p>Meet new people with the comfort of your group.</p>
+            </div>
+        </div>
+    </main>
 
-</div>
--->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 tribe. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Here you would typically send the form data to your backend
+            // For this example, we'll just log it to the console
+            console.log('Form submitted');
+
+            // Redirect to a thank you page
+            window.location.href = '/thank-you.html';
+        });
+    </script>
 </body>
 </html>
