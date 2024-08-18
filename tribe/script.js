@@ -1,14 +1,20 @@
-document.getElementById('username-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdowns = document.querySelectorAll('.form-dropdown');
 
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const referralCode = document.getElementById('referral-code').value;
+    dropdowns.forEach(dropdown => {
+        const summary = dropdown.querySelector('summary');
+        const content = dropdown.querySelector('.form-content');
 
-    // TODO: Validate username availability using Airtable or Google Sheets API.
-    // TODO: Send the form data to Airtable or Google Sheets for storage using Zapier.
-    
-    alert(`Username: ${username}, Email: ${email}, Referral Code: ${referralCode} submitted successfully!`);
-    
-    // Redirect to a thank you or confirmation page if needed
+        summary.addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent the default toggle behavior
+
+            dropdowns.forEach(otherDropdown => {
+                if (otherDropdown !== dropdown) {
+                    otherDropdown.removeAttribute('open');
+                }
+            });
+
+            dropdown.toggleAttribute('open');
+        });
+    });
 });

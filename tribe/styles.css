@@ -1,81 +1,65 @@
-body {
-    font-family: Arial, sans-serif;
+body, html {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    font-family: Arial, sans-serif;
 }
 
-header {
-    text-align: center;
+#app {
+    min-height: 100vh;
+}
+
+.section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 20px;
-    background-color: #333;
-    color: #fff;
+    box-sizing: border-box;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 2.5em;
-}
-
-header p {
-    margin-top: 10px;
-    font-size: 1.2em;
-}
-
-#promo-video {
-    margin: 20px auto;
-    max-width: 800px;
-    text-align: center;
-}
-
-#signup-form {
-    background-color: #fff;
-    padding: 20px;
-    margin: 20px auto;
-    max-width: 500px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
-
-#signup-form h2 {
-    text-align: center;
+#logo {
+    font-size: 4rem;
+    font-weight: bold;
     margin-bottom: 20px;
 }
 
-#signup-form label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+.swipe-cta {
+    margin-top: 20px;
 }
 
-#signup-form input {
+.video-placeholder {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    font-size: 1em;
+    max-width: 800px;
+    aspect-ratio: 16 / 9;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
 }
 
-#signup-form button {
+.form-container {
     width: 100%;
-    padding: 10px;
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    font-size: 1.2em;
+    max-width: 400px;
+}
+
+.form-dropdown {
+    margin-bottom: 10px;
+}
+
+.form-dropdown summary {
     cursor: pointer;
+    padding: 10px;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
 }
 
-#signup-form button:hover {
-    background-color: #0056b3;
-}
-
-footer {
-    text-align: center;
-    padding: 20px;
-    background-color: #333;
-    color: #fff;
+.form-content {
+    padding: 10px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 0 0 5px 5px;
 }
