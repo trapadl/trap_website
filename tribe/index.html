@@ -64,11 +64,9 @@
         #app {
             height: 100%;
             overflow-y: auto;
-            scroll-snap-type: y mandatory;
         }
         .section {
             height: 100vh;
-            scroll-snap-align: start;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -174,7 +172,10 @@
         <div style="padding: 8px 0;">
           <div class="sib-form-block" style="font-size:16px; text-align:left; font-family:&quot;Helvetica&quot;, sans-serif; color:#1d1d1d; background-color:transparent; text-align:left">
             <div class="sib-text-form-block">
-              <p>be one of the first to join tribe. and secure your preferred username below.</p>
+              <p>how it works:</p>
+                <p>join the waiting list below with your preferred username</p>
+                <p>get emailed a unique referral code</p>
+                <p>sign up 10 friends to this waiting list and get your username</p>
             </div>
           </div>
         </div>
@@ -277,28 +278,10 @@
 <!-- End Brevo Form -->
 
         </div>
+        <iframe class="airtable-embed" src="https://airtable.com/embed/applejmhCdfl17uT6/shrFTjUQMQjL6NKsB?viewControls=on" frameborder="0" onmousewheel="" width="100%" height="533" style="background: transparent; border: 1px solid #ccc;"></iframe>
     </div>
 
-    <script>
-        document.getElementById('referral-code').addEventListener('input', function() {
-            const message = document.getElementById('referral-message');
-            if (this.value.trim() !== '') {
-                message.style.display = 'block';
-                message.textContent = `By joining the waitlist below, we'll add you into a tribe with ${this.value} when the tribe. app launches`;
-            } else {
-                message.style.display = 'none';
-            }
-        });
 
-        document.getElementById('signup-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            // Handle form submission here
-            console.log('Form submitted:', {
-                referralCode: document.getElementById('referral-code').value,
-                username: document.getElementById('username').value,
-                email: document.getElementById('email').value
-            });
-        });
-    </script>
+
 </body>
 </html>
