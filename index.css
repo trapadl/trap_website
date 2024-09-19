@@ -637,3 +637,11 @@ h2,h1 {
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
 }
+
+.btn_three {
+    font-size:18px;
+    font-family: 'Josefin Sans', sans-serif;
+    background:#fff;
+border: none;
+    font-weight:bold;
+}
