@@ -122,3 +122,22 @@ function closePopup() {
 window.onload = function() {
   setTimeout(showPopup, 3000); // Adjust time as needed
 };
+
+// Function to show the booking pop-up with the specified form URL
+function openBookingPopup(formUrl) {
+  document.getElementById('bookingPopup').classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  // Set the iframe's src attribute to the form URL
+  document.getElementById('bookingIframe').src = formUrl;
+}
+
+// Function to close the booking pop-up
+function closeBookingPopup() {
+  document.getElementById('bookingPopup').classList.remove('active');
+  document.body.style.overflow = 'auto';
+
+  // Reset the iframe's src attribute
+  document.getElementById('bookingIframe').src = '';
+}
+

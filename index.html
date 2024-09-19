@@ -298,9 +298,10 @@ disbanding in the mid-2010's, their commission work can still be found at miscel
         <section>
             <h3>to guarantee a good time at trap. , please fill out the form using the link below</h3>
 
-            <button class="btn_one"><a
-                                href="https://forms.gle/YRD8qtPnJxGCTMdf8"
-                                style="color: inherit; text-decoration: none">make a booking.</a></button>
+            <button class="btn_one" onclick="openBookingPopup('https://docs.google.com/forms/d/e/1FAIpQLSe57gW9pysQn_LBf5PKRmur-yoccAw3rXOiFYUdNK2N3EszSQ/viewform?embedded=true')">
+  make a booking.
+</button>
+
 
 
 
@@ -315,7 +316,9 @@ disbanding in the mid-2010's, their commission work can still be found at miscel
   <div class="popup-content">
     <span class="close-btn" onclick="closePopup()">&times;</span>
     <p>welcome home. your first time here?</p>
-      <a class="linky" style="color: black;" href="https://docs.google.com/forms/d/e/1FAIpQLSe57gW9pysQn_LBf5PKRmur-yoccAw3rXOiFYUdNK2N3EszSQ/viewform?usp=pp_url&entry.685335800=i+heard+there+was+a+free+gin+and+mixer?" target="_blank">make a booking, for a free gin mixer on us!</a>
+      <a class="linky" style="color: black; text-decoration: underline; cursor: pointer;" onclick="openBookingPopup('https://docs.google.com/forms/d/e/1FAIpQLSe57gW9pysQn_LBf5PKRmur-yoccAw3rXOiFYUdNK2N3EszSQ/viewform?usp=pp_url&entry.685335800=i+heard+there+was+a+free+gin+and+mixer&embedded=true')">
+  make a booking, for a free gin mixer on us!
+</a>
 <p>looking to sign up for our hip hop henny open mic nights?</p>
       <a class="linky" style="color: black;" href="https://www.trapadl.com/hiphop" target="_blank">sign up.</a> 
   </div>
@@ -324,6 +327,32 @@ disbanding in the mid-2010's, their commission work can still be found at miscel
     
     <script src="particles.js"></script>
     <script src="app.js"></script>
+
+
+    <!-- Booking Pop-up structure -->
+<div id="bookingPopup" class="popup-background">
+  <div class="popup-content">
+    <span class="close-btn" onclick="closeBookingPopup()">&times;</span>
+    <!-- Embed the Google Form using an iframe -->
+    <iframe
+      id="bookingIframe"
+      src="https://docs.google.com/forms/d/e/1FAIpQLSe57gW9pysQn_LBf5PKRmur-yoccAw3rXOiFYUdNK2N3EszSQ/viewform?embedded=true"
+      width="100%"
+      height="80vh"
+      frameborder="0"
+      style="border: none;"
+      scrolling="yes"
+    >
+      Loading…
+    </iframe>
+  </div>
+</div>
+
+
+
+
+
+
 
 </body>
 
