@@ -52,6 +52,20 @@ function closework(){
         $("#work_container").css("display","none");
     },800);
 }
+function showevents(){
+    $("#events_container").css("display","inherit");
+    $("#events_container").addClass("animated slideInLeft");
+    setTimeout(function(){
+        $("#events_container").removeClass("animated slideInLeft");
+    },800);
+}
+function closeevents(){
+    $("#events_container").addClass("animated slideOutLeft");
+    setTimeout(function(){
+        $("#events_container").removeClass("animated slideOutLeft");
+        $("#events_container").css("display","none");
+    },800);
+}
     function showfindus(){
     $("#findus_container").css("display","inherit");
     $("#findus_container").addClass("animated slideInLeft");
