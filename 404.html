@@ -1,22 +1,101 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <link type="text/css" rel="stylesheet" href="./404.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>404 - page not found | trap.</title>
+    <link rel="stylesheet" href="https://use.typekit.net/cgk8fct.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: "acumin-pro", sans-serif;
+            font-weight: 700;
+            background-color: black;
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        .logo {
+            width: 200px;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Futura', sans-serif;
+            font-weight: bold;
+            font-style: italic;
+            font-size: 4rem;
+            margin: 0 0 20px 0;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin: 10px 0;
+            line-height: 1.5;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin-top: 30px;
+            background-color: white;
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #333;
+            color: white;
+        }
+
+        .message {
+            margin: 30px 0;
+        }
+
+        .drinks {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 3rem;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
-
-<body class="permission_denied">
-    <div id="tsparticles"></div>
-    <div class="denied__wrapper">
+<body>
+    <div class="container">
+        <img src="/assets/traplogowhite.png" alt="trap." class="logo">
         <h1>404</h1>
-        <h3>LOST IN <span>SPACE</span> App-Name? Hmm, looks like that page doesn't exist.</h3>
-        <img id="astronaut" src="./assets/astronaut.svg" />
-        <img id="planet" src="./assets/planet.svg" />
-        <a href="https://thekaushikgoswami.github.io"><button class="denied__link">Go Home</button></a>
+        <div class="message">
+            <p>looks like you've wandered into the wrong lane.</p>
+            <p>this page doesn't exist, but our cocktails definitely do.</p>
+        </div>
+        <a href="/" class="btn">take me home.</a>
+        <div class="drinks">
+            <p>meanwhile, our bartenders are shaking up something special at<br>
+            cold chisel lane, adelaide.</p>
+        </div>
     </div>
-
-    <script type="text/javascript"
-        src="https://cdn.jsdelivr.net/npm/tsparticles@1.18.11/dist/tsparticles.min.js"></script>
-    <script type="text/javascript" src="./404.js"></script>
-
+</body>
 </html>

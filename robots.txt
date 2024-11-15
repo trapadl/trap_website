@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Allow: /index.html
+Allow: /barawards/
+Allow: /entry/
+Allow: /hiphop/
+Allow: /mbc/
+Allow: /trapdatenight/
+Allow: /tribe/
+
+Disallow: /assets/
+Disallow: /fonts/
+Disallow: /speaksans/
+
+Sitemap: https://www.trapadl.com/sitemap.xml
