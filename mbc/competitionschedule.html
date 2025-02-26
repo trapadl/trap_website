@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Competition Schedule - Master Bartending Championship</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Black&display=swap" rel="stylesheet" />
+    <style>
+      .content-section {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      
+      .schedule-table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-top: 2rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+      
+      .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+      }
+      
+      .schedule-table th,
+      .schedule-table td {
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .schedule-table th {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+      
+      .schedule-table td {
+        color: #aaaaaa;
+      }
+      
+      .category-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.85rem;
+        white-space: nowrap;
+      }
+      
+      .category-speed {
+        background: #ff4444;
+      }
+      
+      .category-traditional {
+        background: #4444ff;
+      }
+      
+      .category-flair {
+        background: #44ff44;
+      }
+      
+      .status-upcoming {
+        color: #44ff44;
+      }
+      
+      .status-registration {
+        color: #ffff44;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .content-section {
+          padding: 0.5rem;
+        }
+        
+        .schedule-table th,
+        .schedule-table td {
+          padding: 0.75rem;
+          font-size: 0.9rem;
+        }
+        
+        .category-badge {
+          padding: 0.2rem 0.5rem;
+          font-size: 0.8rem;
+        }
+        
+        h1, h2 {
+          padding: 0 0.5rem;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/competition-CiIJq6x2.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/countdown-1B-LzVIm.js">
+    <link rel="stylesheet" crossorigin href="/assets/countdown-DmaKE9B1.css">
+  </head>
+  <body>
+    <div class="content">
+      <header class="small-header">
+        <nav class="menu-container" aria-label="Main Navigation">
+          <ul class="menu">
+            <li class="menu-item" data-submenu="legacy">Legacy Leaderboard</li>
+            <li class="menu-item" data-submenu="mbc">MBC Leaderboard</li>
+            <li class="menu-item" data-submenu="about">About</li>
+            <li class="menu-item" data-submenu="upcoming">Upcoming Competitions</li>
+            <li class="menu-item" data-submenu="entry">Entry</li>
+          </ul>
+          <div class="submenu-inline"></div>
+        </nav>
+      </header>
+
+      <div class="page-content">
+        <!-- Upcoming Competitions Section -->
+        <div class="content-section">
+          <h1>Competition Schedule</h1>
+          <div class="schedule-table-wrapper">
+            <table class="schedule-table" id="upcoming-competitions-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Event</th>
+                  <th>Category</th>
+                  <th>Location</th>
+                  <th>More Info</th>
+                </tr>
+              </thead>
+              <tbody id="upcoming-competitions-body">
+                <!-- Will be populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Past Competitions Section -->
+        <div class="content-section">
+          <h2>Past Competitions</h2>
+          <div class="schedule-table-wrapper">
+            <table class="schedule-table" id="past-competitions-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Event</th>
+                  <th>Category</th>
+                  <th>Location</th>
+                  <th>Results</th>
+                </tr>
+              </thead>
+              <tbody id="past-competitions-body">
+                <!-- Dynamically populated rows go here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript to load competitions from Supabase -->
+
+  </body>
+</html>
