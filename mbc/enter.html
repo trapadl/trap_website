@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Master Bartending Championship</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Black&display=swap" rel="stylesheet" />
+
+    <style>
+      .content-section {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+      
+      .auth-container {
+        background: rgba(255, 255, 255, 0.05);
+        padding: 2rem;
+        border-radius: 8px;
+      }
+      
+      .auth-tabs {
+        display: flex;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .auth-tab {
+        padding: 1rem 2rem;
+        cursor: pointer;
+        color: #aaaaaa;
+        border-bottom: 2px solid transparent;
+      }
+      
+      .auth-tab.active {
+        color: #ffffff;
+        border-bottom-color: #ffffff;
+      }
+      
+      .auth-form {
+        display: none;
+      }
+      
+      .auth-form.active {
+        display: block;
+      }
+      
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+      
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #ffffff;
+      }
+      
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        color: #ffffff;
+      }
+      
+      .form-input:focus {
+        outline: none;
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+      
+      .submit-button {
+        width: 100%;
+        padding: 1rem;
+        background: #ffffff;
+        color: #000000;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+      }
+      
+      .social-login {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-top: 2rem;
+      }
+      
+      .social-button {
+        padding: 0.75rem;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        background: transparent;
+        color: #ffffff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      
+      .social-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .error-message {
+        background: rgba(255, 0, 0, 0.2);
+        border: 1px solid rgba(255, 0, 0, 0.3);
+        color: #ff9999;
+        padding: 0.75rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+        display: none;
+      }
+
+      .success-message {
+        background: rgba(0, 255, 0, 0.2);
+        border: 1px solid rgba(0, 255, 0, 0.3);
+        color: #99ff99;
+        padding: 0.75rem;
+        margin-bottom: 1.5rem;
+        border-radius: 4px;
+        display: none;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.2.0",
+          "react-dom": "https://esm.sh/react-dom@18.2.0",
+          "react-dom/client": "https://esm.sh/react-dom@18.2.0/client"
+        }
+      }
+    </script>
+    <script type="module" crossorigin src="/assets/enter-BUZF6gT0.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/countdown-1B-LzVIm.js">
+    <link rel="stylesheet" crossorigin href="/assets/countdown-DmaKE9B1.css">
+  </head>
+  <body>
+    <div class="content">
+      <header class="small-header">
+        <nav class="menu-container" aria-label="Main Navigation">
+          <ul class="menu">
+            <li class="menu-item" data-submenu="legacy">Legacy Leaderboard</li>
+            <li class="menu-item" data-submenu="mbc">MBC Leaderboard</li>
+            <li class="menu-item" data-submenu="about">About</li>
+            <li class="menu-item" data-submenu="upcoming">Upcoming Competitions</li>
+            <li class="menu-item" data-submenu="entry">Entry</li>
+          </ul>
+          <div class="submenu-inline"></div>
+        </nav>
+      </header>
+
+      <div class="page-content">
+        <div class="content-section">
+          <h1>Join MBC</h1>
+          <div class="auth-container">
+            <div class="auth-tabs">
+              <div class="auth-tab active" data-form="signin">Sign In</div>
+              <div class="auth-tab" data-form="signup">Sign Up</div>
+            </div>
+
+            <div class="error-message"></div>
+            <div class="success-message"></div>
+
+            <form class="auth-form active" id="signin-form">
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-input" required>
+              </div>
+              <button type="submit" class="submit-button">Sign In</button>
+            </form>
+
+            <form class="auth-form" id="signup-form">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="fullName" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Role</label>
+                <select name="role" class="form-input">
+                  <option value="bartender">Bartender</option>
+                  <option value="organiser">Organiser</option>
+                </select>
+              </div>
+              <div class="form-group bartender-fields">
+                <label class="form-label">Bar</label>
+                <input type="text" name="bar" class="form-input">
+              </div>
+              <div class="form-group organiser-fields" style="display: none;">
+                <label class="form-label">Brand</label>
+                <input type="text" name="brand" class="form-input">
+              </div>
+              <button type="submit" class="submit-button">Sign Up</button>
+            </form>
+
+            <!-- <div class="social-login">
+              <button class="social-button">
+                <img src="google-icon.png" alt="Google" width="20">
+                Google
+              </button>
+              <button class="social-button">
+                <img src="facebook-icon.png" alt="Facebook" width="20">
+                Facebook
+              </button>
+              <button class="social-button">
+                <img src="instagram-icon.png" alt="Instagram" width="20">
+                Instagram
+              </button>
+              <button class="social-button">
+                <img src="linkedin-icon.png" alt="LinkedIn" width="20">
+                LinkedIn
+              </button>
+              <button class="social-button">
+                <img src="tiktok-icon.png" alt="TikTok" width="20">
+                TikTok
+              </button>
+              <button class="social-button">
+                <img src="reddit-icon.png" alt="Reddit" width="20">
+                Reddit
+              </button>
+            </div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
