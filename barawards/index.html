@@ -341,19 +341,18 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
             overflow: hidden;
-            max-height: 30vh; /* Adjusted max-height */
+            max-height: 40vh; /* Adjusted max-height */
             display: flex;
             flex-direction: column;
         }
 
         .carousel-container {
-    position: relative; /* Keep if needed for other absolute positioning within it */
-    /* height: 100%; */ /* REMOVE THIS LINE */
-    flex: 1;           /* ADD THIS LINE */
-    min-height: 0;     /* ENSURE THIS IS PRESENT (it is in your current code) */
-    display: flex;
-    flex-direction: column;
-}
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+min-height: 0;
+        }
 
         .carousel-track {
             flex: 1;
@@ -633,7 +632,7 @@ min-height: 0;
             border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
-            height: 65vh; /* Adjusted height */
+            height: 55vh; /* Adjusted height */
         }
 
         .survey-content {
@@ -1496,9 +1495,7 @@ min-height: 0;
                 </div>
             </div>
             
-            <div class="card-indicator">
-                <span id="cardCounter">1 / 36</span>
-            </div>
+
         </div>
 
         <!-- Form Container -->
