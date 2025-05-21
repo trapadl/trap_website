@@ -350,12 +350,14 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+min-height: 0;
         }
 
         .carousel-track {
             flex: 1;
             overflow: hidden;
             position: relative;
+min-height: 0;
         }
 
         .carousel-slides {
@@ -370,6 +372,7 @@
             display: flex;
             flex-direction: column;
             position: relative;
+min-height: 0;
         }
 
         .nav-btn {
@@ -710,13 +713,16 @@
                         <div class="carousel-slide header-card">
                             <div class="card-header"></div>
                             <div class="card-content">
-                                <img src="https://github.com/trapadl/trap_website/blob/main/assets/traplogowhite.png?raw=true" alt="trap. logo" class="logo">
-                                <div class="header-title">Support trap. in the Bar Awards!</div>
+                               <div style="max-height: 180px; overflow: scroll">
+                                
+                                 <img src="https://github.com/trapadl/trap_website/blob/main/assets/traplogowhite.png?raw=true" alt="trap. logo" class="logo">
+                                <div class="header-title">Support us in the Bar Awards!</div>
                                 <div class="header-subtitle">25th Annual Bartender Magazine Bar Awards</div>
                                 <div class="badge">Best Cocktail Bar South Australia 2024 🏆</div>
                                 <button class="start-cta" onclick="event.stopPropagation(); changeCard(1);">
-                                    🗳️ Start Voting Process
+                                    🗳️ Vote for trap. !! >>
                                 </button>
+                                </div>
                             </div>
                         </div>
 
@@ -724,10 +730,12 @@
                         <div class="carousel-slide">
                             <div class="card-header">🏆 Help Us Go Back-to-Back!</div>
                             <div class="card-content intro-card">
-                                <div class="intro-text">
-                                    <p><strong>Last year we took home Best Cocktail Bar South Australia 2024 — and we're aiming for it again in 2025!</strong></p>
-                                    <p>What a year it's been at trap. We've launched our <span class="highlight">'guardians of the cocktail'</span> menu, continuing our commitment to innovation and quality. Our team has worked tirelessly to provide exceptional drinks, service, and atmosphere, always striving to be a place you love to visit.</p>
-                                    <p>Recognition in these awards means the world to us and helps bring new friends to our door. If you've enjoyed your experiences at trap., please consider voting for us in this year's Bartender Magazine Bar Awards!</p>
+                                <div class="intro-text" style="max-height: 180px; overflow: scroll">
+                                     <p><strong>Last year we took home Best Cocktail Bar South Australia 2024 — and we're going for it again!</strong></p>
+                                    
+                                    <p>What a year it's been at trap. We've launched <strong>two new menus</strong> with our beloved Toy Soldiers concept seeing our most loved 'robot' cocktail travel an incredible <strong>22km over our bar top</strong>. Our innovative Guardians of the Cocktail menu worked tirelessly to combat cost of living pressures, <strong>lowering our average cocktail price from $24 to $19</strong> while maintaining exceptional trap. quality and hospitality.</p>
+                                    
+                                    <p>Every single day we focus on providing the best drinks, service and chat we can. Having recognition amongst Australia's best food and beverage venues means the world to us and helps bring new faces through our doors. <span class="highlight">If you've enjoyed what we do, please consider voting for us again in this year's Bartender Magazine Bar Awards!</span></p>
                                 </div>
                             </div>
                         </div>
@@ -736,11 +744,11 @@
                         <div class="carousel-slide">
                             <div class="card-header">🗳️ How to Vote</div>
                             <div class="card-content instructions-card">
-                                <div class="instructions">
+                                <div class="instructions" style="max-height: 180px; overflow: scroll">
                                     <h4>Voting Instructions:</h4>
                                     <ol>
                                         <li>Use the <strong>← →</strong> arrows (or swipe on mobile) to navigate these info cards.</li>
-                                        <li>For each category, click the <strong>"Copy"</strong> button next to our suggestion.</li>
+                                        <li>Move down the form below and for each category, click the <strong>"Copy"</strong> button from the info card if you want a suggestion.</li>
                                         <li>Paste the copied text into the corresponding field in the official form below.</li>
                                         <li>Fill in all <strong>required fields</strong> in the form to submit your vote.</li>
                                     </ol>
@@ -776,7 +784,7 @@
                         <!-- Cocktail List of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🍸 Cocktail List of the Year (Form Q3)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <p style="font-size:0.8rem; text-align: center; margin-bottom: 0.5rem;">For trap.'s 'guardians of the cocktail' menu</p>
                                 <div class="vote-grid">
                                     <div class="vote-row">
@@ -812,7 +820,7 @@
                         <!-- Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🏆 Bar of the Year (Form Q5)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -836,7 +844,7 @@
                         <!-- Cocktail Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🍹 Cocktail Bar of the Year (Form Q6)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -860,7 +868,7 @@
                         <!-- New Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">✨ New Bar of the Year (Form Q7)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -884,7 +892,7 @@
                         <!-- Best Rookie Bartender Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🌟 Best Rookie Bartender (Form Q8)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Rookie's Name</span>
@@ -908,7 +916,7 @@
                         <!-- Pub of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🍺 Pub of the Year (Form Q9)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -932,12 +940,12 @@
                         <!-- Host of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">👋 Host of the Year (Form Q10)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Host's Name</span>
-                                        <span class="field-value">Jess Purcell</span>
-                                        <button class="copy-btn" onclick="copyText('Jess Purcell', this, event)">Copy</button>
+                                        <span class="field-value">Jessica Purcell</span>
+                                        <button class="copy-btn" onclick="copyText('Jessica Purcell', this, event)">Copy</button>
                                     </div>
                                     <div class="vote-row">
                                         <span class="field-name">Host's Venue</span>
@@ -956,7 +964,7 @@
                         <!-- Small Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🏠 Small Bar of the Year (Form Q11)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -980,7 +988,7 @@
                         <!-- Nightclub of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🕺 Nightclub of the Year (Form Q12)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1004,7 +1012,7 @@
                         <!-- Bar Manager of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">👔 Bar Manager of the Year (Form Q13)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Bar Manager</span>
@@ -1028,7 +1036,7 @@
                         <!-- Regional Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🗺️ Regional Bar of the Year (Form Q14)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1052,7 +1060,7 @@
                         <!-- Bar Operator of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🏢 Bar Operator of the Year (Form Q15)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Operator's Name</span>
@@ -1076,7 +1084,7 @@
                         <!-- Bar Team of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🤝 Bar Team of the Year (Form Q16)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1100,7 +1108,7 @@
                         <!-- Best Speciality Beer Venue Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🍻 Best Speciality Beer Venue (Form Q17)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1124,7 +1132,7 @@
                         <!-- Wine Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🍷 Wine Bar of the Year (Form Q18)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1148,7 +1156,7 @@
                         <!-- Best Bar Food Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🍔 Best Bar Food (Form Q19)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1172,7 +1180,7 @@
                         <!-- Best Bartenders' Bar Card -->
                         <div class="carousel-slide">
                             <div class="card-header">👨‍💼 Best Bartenders' Bar (Form Q20)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1196,7 +1204,7 @@
                         <!-- Best Live Music Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🎶 Best Live Music Bar (Form Q21)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1220,7 +1228,7 @@
                         <!-- Restaurant Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🍽️ Restaurant Bar of the Year (Form Q22)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1244,7 +1252,7 @@
                         <!-- Best Distillery Bar Card -->
                         <div class="carousel-slide">
                             <div class="card-header">⚗️ Best Distillery Bar (Form Q23)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1268,7 +1276,7 @@
                         <!-- Best Brewery Bar Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🏭 Best Brewery Bar (Form Q24)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1292,7 +1300,7 @@
                         <!-- Gin Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🌿 Gin Bar of the Year (Form Q25)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1316,7 +1324,7 @@
                         <!-- Rum Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🏴‍☠️ Rum Bar of the Year (Form Q26)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1340,7 +1348,7 @@
                         <!-- Whisky Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🥃 Whisky Bar of the Year (Form Q27)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1364,7 +1372,7 @@
                         <!-- Tequila Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🌶️ Tequila Bar of the Year (Form Q28)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1388,7 +1396,7 @@
                         <!-- Hotel Bar of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🏨 Hotel Bar of the Year (Form Q29)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Venue Name</span>
@@ -1412,7 +1420,7 @@
                         <!-- Bar of the Year – State Awards Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🇦🇺 Bar of the Year - State (Form Q30)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row"><span class="field-name">ACT</span><span class="field-value">Bar Rochford</span><button class="copy-btn" onclick="copyText('Bar Rochford', this, event)">Copy</button></div>
                                     <div class="vote-row"><span class="field-name">NSW</span><span class="field-value">Fortunate Son</span><button class="copy-btn" onclick="copyText('Fortunate Son', this, event)">Copy</button></div>
@@ -1429,7 +1437,7 @@
                         <!-- Cocktail Bar of the Year – State Awards Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🍹 Cocktail Bar - State (Form Q31)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row"><span class="field-name">ACT</span><span class="field-value">Volstead Repeal</span><button class="copy-btn" onclick="copyText('Volstead Repeal', this, event)">Copy</button></div>
                                     <div class="vote-row"><span class="field-name">NSW</span><span class="field-value">Double Deuce Lounge</span><button class="copy-btn" onclick="copyText('Double Deuce Lounge', this, event)">Copy</button></div>
@@ -1446,7 +1454,7 @@
                         <!-- Training Program of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🎓 Training Program (Form Q32)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">Program Name</span>
@@ -1465,12 +1473,12 @@
                         <!-- Brand Ambassador of the Year Card -->
                         <div class="carousel-slide">
                             <div class="card-header">🌟 Brand Ambassador (Form Q33)</div>
-                            <div class="card-content">
+                            <div class="card-content" style="max-height: 180px; overflow: scroll">
                                 <div class="vote-grid">
                                     <div class="vote-row">
                                         <span class="field-name">BA Name</span>
-                                        <span class="field-value">Simone Carvallo</span> <!-- Corrected from Carpole -->
-                                        <button class="copy-btn" onclick="copyText('Simone Carvallo', this, event)">Copy</button>
+                                        <span class="field-value">Simone Sanna</span> <!-- Corrected from Carpole -->
+                                        <button class="copy-btn" onclick="copyText('Simone Sanna', this, event)">Copy</button>
                                     </div>
                                     <div class="vote-row">
                                         <span class="field-name">BA Company</span>
