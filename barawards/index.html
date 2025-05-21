@@ -3,354 +3,825 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <title>Bar Awards Campaign</title>
-    <link rel="stylesheet" href="https://www.trapadl.com/barawards/style.css">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <title>Support trap. in the 24th Annual Bartender Magazine Bar Awards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* Card Carousel Styles */
+        .card-carousel {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            overflow: hidden;
+            max-height: 30vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .carousel-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .carousel-track {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .carousel-slides {
+            display: flex;
+            transition: transform 0.3s ease;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 8px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            border: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 10;
+            font-size: 0.7rem;
+            font-weight: 500;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .nav-btn:hover {
+            background: #000;
+            transform: scale(1.05);
+        }
+
+        .nav-btn:disabled {
+            background: rgba(0,0,0,0.3);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .nav-btn.prev {
+            left: 8px;
+        }
+
+        .nav-btn.next {
+            right: 8px;
+        }
+
+        .card-header {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #000;
+            text-align: center;
+            padding: 2.5rem 1rem 0.5rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .card-content {
+            flex: 1;
+            padding: 0.8rem;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Header Card Styles */
+        .header-card {
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .header-card .card-header {
+            background: transparent;
+            color: white;
+            border: none;
+        }
+
+        .header-card .card-content {
+            text-align: center;
+        }
+
+        .logo {
+            width: 60px;
+            height: auto;
+            margin-bottom: 0.8rem;
+            filter: brightness(0) invert(1);
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            letter-spacing: -0.02em;
+        }
+
+        .header-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 0.8rem;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 0.6rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 0.8rem;
+        }
+
+        .start-cta {
+            background: white;
+            color: #000;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .start-cta:hover {
+            background: #f3f4f6;
+            transform: translateY(-1px);
+        }
+
+        /* Intro Card Styles */
+        .intro-card {
+            text-align: left;
+        }
+
+        .intro-text {
+            font-size: 0.85rem;
+            margin-bottom: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .intro-text strong {
+            color: #000;
+        }
+
+        /* Instructions Card */
+        .instructions-card {
+            text-align: left;
+        }
+
+        .instructions h4 {
+            font-size: 0.9rem;
+            margin-bottom: 0.6rem;
+            color: #374151;
+        }
+
+        .instructions ol {
+            margin: 0;
+            padding-left: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Standard Card Grid */
+        .vote-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .vote-row {
+            display: grid;
+            grid-template-columns: 1fr 2fr auto;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 6px;
+            min-height: 40px;
+        }
+
+        .field-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .field-value {
+            font-size: 0.8rem;
+            color: #1f2937;
+            word-break: break-word;
+        }
+
+        .copy-btn {
+            background: #000;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            touch-action: manipulation;
+        }
+
+        .copy-btn:hover {
+            background: #333;
+        }
+
+        .copy-btn.copied {
+            background: #10b981;
+        }
+
+        .card-indicator {
+            text-align: center;
+            padding: 0.4rem;
+            font-size: 0.7rem;
+            color: #666;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        /* Info Cards */
+        .info-card {
+            text-align: center;
+        }
+
+        .info-card p {
+            font-size: 0.85rem;
+            margin-bottom: 0.6rem;
+            color: #666;
+        }
+
+        .info-box {
+            padding: 0.6rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        .info-box.blue {
+            background: #f0f9ff;
+            color: #0369a1;
+        }
+
+        .info-box.orange {
+            background: #fef7f0;
+            color: #c2410c;
+        }
+
+        /* Form Styles */
+        .form-container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            height: 65vh;
+        }
+
+        .survey-content {
+            height: 100%;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        .survey-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #fef3c7 0%, #fef3c7 100%);
+            background-size: 100% 40%;
+            background-repeat: no-repeat;
+            background-position: 0 80%;
+            font-weight: 600;
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .vote-row {
+                grid-template-columns: 1fr;
+                gap: 0.3rem;
+                text-align: center;
+            }
+            
+            .field-name {
+                font-weight: 700;
+            }
+            
+            .copy-btn {
+                justify-self: center;
+                width: fit-content;
+            }
+
+            .nav-btn {
+                max-width: 80px;
+                font-size: 0.65rem;
+                padding: 0.3rem 0.5rem;
+            }
+
+            .header-title {
+                font-size: 1rem;
+            }
+
+            .logo {
+                width: 50px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h1>Support Us in the  23rd Annual Bartender Magazine Bar Awards!</h1>
-        <p>It's our first year as a new bar and while it every single day we focus on providing the best drinks, service and chat we can - having a prescence amongst some of Australia's best food and beverage venues is a very valuable source of new business. We love what we do, if you do too, <u>please consider voting for us in this years Bartender Magazine Bar Awards below!</u></p>
-
-
-<p><strong>We've done our best to make it super simple and quick for you to vote! It's required that anyone voting votes for all the categories in the awards - which can be quite a task! To make it easier, we've collated our picks for each category. Simply hit 'copy' to copy that selection to your clipboard. </strong></p>
-
-        <div class="voting-section">
-            <table>
-                <tr>
-                    <td class="form-embed">
-                        <!-- Embedded SurveyMonkey form -->
-                        <iframe src="https://www.surveymonkey.com/r/MP28WR5?embedded=1" width="100%" height="500px" frameborder="0"></iframe>
-                    </td>
+        <!-- Card Carousel -->
+        <div class="card-carousel">
+            <div class="carousel-container">
+                <div class="carousel-track">
+                    <button class="nav-btn prev" id="prevBtn" onclick="changeCard(-1)">← Back</button>
+                    <button class="nav-btn next" id="nextBtn" onclick="changeCard(1)">Next →</button>
                     
-                    <td class="suggestions">
-    <div class="scroll-container">
-<h2>How to Vote:</h2>
-        <ol class="steps">
-            <li>Either pick your own vote, or click 'copy' to auto-copy our suggested pick to your clipboard.</li>
-            <li>Paste it into the corresponding field in the form.</li>
-            <li>Submit the form once all you've filled in your own details and all categories are filled.</li>
-        </ol>
-        <h3>Our Suggested Picks:</h3>
-                        <!-- Updated placeholders for suggestions -->
-        <div class="suggestion">
-        <p>Cocktail List of the Year:&nbsp;<strong>trap. cocktail bar, 01_TOY SOLDIERS</strong> <button onclick="copyToClipboard('trap. cocktail bar, 01_TOY SOLDIERS', event)">Copy</button></p>
-<p>you shouldn't need to upload the menu here - we've already done it!</p>
-    </div>
-    <div class="suggestion">
-        <p>Bar of the Year:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Cocktail Bar of the Year:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>New Bar of the Year:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Rookie of the Year:&nbsp;<strong>Rachel Flashman, Bank St Social, Adelaide, SA</strong> <button onclick="copyToClipboard('Rachel Flashman, Bank St Social, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Pub of the Year:&nbsp;<strong>The Watervale Hotel, Adelaide, SA</strong> <button onclick="copyToClipboard('The Watervale Hotel, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Host of the Year:&nbsp;<strong>Jessica Purcell, Niña, Adelaide</strong> <button onclick="copyToClipboard('Jessica Purcell, Niña, Adelaide', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Small Bar of the Year:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Nightclub of the Year:&nbsp;<strong>Mary's Poppin, Adelaide, SA</strong> <button onclick="copyToClipboard('Marys Poppin, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar Manager of the Year:&nbsp;<strong>Jack Somers, trap., Adelaide</strong> <button onclick="copyToClipboard('Jack Somers, trap., Adelaide', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Regional Bar of the Year:&nbsp;<strong>Noori on the midcoast, Port Nourlanga, SA</strong> <button onclick="copyToClipboard('Noori on the midcoast, Port Nourlanga, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar Operator of the Year:&nbsp;<strong>Liquid and Larder, Sydney, NSW</strong> <button onclick="copyToClipboard('Liquid and Larder, Sydney, NSW', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar Team of the Year:&nbsp;<strong>Cry Baby Bar, Adelaide, SA</strong> <button onclick="copyToClipboard('Cry Baby Bar, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Specialty Beer Venue:&nbsp;<strong>Wheatsheaf Hotel, Adelaide, SA</strong> <button onclick="copyToClipboard('Wheatsheaf Hotel, Adelaide, SA', event)">Copy</button></p>
-    </div>
-<div class="suggestion">
-        <p>Wine Bar of the Year:&nbsp;<strong>Jennie Wine Bar, Adelaide, SA</strong> <button onclick="copyToClipboard('Jennie Wine Bar, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Bar Food:&nbsp;<strong>Jennie Wine Bar, Adelaide, SA</strong> <button onclick="copyToClipboard('Jennie Wine Bar, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Bartenders’ Bar:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Live Music Venue:&nbsp;<strong>The Gov, Adelaide, SA</strong> <button onclick="copyToClipboard('The Gov, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Restaurant Bar of the Year:&nbsp;<strong>Niña Restaurant, Adelaide, SA</strong> <button onclick="copyToClipboard('Niña Restaurant, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Distillery Bar:&nbsp;<strong>Ounce Bar, Adelaide, SA</strong> <button onclick="copyToClipboard('Ounce Bar, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Brewery Bar:&nbsp;<strong>Bowden Brewing, Adelaide, SA</strong> <button onclick="copyToClipboard('Bowden Brewing, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Gin Bar of the Year:&nbsp;<strong>Malt and Juniper, Adelaide, SA</strong> <button onclick="copyToClipboard('Malt and Juniper, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Rum Bar of the Year:&nbsp;<strong>Hains and Co, Adelaide, SA</strong> <button onclick="copyToClipboard('Hains and Co, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Whisky Bar of the Year:&nbsp;<strong>Bank Street Social, Adelaide, SA</strong> <button onclick="copyToClipboard('Bank Street Social, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Tequila Bar of the Year:&nbsp;<strong>EL PRIMO SANCHEZ, SYDNEY</strong> <button onclick="copyToClipboard('EL PRIMO SANCHEZ, SYDNEY', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Hotel Bar of the Year:&nbsp;<strong>Garcon Bleu, Adelaide, SA</strong> <button onclick="copyToClipboard('Garcon Bleu, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar of the Year (State):&nbsp;<strong>Copy each state below:</strong></p>
-    </div>
-        <div class="suggestion">
-        <p>ACT:&nbsp;<strong>BAR ROCHFORD, CANBERRA, ACT</strong> <button onclick="copyToClipboard('BAR ROCHFORD, CANBERRA, ACT', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>NSW:&nbsp;<strong>The Waratah, SYDNEY,NSW</strong> <button onclick="copyToClipboard('The Waratah, SYDNEY,NSW', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>NT:&nbsp;<strong>SMOKE & OAK, DARWIN, NT</strong> <button onclick="copyToClipboard('SMOKE & OAK, DARWIN, NT', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>QLD:&nbsp;<strong>FROG’S HOLLOW SALOON, BRISBANE, QLD</strong> <button onclick="copyToClipboard('FROG’S HOLLOW SALOON, BRISBANE, QLD', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>SA:&nbsp;<strong>
-trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>TAS:&nbsp;<strong>SONNY, HOBART, TAS</strong> <button onclick="copyToClipboard('SONNY, HOBART, TAS', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>VIC:&nbsp;<strong>PURPLE PIT BAR, MELBOURNE, VIC</strong> <button onclick="copyToClipboard('PURPLE PIT BAR, MELBOURNE, VIC', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>WA:&nbsp;<strong>Frisk. Small Bar, Perth, WA</strong> <button onclick="copyToClipboard('Frisk. Small Bar, Perth, WA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Cocktail Bar of the Year (State):&nbsp;<strong>Copy each state below:</strong> </p>
-    </div>
-         <div class="suggestion">
-        <p>ACT:&nbsp;<strong>VOLSTEAD REPEAL, CANBERRA, ACT</strong> <button onclick="copyToClipboard('VOLSTEAD REPEAL, CANBERRA, ACT', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>NSW:&nbsp;<strong>The Waratah, SYDNEY,NSW</strong> <button onclick="copyToClipboard('The Waratah, SYDNEY,NSW', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>NT:&nbsp;<strong>HANKY PANKY LOUNGE, DARWIN, NT</strong> <button onclick="copyToClipboard('HANKY PANKY LOUNGE, DARWIN, NT', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>QLD:&nbsp;<strong>SAVILE ROW, BRISBANE, QLD</strong> <button onclick="copyToClipboard('SAVILE ROW, BRISBANE, QLD', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>SA:&nbsp;<strong>
-trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>TAS:&nbsp;<strong>RUDE BOY, HOBART, TAS</strong> <button onclick="copyToClipboard('RUDE BOY, HOBART, TAS', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>VIC:&nbsp;<strong>BYRDI, MELBOURNE, VIC</strong> <button onclick="copyToClipboard('BYRDI, MELBOURNE, VIC', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>WA:&nbsp;<strong>TERRARIUM BAR, PERTH, WA</strong> <button onclick="copyToClipboard('TERRARIUM BAR, PERTH, WA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Training Program of the Year:&nbsp;<strong>THE BLEND BY BEAM SUNTORY</strong> <button onclick="copyToClipboard('THE BLEND BY BEAM SUNTORY', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Brand Ambassador of the Year:&nbsp;<strong>Chris Brittain, The Exchange</strong> <button onclick="copyToClipboard('Chris Brittain, The Exchange', event)">Copy</button></p>
-    </div>
-    </div>
-</td>
-                </tr>
-                <tr>
-                
-                     <td class="suggdupes">
-    <div class="scroll-container">
-<h2>How to Vote:</h2>
-        <ol class="steps">
-            <li>Click on the category name to auto-copy our suggested pick.</li>
-            <li>Paste it into the corresponding field in the form on the left.</li>
-            <li>Submit the form once all categories are filled.</li>
-        </ol>
-        <h3>Our Suggested Picks:</h3>
-                        <!-- Updated placeholders for suggestions -->
-        <div class="suggestion">
-        <p>Cocktail List of the Year:&nbsp;<strong>trap. cocktail bar, 01_TOY SOLDIERS</strong> <button onclick="copyToClipboard('trap. cocktail bar, 01_TOY SOLDIERS', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar of the Year:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Cocktail Bar of the Year:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>New Bar of the Year:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Rookie of the Year:&nbsp;<strong>Rachel Flashman, Bank Street Social, Adelaide, SA</strong> <button onclick="copyToClipboard('Rachel Flashman, Bank Street Social, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Pub of the Year:&nbsp;<strong>The Watervale Hotel, Adelaide, SA</strong> <button onclick="copyToClipboard('The Watervale Hotel, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Host of the Year:&nbsp;<strong>Jessica Purcell, Niña, Adelaide</strong> <button onclick="copyToClipboard('Jessica Purcell, Niña, Adelaide', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Small Bar of the Year:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Nightclub of the Year:&nbsp;<strong>Mary's Poppin, Adelaide, SA</strong> <button onclick="copyToClipboard('Marys Poppin, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar Manager of the Year:&nbsp;<strong>Jack Somers, trap., Adelaide</strong> <button onclick="copyToClipboard('Jack Somers, trap., Adelaide', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Regional Bar of the Year:&nbsp;<strong>Noori on the midcoast, Port Nourlanga, SA</strong> <button onclick="copyToClipboard('Noori on the midcoast, Port Nourlanga, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar Operator of the Year:&nbsp;<strong>Liquid and Larder, Sydney, NSW</strong> <button onclick="copyToClipboard('Liquid and Larder, Sydney, NSW', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar Team of the Year:&nbsp;<strong>Cry Baby Bar, Adelaide, SA</strong> <button onclick="copyToClipboard('Cry Baby Bar, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Specialty Beer Venue:&nbsp;<strong>Wheatsheaf Hotel, Adelaide, SA</strong> <button onclick="copyToClipboard('Wheatsheaf Hotel, Adelaide, SA', event)">Copy</button></p>
-    </div>
-<div class="suggestion">
-        <p>Wine Bar of the Year:&nbsp;<strong>JENNIE WINE BAR, ADELAIDE, SA</strong> <button onclick="copyToClipboard('JENNIE WINE BAR, ADELAIDE, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Bar Food:&nbsp;<strong>JENNIE WINE BAR, ADELAIDE, SA</strong> <button onclick="copyToClipboard('JENNIE WINE BAR, ADELAIDE, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Bartenders’ Bar:&nbsp;<strong>trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Live Music Venue:&nbsp;<strong>MEMPHIS SLIMS HOUSE OF BLUES, ADELAIDE, SA</strong> <button onclick="copyToClipboard('MEMPHIS SLIMS HOUSE OF BLUES, ADELAIDE, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Restaurant Bar of the Year:&nbsp;<strong>Niña Restaurant, Adelaide, SA</strong> <button onclick="copyToClipboard('Niña Restaurant, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Distillery Bar:&nbsp;<strong>Ounce Bar, Adelaide, SA</strong> <button onclick="copyToClipboard('Ounce Bar, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Best Brewery Bar:&nbsp;<strong>Bowden Brewing, Adelaide, SA</strong> <button onclick="copyToClipboard('Bowden Brewing, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Gin Bar of the Year:&nbsp;<strong>Malt and Juniper, Adelaide, SA</strong> <button onclick="copyToClipboard('Malt and Juniper, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Rum Bar of the Year:&nbsp;<strong>Hains and Co, Adelaide, SA</strong> <button onclick="copyToClipboard('Hains and Co, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Whisky Bar of the Year:&nbsp;<strong>Bank Street Social, Adelaide, SA</strong> <button onclick="copyToClipboard('Bank Street Social, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Tequila Bar of the Year:&nbsp;<strong>EL PRIMO SANCHEZ, SYDNEY</strong> <button onclick="copyToClipboard('EL PRIMO SANCHEZ, SYDNEY', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Hotel Bar of the Year:&nbsp;<strong>Garcon Bleu, Adelaide, SA</strong> <button onclick="copyToClipboard('Garcon Bleu, Adelaide, SA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Bar of the Year (State):&nbsp;<strong>Copy each state below:</strong></p>
-    </div>
-        <div class="suggestion">
-        <p>ACT:&nbsp;<strong>BAR ROCHFORD, CANBERRA, ACT</strong> <button onclick="copyToClipboard('BAR ROCHFORD, CANBERRA, ACT', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>NSW:&nbsp;<strong>The Waratah, SYDNEY,NSW</strong> <button onclick="copyToClipboard('The Waratah, SYDNEY,NSW', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>NT:&nbsp;<strong>SMOKE & OAK, DARWIN, NT</strong> <button onclick="copyToClipboard('SMOKE & OAK, DARWIN, NT', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>QLD:&nbsp;<strong>FROG’S HOLLOW SALOON, BRISBANE, QLD</strong> <button onclick="copyToClipboard('FROG’S HOLLOW SALOON, BRISBANE, QLD', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>SA:&nbsp;<strong>
-trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>TAS:&nbsp;<strong>SONNY, HOBART, TAS</strong> <button onclick="copyToClipboard('SONNY, HOBART, TAS', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>VIC:&nbsp;<strong>PURPLE PIT BAR, MELBOURNE, VIC</strong> <button onclick="copyToClipboard('PURPLE PIT BAR, MELBOURNE, VIC', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>WA:&nbsp;<strong>Frisk. Small Bar, Perth, WA</strong> <button onclick="copyToClipboard('Frisk. Small Bar, Perth, WA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Cocktail Bar of the Year (State):&nbsp;<strong>Copy each state below:</strong> </p>
-    </div>
-         <div class="suggestion">
-        <p>ACT:&nbsp;<strong>VOLSTEAD REPEAL, CANBERRA, ACT</strong> <button onclick="copyToClipboard('VOLSTEAD REPEAL, CANBERRA, ACT', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>NSW:&nbsp;<strong>The Waratah, SYDNEY,NSW</strong> <button onclick="copyToClipboard('The Waratah, SYDNEY,NSW', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>NT:&nbsp;<strong>HANKY PANKY LOUNGE, DARWIN, NT</strong> <button onclick="copyToClipboard('HANKY PANKY LOUNGE, DARWIN, NT', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>QLD:&nbsp;<strong>SAVILE ROW, BRISBANE, QLD</strong> <button onclick="copyToClipboard('SAVILE ROW, BRISBANE, QLD', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>SA:&nbsp;<strong>
-trap., Adelaide, SA</strong> <button onclick="copyToClipboard('trap., Adelaide, SA', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>TAS:&nbsp;<strong>RUDE BOY, HOBART, TAS</strong> <button onclick="copyToClipboard('RUDE BOY, HOBART, TAS', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>VIC:&nbsp;<strong>BYRDI, MELBOURNE, VIC</strong> <button onclick="copyToClipboard('BYRDI, MELBOURNE, VIC', event)">Copy</button></p>
-    </div>
-         <div class="suggestion">
-        <p>WA:&nbsp;<strong>TERRARIUM BAR, PERTH, WA</strong> <button onclick="copyToClipboard('TERRARIUM BAR, PERTH, WA', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Training Program of the Year:&nbsp;<strong>THE BLEND BY BEAM SUNTORY</strong> <button onclick="copyToClipboard('THE BLEND BY BEAM SUNTORY', event)">Copy</button></p>
-    </div>
-    <div class="suggestion">
-        <p>Brand Ambassador of the Year:&nbsp;<strong>Chris Brittain, The Exchange</strong> <button onclick="copyToClipboard('Chris Brittain, The Exchange', event)">Copy</button></p>
-    </div>
-    </div>
-</td>
-                   
-                </tr>
-            </table>
+                    <div class="carousel-slides" id="carouselSlides">
+                        <!-- Header Card -->
+                        <div class="carousel-slide header-card">
+                            <div class="card-header"></div>
+                            <div class="card-content">
+                                <img src="https://github.com/trapadl/trap_website/blob/main/assets/traplogowhite.png?raw=true" alt="trap. logo" class="logo">
+                                <div class="header-title">Support trap. in the Bar Awards!</div>
+                                <div class="header-subtitle">24th Annual Bartender Magazine Bar Awards</div>
+                                <div class="badge">Best Cocktail Bar South Australia 2024 🏆</div>
+                                <button class="start-cta" onclick="event.stopPropagation(); changeCard(1);">
+                                    🗳️ Start Voting Process
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Intro Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">🏆 Help Us Go Back-to-Back!</div>
+                            <div class="card-content intro-card">
+                                <div class="intro-text">
+                                    <p><strong>Last year we took home Best Cocktail Bar South Australia 2024 — and we're going for it again!</strong></p>
+                                    
+                                    <p>What a year it's been at trap. We've launched <strong>two new menus</strong> with our beloved Toy Soldiers concept seeing our most loved 'robot' cocktail travel an incredible <strong>22km over our bar top</strong>. Our innovative Guardians of the Cocktail have worked tirelessly to combat cost of living pressures, <strong>lowering our average cocktail price from $24 to $19</strong> while maintaining the exceptional quality you expect.</p>
+                                    
+                                    <p>Every single day we focus on providing the best drinks, service and chat we can. Having recognition amongst Australia's best food and beverage venues means the world to us and helps bring new faces through our doors. <span class="highlight">If you've enjoyed what we do, please consider voting for us again in this year's Bartender Magazine Bar Awards!</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- How to Vote Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">🗳️ How to Vote</div>
+                            <div class="card-content instructions-card">
+                                <div class="instructions">
+                                    <h4>Voting Instructions:</h4>
+                                    <ol>
+                                        <li>Use the <strong>← →</strong> arrows to navigate between categories</li>
+                                        <li>Click <strong>"Copy"</strong> buttons for individual field values</li>
+                                        <li>Paste the copied text into corresponding form fields below</li>
+                                        <li>Fill all required fields to submit your vote</li>
+                                    </ol>
+                                    <p style="margin-top: 0.8rem; font-size: 0.8rem; opacity: 0.8;">
+                                        <strong>Note:</strong> Voting requires all categories to be filled. We've curated picks for every category to make it quick and easy!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Your Details Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">📝 Your Details</div>
+                            <div class="card-content info-card">
+                                <p>Fill in your personal details in the form below</p>
+                                <div class="info-box blue">
+                                    ℹ️ This information is required to validate your vote
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- T&C Agreement Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">📋 Terms & Conditions</div>
+                            <div class="card-content info-card">
+                                <p>Please read and agree to the terms below</p>
+                                <div class="info-box orange">
+                                    ⚠️ You must work in the Australian drinks/hospitality industry to vote
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cocktail List of the Year Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">🍸 Cocktail List of the Year</div>
+                            <div class="card-content">
+                                <div class="vote-grid">
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue Name</span>
+                                        <span class="field-value">trap. cocktail bar, 01_TOY SOLDIERS</span>
+                                        <button class="copy-btn" onclick="copyText('trap. cocktail bar, 01_TOY SOLDIERS', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue City</span>
+                                        <span class="field-value">Adelaide</span>
+                                        <button class="copy-btn" onclick="copyText('Adelaide', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue State</span>
+                                        <span class="field-value">SA</span>
+                                        <button class="copy-btn" onclick="copyText('SA', this, event)">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- File Upload Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">📎 Menu Upload</div>
+                            <div class="card-content info-card">
+                                <p>Upload trap.'s cocktail menu below</p>
+                                <div class="info-box blue">
+                                    💡 Supported formats: PDF, DOC, DOCX, PNG, JPG, JPEG, GIF
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bar of the Year Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">🏆 Bar of the Year</div>
+                            <div class="card-content">
+                                <div class="vote-grid">
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue Name</span>
+                                        <span class="field-value">trap.</span>
+                                        <button class="copy-btn" onclick="copyText('trap.', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue City</span>
+                                        <span class="field-value">Adelaide</span>
+                                        <button class="copy-btn" onclick="copyText('Adelaide', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue State</span>
+                                        <span class="field-value">SA</span>
+                                        <button class="copy-btn" onclick="copyText('SA', this, event)">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Cocktail Bar of the Year Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">🍹 Cocktail Bar of the Year</div>
+                            <div class="card-content">
+                                <div class="vote-grid">
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue Name</span>
+                                        <span class="field-value">trap.</span>
+                                        <button class="copy-btn" onclick="copyText('trap.', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue City</span>
+                                        <span class="field-value">Adelaide</span>
+                                        <button class="copy-btn" onclick="copyText('Adelaide', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue State</span>
+                                        <span class="field-value">SA</span>
+                                        <button class="copy-btn" onclick="copyText('SA', this, event)">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- New Bar of the Year Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">✨ New Bar of the Year</div>
+                            <div class="card-content">
+                                <div class="vote-grid">
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue Name</span>
+                                        <span class="field-value">trap.</span>
+                                        <button class="copy-btn" onclick="copyText('trap.', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue City</span>
+                                        <span class="field-value">Adelaide</span>
+                                        <button class="copy-btn" onclick="copyText('Adelaide', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue State</span>
+                                        <span class="field-value">SA</span>
+                                        <button class="copy-btn" onclick="copyText('SA', this, event)">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Best Rookie Bartender Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">🌟 Best Rookie Bartender</div>
+                            <div class="card-content">
+                                <div class="vote-grid">
+                                    <div class="vote-row">
+                                        <span class="field-name">Rookie's Name</span>
+                                        <span class="field-value">Rachel Flashman</span>
+                                        <button class="copy-btn" onclick="copyText('Rachel Flashman', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Rookie's Bar</span>
+                                        <span class="field-value">Bank St Social, Adelaide, SA</span>
+                                        <button class="copy-btn" onclick="copyText('Bank St Social, Adelaide, SA', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Rookie's D.O.B</span>
+                                        <span class="field-value">[Enter Date]</span>
+                                        <button class="copy-btn" onclick="copyText('[Enter Date]', this, event)">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Small Bar of the Year Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">🏠 Small Bar of the Year</div>
+                            <div class="card-content">
+                                <div class="vote-grid">
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue Name</span>
+                                        <span class="field-value">trap.</span>
+                                        <button class="copy-btn" onclick="copyText('trap.', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue City</span>
+                                        <span class="field-value">Adelaide</span>
+                                        <button class="copy-btn" onclick="copyText('Adelaide', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue State</span>
+                                        <span class="field-value">SA</span>
+                                        <button class="copy-btn" onclick="copyText('SA', this, event)">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Best Bartenders' Bar Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">👨‍💼 Best Bartenders' Bar</div>
+                            <div class="card-content">
+                                <div class="vote-grid">
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue Name</span>
+                                        <span class="field-value">trap.</span>
+                                        <button class="copy-btn" onclick="copyText('trap.', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue City</span>
+                                        <span class="field-value">Adelaide</span>
+                                        <button class="copy-btn" onclick="copyText('Adelaide', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Venue State</span>
+                                        <span class="field-value">SA</span>
+                                        <button class="copy-btn" onclick="copyText('SA', this, event)">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bar Manager of the Year Card -->
+                        <div class="carousel-slide">
+                            <div class="card-header">👔 Bar Manager of the Year</div>
+                            <div class="card-content">
+                                <div class="vote-grid">
+                                    <div class="vote-row">
+                                        <span class="field-name">Bar Manager</span>
+                                        <span class="field-value">Jack Somers</span>
+                                        <button class="copy-btn" onclick="copyText('Jack Somers', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">Manager's Venue</span>
+                                        <span class="field-value">trap., Adelaide</span>
+                                        <button class="copy-btn" onclick="copyText('trap., Adelaide', this, event)">Copy</button>
+                                    </div>
+                                    <div class="vote-row">
+                                        <span class="field-name">State</span>
+                                        <span class="field-value">SA</span>
+                                        <button class="copy-btn" onclick="copyText('SA', this, event)">Copy</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-indicator">
+                <span id="cardCounter">1 / 15</span>
+            </div>
+        </div>
+
+        <!-- Form Container -->
+        <div class="form-container">
+            <div class="survey-content">
+                <iframe src="https://www.surveymonkey.com/r/366LLYW?embedded=1" 
+                        title="Bar Awards Voting Form">
+                </iframe>
+            </div>
         </div>
     </div>
 
     <script>
-        function copyToClipboard(textToCopy, event) {
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        // Change the button text to 'Copied'
-        event.target.innerText = 'Copied';
-        // Reset the button text after a delay
-        setTimeout(() => {
-            event.target.innerText = 'Copy';
-        }, 3000);
-    }, (err) => {
-        console.error('Could not copy text: ', err);
-    });
-}
+        let currentCard = 0;
+        const totalCards = document.querySelectorAll('.carousel-slide').length;
 
+        // Card titles for navigation
+        const cardTitles = [
+            "trap. Bar Awards", // Header card
+            "Our Story", // Intro card
+            "How to Vote", // Instructions
+            "Your Details", // Personal info
+            "T&Cs", // Terms
+            "Cocktail List", // Cocktail List of Year
+            "Menu Upload", // File upload
+            "Bar of Year", // Bar of Year
+            "Cocktail Bar", // Cocktail Bar of Year
+            "New Bar", // New Bar of Year
+            "Rookie", // Best Rookie
+            "Small Bar", // Small Bar of Year
+            "Bartenders' Bar", // Best Bartenders' Bar
+            "Bar Manager" // Bar Manager of Year
+        ];
+
+        function updateCarousel() {
+            const slides = document.getElementById('carouselSlides');
+            const counter = document.getElementById('cardCounter');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+
+            slides.style.transform = `translateX(-${currentCard * 100}%)`;
+            counter.textContent = `${currentCard + 1} / ${totalCards}`;
+
+            // Update button states and labels
+            prevBtn.disabled = currentCard === 0;
+            nextBtn.disabled = currentCard === totalCards - 1;
+
+            // Update button text
+            if (currentCard === 0) {
+                prevBtn.textContent = "← Back";
+            } else {
+                prevBtn.textContent = `← ${cardTitles[currentCard - 1]}`;
+            }
+
+            if (currentCard === totalCards - 1) {
+                nextBtn.textContent = "Done ✓";
+            } else {
+                nextBtn.textContent = `${cardTitles[currentCard + 1]} →`;
+            }
+        }
+
+        function changeCard(direction) {
+            const newCard = currentCard + direction;
+            if (newCard >= 0 && newCard < totalCards) {
+                currentCard = newCard;
+                updateCarousel();
+            }
+        }
+
+        function copyText(text, button, event) {
+            // Prevent event bubbling to avoid triggering swipe
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                
+                try {
+                    document.execCommand('copy');
+                    button.textContent = 'Copied!';
+                    button.classList.add('copied');
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                        button.classList.remove('copied');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Fallback: Could not copy text: ', err);
+                }
+                
+                document.body.removeChild(textArea);
+            });
+        }
+
+        // Swipe support for mobile
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+
+        const carousel = document.querySelector('.carousel-track');
+
+        carousel.addEventListener('touchstart', (e) => {
+            // Don't start swipe if touching a button
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                return;
+            }
+            startX = e.touches[0].clientX;
+            isDragging = true;
+        });
+
+        carousel.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+            e.preventDefault(); // Prevent default scrolling
+        });
+
+        carousel.addEventListener('touchend', (e) => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const diff = startX - currentX;
+            const threshold = 50;
+
+            if (Math.abs(diff) > threshold) {
+                if (diff > 0) {
+                    changeCard(1); // Swipe left - next card
+                } else {
+                    changeCard(-1); // Swipe right - previous card
+                }
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                changeCard(-1);
+            } else if (e.key === 'ArrowRight') {
+                changeCard(1);
+            }
+        });
+
+        // Initialize
+        updateCarousel();
     </script>
 </body>
 </html>
