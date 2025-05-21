@@ -341,7 +341,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             margin-bottom: 1rem;
             overflow: hidden;
-            max-height: 40vh; /* Adjusted max-height */
+            max-height: 30vh; /* Adjusted max-height */
             display: flex;
             flex-direction: column;
         }
@@ -426,9 +426,7 @@ min-height: 0;
         
         .card-content {
             flex: 1;
-            padding-top: 0;
             padding: 0.8rem;
-            padding-bottom: 3rem;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
               min-height: 0;
@@ -634,7 +632,7 @@ min-height: 0;
             border-radius: 16px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             overflow: hidden;
-            height: 55vh; /* Adjusted height */
+            height: 65vh; /* Adjusted height */
         }
 
         .survey-content {
@@ -659,10 +657,10 @@ min-height: 0;
         /* Mobile adjustments */
         @media (max-width: 768px) {
             .card-carousel {
-                max-height: 35vh; /* Slightly more height on mobile */
+                max-height: 45vh; /* Slightly more height on mobile */
             }
             .form-container {
-                height: 60vh; /* Less height for form on mobile */
+                height: 55vh; /* Less height for form on mobile */
             }
             .field-name, .field-value {
     white-space: nowrap;     /* Prevent text from wrapping */
@@ -1497,7 +1495,9 @@ min-height: 0;
                 </div>
             </div>
             
-
+            <div class="card-indicator">
+                <span id="cardCounter">1 / 36</span>
+            </div>
         </div>
 
         <!-- Form Container -->
