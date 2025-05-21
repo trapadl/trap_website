@@ -425,6 +425,7 @@
             padding: 0.8rem;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+              min-height: 0;
         }
 
         /* Header Card Styles */
@@ -657,10 +658,19 @@
             .form-container {
                 height: 60vh; /* Less height for form on mobile */
             }
+            .field-name, .field-value {
+    white-space: nowrap;     /* Prevent text from wrapping */
+    overflow: hidden;        /* Hide overflowing text */
+    text-overflow: ellipsis; /* Show '...' for truncated text */
+    display: block;          /* Helps ellipsis apply correctly. inline-block also works. */
+    min-width: 0;            /* Crucial for grid/flex children to shrink properly */
+}
             .vote-row {
-                grid-template-columns: 1fr; /* Stack elements */
-                gap: 0.3rem;
-                text-align: left; /* Align text left for stacked view */
+                grid-template-columns: 0.8fr 1.2fr auto; /* Keeps 3 columns. Adjust fractions as needed. */
+                                            /* e.g., minmax(70px, auto) 1fr auto; might offer more control */
+    gap: 0.4rem; /* Or your preferred gap for mobile */
+    text-align: left; /* Align text to the left */
+    align-items: center; /* Vertically center items in the row */
             }
             .field-name {
                 font-weight: 700;
