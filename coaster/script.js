@@ -162,8 +162,8 @@ async function uploadRawImage(blob) {
     .upload(path, blob, { contentType: 'image/jpeg' });
 
   if (uploadError) {
-    showCameraError('Upload failed — please try again.');
-    console.error('[uploadRawImage] upload', uploadError.message);
+    showCameraError(`Upload failed — ${uploadError.message}`);
+    console.error('[uploadRawImage] upload', uploadError);
     return;
   }
 
@@ -174,8 +174,8 @@ async function uploadRawImage(blob) {
     .single();
 
   if (insertError) {
-    showCameraError('Something went wrong — please try again.');
-    console.error('[uploadRawImage] insert', insertError.message);
+    showCameraError(`Something went wrong — ${insertError.message}`);
+    console.error('[uploadRawImage] insert', insertError);
     return;
   }
 
