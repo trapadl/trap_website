@@ -57,6 +57,7 @@ function goToStep(stepName) {
     document.querySelector('.camera-trigger')?.classList.remove('is-hidden');
     document.querySelector('.camera-viewfinder')?.classList.add('is-hidden');
     document.querySelector('.camera-error')?.classList.add('is-hidden');
+    document.querySelector('.site-header')?.classList.remove('is-hidden');
     state.rawImagePath = null;
     state.submissionId = null;
     if (cameraStream) {
@@ -131,6 +132,7 @@ async function startCamera() {
     video.srcObject = cameraStream;
     document.querySelector('.camera-trigger').classList.add('is-hidden');
     document.querySelector('.camera-viewfinder').classList.remove('is-hidden');
+    document.querySelector('.site-header').classList.add('is-hidden');
   } catch (err) {
     console.error('[startCamera]', err.message);
     document.querySelector('.camera-trigger').classList.add('is-hidden');
@@ -187,6 +189,7 @@ function showCameraError(msg) {
   document.querySelector('.camera-viewfinder').classList.add('is-hidden');
   document.querySelector('.camera-trigger').classList.add('is-hidden');
   document.querySelector('.camera-error').classList.remove('is-hidden');
+  document.querySelector('.site-header').classList.remove('is-hidden');
 }
 
 // =============================================================================
