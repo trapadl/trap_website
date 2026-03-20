@@ -167,11 +167,9 @@ async function uploadRawImage(blob) {
     return;
   }
 
-  const { data, error: insertError } = await db
+  const { error: insertError } = await db
     .from('submissions')
-    .insert({ raw_image_path: path, is_verified: false, name: '', email: '' })
-    .select('id')
-    .single();
+    .insert({ id, raw_image_path: path, is_verified: false, name: '', email: '' });
 
   if (insertError) {
     showCameraError(`Something went wrong — ${insertError.message}`);
@@ -179,7 +177,7 @@ async function uploadRawImage(blob) {
     return;
   }
 
-  state.submissionId = data.id;
+  state.submissionId = id;
   state.rawImagePath = path;
   goToStep('processing');
 }
