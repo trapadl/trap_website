@@ -52,6 +52,18 @@ let currentStep = null;
  * @param {string} stepName - One of STEPS array values
  */
 function goToStep(stepName) {
+  // Reset camera UI when returning to camera step (retake flow)
+  if (stepName === 'camera') {
+    document.querySelector('.camera-trigger')?.classList.remove('is-hidden');
+    document.querySelector('.camera-viewfinder')?.classList.add('is-hidden');
+    document.querySelector('.camera-error')?.classList.add('is-hidden');
+    state.rawImagePath = null;
+    state.submissionId = null;
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(t => t.stop());
+      cameraStream = null;
+    }
+  }
   document.querySelectorAll('.step').forEach(el => el.classList.remove('step--active'));
   const target = document.querySelector(`.step--${stepName}`);
   if (target) {
@@ -105,6 +117,79 @@ function recordVote(submissionId) {
 }
 
 // =============================================================================
+// CAMERA
+// =============================================================================
+
+let cameraStream = null;
+
+async function startCamera() {
+  try {
+    cameraStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+    });
+    const video = document.getElementById('camera-video');
+    video.srcObject = cameraStream;
+    document.querySelector('.camera-trigger').classList.add('is-hidden');
+    document.querySelector('.camera-viewfinder').classList.remove('is-hidden');
+  } catch (err) {
+    console.error('[startCamera]', err.message);
+    document.querySelector('.camera-trigger').classList.add('is-hidden');
+    document.querySelector('.camera-error').classList.remove('is-hidden');
+  }
+}
+
+function captureFrame() {
+  const video = document.getElementById('camera-video');
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  if (cameraStream) {
+    cameraStream.getTracks().forEach(t => t.stop());
+    cameraStream = null;
+  }
+  canvas.toBlob(blob => uploadRawImage(blob), 'image/jpeg', 0.92);
+}
+
+async function uploadRawImage(blob) {
+  const id = crypto.randomUUID();
+  const path = RAW_PATH(id);
+
+  const { error: uploadError } = await db.storage
+    .from('raw-uploads')
+    .upload(path, blob, { contentType: 'image/jpeg' });
+
+  if (uploadError) {
+    showCameraError('Upload failed — please try again.');
+    console.error('[uploadRawImage] upload', uploadError.message);
+    return;
+  }
+
+  const { data, error: insertError } = await db
+    .from('submissions')
+    .insert({ raw_image_path: path, is_verified: false, name: '', email: '' })
+    .select('id')
+    .single();
+
+  if (insertError) {
+    showCameraError('Something went wrong — please try again.');
+    console.error('[uploadRawImage] insert', insertError.message);
+    return;
+  }
+
+  state.submissionId = data.id;
+  state.rawImagePath = path;
+  goToStep('processing');
+}
+
+function showCameraError(msg) {
+  document.querySelector('.camera-error__msg').textContent = msg;
+  document.querySelector('.camera-viewfinder').classList.add('is-hidden');
+  document.querySelector('.camera-trigger').classList.add('is-hidden');
+  document.querySelector('.camera-error').classList.remove('is-hidden');
+}
+
+// =============================================================================
 // URL ROUTING — Reads params on DOMContentLoaded and routes to correct mode
 // /coaster/             → feed mode (5 sections, no submission UI)
 // /coaster/?mode=submit → submission mode (camera → form → OTP → share)
@@ -134,6 +219,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event listeners
   document.querySelector('[data-action="submit-cta"]')
     ?.addEventListener('click', () => goToStep('camera'));
+
+  document.querySelector('[data-action="open-camera"]')
+    ?.addEventListener('click', startCamera);
+
+  document.querySelector('[data-action="capture"]')
+    ?.addEventListener('click', captureFrame);
+
+  document.getElementById('camera-fallback')
+    ?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) uploadRawImage(file);
+    });
 
   // URL routing
   const params = new URLSearchParams(window.location.search);

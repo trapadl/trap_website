@@ -289,6 +289,101 @@ select {
 }
 
 /* =============================================================================
+   UTILITY
+   ============================================================================= */
+
+.is-hidden {
+  display: none !important;
+}
+
+/* =============================================================================
+   CAMERA STEP
+   ============================================================================= */
+
+.step--camera {
+  justify-content: center;
+  align-items: center;
+  padding: 80px var(--space-5) var(--space-6);
+  text-align: center;
+}
+
+/* Trigger state */
+.camera-trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 400px;
+}
+
+.camera-trigger__copy {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+}
+
+/* Viewfinder state */
+.camera-viewfinder {
+  position: fixed;
+  inset: 0;
+  background: var(--color-black);
+}
+
+#camera-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.camera-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.camera-instruction {
+  position: absolute;
+  bottom: 130px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-white);
+  pointer-events: none;
+  margin: 0;
+}
+
+.camera-shutter {
+  position: absolute;
+  bottom: var(--space-7);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-circle);
+  background: var(--color-white);
+  border: 4px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+}
+
+/* Error state */
+.camera-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  max-width: 400px;
+}
+
+.camera-error__msg {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+}
+
+/* =============================================================================
    LANDING STEP
    ============================================================================= */
 

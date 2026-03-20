@@ -40,7 +40,33 @@
     <!-- Step: Camera -->
     <section class="step step--camera" aria-labelledby="step-camera-heading">
       <h1 id="step-camera-heading" class="sr-only">Camera</h1>
-      <!-- Populated in Story 1.3 -->
+
+      <!-- Trigger: shown before camera starts -->
+      <div class="camera-trigger">
+        <p class="camera-trigger__copy">point your camera at your coaster</p>
+        <button class="btn btn--primary" data-action="open-camera">Open camera</button>
+      </div>
+
+      <!-- Viewfinder: shown after camera starts -->
+      <div class="camera-viewfinder is-hidden">
+        <video id="camera-video" autoplay playsinline muted></video>
+
+        <!-- Dashed circle guide overlay — decorative only -->
+        <svg class="camera-overlay" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="0.5" stroke-dasharray="3 2" />
+        </svg>
+
+        <p class="camera-instruction">centre your coaster in the circle</p>
+
+        <button class="camera-shutter" data-action="capture" aria-label="Capture photo"></button>
+      </div>
+
+      <!-- Error / fallback: shown on permission denied -->
+      <div class="camera-error is-hidden">
+        <p class="camera-error__msg">Camera access was denied.</p>
+        <label class="btn btn--secondary" for="camera-fallback">Choose a photo instead</label>
+        <input type="file" accept="image/*" id="camera-fallback" class="sr-only">
+      </div>
     </section>
 
     <!-- Step: Processing -->
