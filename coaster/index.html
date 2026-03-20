@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>coaster. — trap.</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <a href="/" class="site-header__logo-link" aria-label="trap. home">
+      <img src="../assets/traplogowhite.png" alt="trap." class="site-header__logo">
+    </a>
+  </header>
+
+  <!-- Main content: submission flow steps + feed view -->
+  <main id="main-content">
+
+    <!-- ===================== SUBMISSION FLOW STEPS ===================== -->
+
+    <!-- Step: Landing -->
+    <section class="step step--landing" aria-labelledby="step-landing-heading">
+      <h1 id="step-landing-heading" class="sr-only">Submit your coaster</h1>
+      <!-- Populated in Story 1.2 -->
+    </section>
+
+    <!-- Step: Camera -->
+    <section class="step step--camera" aria-labelledby="step-camera-heading">
+      <h1 id="step-camera-heading" class="sr-only">Camera</h1>
+      <!-- Populated in Story 1.3 -->
+    </section>
+
+    <!-- Step: Processing -->
+    <section class="step step--processing" aria-labelledby="step-processing-heading">
+      <h1 id="step-processing-heading" class="sr-only">Processing your coaster</h1>
+      <!-- Populated in Story 2.2 -->
+    </section>
+
+    <!-- Step: Reveal (image confirmation) -->
+    <section class="step step--reveal" aria-labelledby="step-reveal-heading">
+      <h1 id="step-reveal-heading" class="sr-only">Confirm your coaster</h1>
+      <!-- Populated in Story 2.3 -->
+    </section>
+
+    <!-- Step: Form (submission details) -->
+    <section class="step step--form" aria-labelledby="step-form-heading">
+      <h1 id="step-form-heading" class="sr-only">Your details</h1>
+      <!-- Populated in Story 2.4 -->
+    </section>
+
+    <!-- Step: OTP verification -->
+    <section class="step step--otp" aria-labelledby="step-otp-heading">
+      <h1 id="step-otp-heading" class="sr-only">Verify your email</h1>
+      <!-- Populated in Story 2.5 -->
+    </section>
+
+    <!-- Step: Confirmation / share screen -->
+    <section class="step step--confirmation" aria-labelledby="step-confirmation-heading">
+      <h1 id="step-confirmation-heading" class="sr-only">You're in</h1>
+      <!-- Populated in Story 2.5 -->
+    </section>
+
+    <!-- ===================== FEED VIEW ===================== -->
+
+    <!-- Feed view: shown in feed mode and share-link mode (not a step) -->
+    <div class="feed-view" id="feed-view" hidden>
+      <!-- Populated in Stories 3.2, 3.3, 3.4 -->
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

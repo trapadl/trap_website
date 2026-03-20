@@ -1,0 +1,358 @@
+/* =============================================================================
+   Coaster — trap. art submission platform
+   style.css
+   ============================================================================= */
+
+/* =============================================================================
+   DESIGN TOKENS — CSS Custom Properties
+   All values derived from UX Design Specification
+   ============================================================================= */
+
+:root {
+  /* Colours */
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+  --color-mid: #1a1a1a;
+  --color-grey: #888888;
+  --color-border: #333333;
+  --color-error: #FF3B30;
+  --color-success: #FFFFFF;
+  --color-vote-up: #FFFFFF;
+  --color-vote-down: #FFFFFF;
+
+  /* Typography — family */
+  --font-heading: 'Futura Bold Italic', sans-serif;
+  --font-body: 'Acumin Pro Bold', sans-serif;
+
+  /* Typography — size scale */
+  --text-xl: clamp(1.75rem, 4vw, 2.5rem); /* Landing headline, confirmation hero */
+  --text-lg: 1.5rem;                        /* Section headings, card titles */
+  --text-md: 1.125rem;                      /* Body, form labels, button text */
+  --text-sm: 0.875rem;                      /* Captions, timestamps, secondary info */
+  --text-xs: 0.75rem;                       /* Fine print, character counts, OTP label */
+
+  /* Typography — line height */
+  --leading-tight: 1.1;
+  --leading-snug: 1.2;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+
+  /* Spacing */
+  --spacing-base: 16px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Radius */
+  --radius-circle: 50%;
+  --radius-card: 12px;
+  --radius-input: 8px;
+
+  /* Animation durations */
+  --duration-reveal: 600ms;
+  --duration-advance: 300ms;
+  --duration-micro: 200ms;
+}
+
+/* =============================================================================
+   FONTS — Self-hosted from trap_website/fonts/
+   Path: ../fonts/ (one level up from coaster/)
+   ============================================================================= */
+
+@font-face {
+  font-family: 'Futura Bold Italic';
+  src: url('../fonts/Futura Bold Italic.otf') format('opentype');
+  font-weight: bold;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Acumin Pro Bold';
+  src: url('../fonts/Acumin_Pro_Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* =============================================================================
+   RESET & BASE
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px; /* rem base */
+}
+
+body {
+  background: var(--color-black);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+textarea,
+select {
+  font-family: var(--font-body);
+  font-size: var(--text-md); /* min 16px prevents iOS Safari auto-zoom */
+}
+
+/* =============================================================================
+   ACCESSIBILITY UTILITIES
+   ============================================================================= */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus rings — white on dark backgrounds */
+:focus-visible {
+  outline: 2px solid var(--color-white);
+  outline-offset: 2px;
+}
+
+/* =============================================================================
+   LAYOUT — Site header
+   ============================================================================= */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: var(--space-4);
+  display: flex;
+  align-items: center;
+}
+
+.site-header__logo {
+  height: 28px;
+  width: auto;
+}
+
+/* =============================================================================
+   STEP SYSTEM — Submission flow screen management
+   Only .step--active is shown; goToStep() manages transitions
+   ============================================================================= */
+
+.step {
+  display: none;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  background: var(--color-black);
+}
+
+.step--active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* =============================================================================
+   CIRCLE FRAME — Core visual component (used everywhere)
+   Variants: --thumb (80px), --full (max 480px), --hero (280px)
+   ============================================================================= */
+
+.circle-frame {
+  border-radius: var(--radius-circle);
+  overflow: hidden;
+  aspect-ratio: 1;
+  background: var(--color-mid);
+  flex-shrink: 0;
+}
+
+.circle-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.circle-frame--thumb {
+  width: 80px;
+  height: 80px;
+}
+
+.circle-frame--full {
+  width: 100%;
+  max-width: 480px;
+}
+
+.circle-frame--hero {
+  width: 280px;
+  height: 280px;
+}
+
+/* Shimmer loading placeholder for circle frames */
+.circle-frame--loading {
+  background: linear-gradient(
+    90deg,
+    var(--color-mid) 25%,
+    #2a2a2a 50%,
+    var(--color-mid) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* =============================================================================
+   BUTTON SYSTEM — Three-tier hierarchy
+   Primary: full-width black fill white text (one per screen)
+   Secondary: white border transparent
+   Tertiary: plain text link
+   ============================================================================= */
+
+.btn {
+  display: block;
+  width: 100%;
+  padding: var(--space-4) var(--space-5);
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  text-align: center;
+  border-radius: var(--radius-input);
+  min-height: 44px; /* WCAG touch target */
+  transition: opacity var(--duration-micro);
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--color-white);
+  border: 1px solid var(--color-white);
+}
+
+.btn--tertiary {
+  background: transparent;
+  color: var(--color-grey);
+  text-decoration: underline;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  width: auto;
+  padding: var(--space-2) 0;
+}
+
+/* =============================================================================
+   FEED VIEW — Public feed sections
+   ============================================================================= */
+
+.feed-view {
+  padding-top: 80px; /* Clear fixed header */
+  padding-bottom: var(--space-8);
+}
+
+.feed-section {
+  padding: var(--space-6) var(--space-4) var(--space-5);
+}
+
+.feed-section__heading {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--color-white);
+  margin-bottom: var(--space-4);
+}
+
+/* 2-col mobile, 4-col desktop */
+.feed-section__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .feed-section__grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.feed-section__empty {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+}
+
+/* =============================================================================
+   REDUCED MOTION — Disable all animations when requested
+   ============================================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .circle-frame--loading {
+    animation: none;
+    background: var(--color-mid);
+  }
+}
+
+/* =============================================================================
+   RESPONSIVE — Mobile-first, single breakpoint at 768px
+   Submission flow: mobile only (desktop shows grab-your-phone message)
+   Feed: responsive
+   ============================================================================= */
+
+@media (min-width: 768px) {
+  .mobile-only {
+    display: none;
+  }
+}
