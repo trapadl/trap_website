@@ -24,7 +24,17 @@
     <!-- Step: Landing -->
     <section class="step step--landing" aria-labelledby="step-landing-heading">
       <h1 id="step-landing-heading" class="sr-only">Submit your coaster</h1>
-      <!-- Populated in Story 1.2 -->
+
+      <div class="landing__content">
+        <!-- Mobile: submission CTA -->
+        <div class="landing__mobile">
+          <h2 class="landing__headline">Think yours is good enough for the wall?</h2>
+          <button class="btn btn--primary" data-action="submit-cta">Submit yours</button>
+        </div>
+
+        <!-- Desktop: redirect message (submission is mobile-only) -->
+        <p class="landing__desktop-msg">grab your phone and scan the QR code at the bar</p>
+      </div>
     </section>
 
     <!-- Step: Camera -->
