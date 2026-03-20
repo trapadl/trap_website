@@ -289,6 +289,47 @@ select {
 }
 
 /* =============================================================================
+   LANDING STEP
+   ============================================================================= */
+
+.step--landing {
+  justify-content: center;
+  align-items: center;
+  padding: 80px var(--space-5) var(--space-6); /* 80px clears fixed header */
+  text-align: center;
+}
+
+.landing__content {
+  width: 100%;
+  max-width: 400px;
+}
+
+.landing__headline {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  color: var(--color-white);
+  margin-bottom: var(--space-6);
+}
+
+/* Desktop gate — hidden on mobile, shown at ≥768px */
+.landing__desktop-msg {
+  display: none;
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  color: var(--color-grey);
+}
+
+@media (min-width: 768px) {
+  .landing__mobile {
+    display: none;
+  }
+  .landing__desktop-msg {
+    display: block;
+  }
+}
+
+/* =============================================================================
    FEED VIEW — Public feed sections
    ============================================================================= */
 

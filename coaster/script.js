@@ -13,8 +13,9 @@
 
 // =============================================================================
 // SUPABASE CLIENT INITIALISATION
-// Replace these placeholder values with the actual Supabase project credentials.
 // Both are safe to expose in client-side code — RLS policies are the access control layer.
+// NOTE: variable named 'db' not 'supabase' — the CDN declares window.supabase globally,
+// so using 'supabase' as a variable name causes "already declared" error in browsers.
 // =============================================================================
 
 const SUPABASE_URL = 'https://snmwmyladvuevtatefeo.supabase.co';
@@ -33,6 +34,7 @@ const state = {
   processedImageUrl: null,  // Public CDN URL of processed image
   submissionId: null,       // UUID of pending submissions record
   userEmail: null,          // Stored for OTP verify call
+  shareId: null,            // UUID from ?id= param; used by Story 3.4
 };
 
 // =============================================================================
@@ -110,21 +112,16 @@ function recordVote(submissionId) {
 // =============================================================================
 
 function initSubmissionMode() {
-  // Show landing step — populated in Story 1.2
   goToStep('landing');
 }
 
 function initFeedMode() {
-  // Show feed view — populated in Story 3.3
-  const feedView = document.getElementById('feed-view');
-  if (feedView) feedView.hidden = false;
+  document.getElementById('feed-view').hidden = false;
 }
 
 function initShareLinkMode(shareId) {
-  // Show feed with featured coaster at top — populated in Story 3.4
-  const feedView = document.getElementById('feed-view');
-  if (feedView) feedView.hidden = false;
-  console.log('[Coaster] Share link mode, id:', shareId);
+  state.shareId = shareId;
+  document.getElementById('feed-view').hidden = false;
 }
 
 // =============================================================================
@@ -134,6 +131,11 @@ function initShareLinkMode(shareId) {
 document.addEventListener('DOMContentLoaded', () => {
   console.log('[Coaster] Supabase client initialised');
 
+  // Event listeners
+  document.querySelector('[data-action="submit-cta"]')
+    ?.addEventListener('click', () => goToStep('camera'));
+
+  // URL routing
   const params = new URLSearchParams(window.location.search);
   const shareId = params.get('id');
   const mode = params.get('mode');
