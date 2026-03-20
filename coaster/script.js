@@ -126,7 +126,7 @@ let cameraStream = null;
 async function startCamera() {
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } }
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
     });
     const video = document.getElementById('camera-video');
     video.srcObject = cameraStream;
