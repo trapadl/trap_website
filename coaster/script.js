@@ -224,7 +224,6 @@ async function detectCoaster(canvas) {
 let cameraStream = null;
 
 async function startCamera() {
-  ensureOpenCV(); // start loading in background while user looks at viewfinder
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
@@ -389,7 +388,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listeners
   document.querySelector('[data-action="submit-cta"]')
-    ?.addEventListener('click', () => goToStep('camera'));
+    ?.addEventListener('click', () => {
+      ensureOpenCV(); // start loading in background while user sees camera step
+      goToStep('camera');
+    });
 
   document.querySelector('[data-action="open-camera"]')
     ?.addEventListener('click', startCamera);
