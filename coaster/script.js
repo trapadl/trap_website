@@ -35,7 +35,7 @@ const state = {
   submissionId: null,       // UUID of pending submissions record
   userEmail: null,          // Stored for OTP verify call
   shareId: null,            // UUID from ?id= param; used by Story 3.4
-  pendingRawBlob: null,     // Raw image blob waiting to be uploaded in startProcessing
+  pendingRawCanvas: null,   // Raw captured canvas — detectCoaster runs on this in startProcessing
 };
 
 // =============================================================================
@@ -62,7 +62,7 @@ function goToStep(stepName) {
     state.rawImagePath = null;
     state.submissionId = null;
     state.processedImageUrl = null;
-    state.pendingRawBlob = null;
+    state.pendingRawCanvas = null;
     if (cameraStream) {
       cameraStream.getTracks().forEach(t => t.stop());
       cameraStream = null;
@@ -241,7 +241,7 @@ async function startCamera() {
   }
 }
 
-async function captureFrame() {
+function captureFrame() {
   const video = document.getElementById('camera-video');
   const rawCanvas = document.createElement('canvas');
   rawCanvas.width = video.videoWidth;
@@ -253,13 +253,9 @@ async function captureFrame() {
     cameraStream = null;
   }
 
-  // Detect coaster circle and crop to it; falls back to original if not found
-  const detected = await detectCoaster(rawCanvas);
-
-  detected.toBlob(rawBlob => {
-    state.pendingRawBlob = rawBlob;
-    goToStep('processing');
-  }, 'image/jpeg', 0.92);
+  // Store canvas and navigate immediately — detection runs inside startProcessing
+  state.pendingRawCanvas = rawCanvas;
+  goToStep('processing');
 }
 
 function showCameraError(msg) {
@@ -283,13 +279,19 @@ async function startProcessing() {
   document.querySelector('.processing-reveal').classList.remove('processing-reveal--animating');
   document.querySelector('.processing-error').classList.add('is-hidden');
 
-  // 1. Upload raw image to private bucket
+  // 1. Detect coaster circle and crop (OpenCV, with fallback) then get blob
+  const detected = await detectCoaster(state.pendingRawCanvas);
+  const rawBlob = await new Promise(resolve =>
+    detected.toBlob(resolve, 'image/jpeg', 0.92)
+  );
+
+  // 2. Upload raw image to private bucket
   const id = crypto.randomUUID();
   const rawPath = RAW_PATH(id);
 
   const { error: rawError } = await db.storage
     .from('raw-uploads')
-    .upload(rawPath, state.pendingRawBlob, { contentType: 'image/jpeg' });
+    .upload(rawPath, rawBlob, { contentType: 'image/jpeg' });
 
   if (rawError) {
     console.error('[startProcessing] upload', rawError);
@@ -297,7 +299,7 @@ async function startProcessing() {
     return;
   }
 
-  // 2. Create submission record
+  // 3. Create submission record
   const { error: insertError } = await db
     .from('submissions')
     .insert({ id, raw_image_path: rawPath, is_verified: false, name: '', email: '' });
@@ -311,7 +313,7 @@ async function startProcessing() {
   state.submissionId = id;
   state.rawImagePath = rawPath;
 
-  // 3. Call edge function — processes image server-side and returns CDN URL
+  // 4. Call edge function — processes image server-side and returns CDN URL
   const { data, error } = await db.functions.invoke('process-image', {
     body: { rawImagePath: state.rawImagePath, submissionId: state.submissionId },
   });
@@ -324,7 +326,7 @@ async function startProcessing() {
 
   state.processedImageUrl = data.data.processedImageUrl;
 
-  // 4. Reveal animation before transitioning to reveal step
+  // 5. Reveal animation before transitioning to reveal step
   document.getElementById('processing-reveal-img').src = state.processedImageUrl;
   document.querySelector('.processing-body').classList.add('is-hidden');
   const revealEl = document.querySelector('.processing-reveal');
@@ -396,22 +398,19 @@ document.addEventListener('DOMContentLoaded', () => {
     ?.addEventListener('click', captureFrame);
 
   document.getElementById('camera-fallback')
-    ?.addEventListener('change', async (e) => {
+    ?.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const img = new Image();
       const url = URL.createObjectURL(file);
-      img.onload = async () => {
+      img.onload = () => {
         URL.revokeObjectURL(url);
         const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
         canvas.getContext('2d').drawImage(img, 0, 0);
-        const detected = await detectCoaster(canvas);
-        detected.toBlob(rawBlob => {
-          state.pendingRawBlob = rawBlob;
-          goToStep('processing');
-        }, 'image/jpeg', 0.92);
+        state.pendingRawCanvas = canvas;
+        goToStep('processing');
       };
       img.src = url;
     });
