@@ -144,46 +144,96 @@ async function startCamera() {
   }
 }
 
+// Build raw canvas (full-res) + processed canvas (800×800 circular crop) from any drawable source.
+function buildCanvases(source, srcWidth, srcHeight) {
+  const rawCanvas = document.createElement('canvas');
+  rawCanvas.width = srcWidth;
+  rawCanvas.height = srcHeight;
+  rawCanvas.getContext('2d').drawImage(source, 0, 0);
+
+  const size = Math.min(srcWidth, srcHeight);
+  const sx = (srcWidth - size) / 2;
+  const sy = (srcHeight - size) / 2;
+
+  const processedCanvas = document.createElement('canvas');
+  processedCanvas.width = 800;
+  processedCanvas.height = 800;
+  const pCtx = processedCanvas.getContext('2d');
+  pCtx.beginPath();
+  pCtx.arc(400, 400, 400, 0, Math.PI * 2);
+  pCtx.closePath();
+  pCtx.clip();
+  pCtx.drawImage(source, sx, sy, size, size, 0, 0, 800, 800);
+
+  return { rawCanvas, processedCanvas };
+}
+
 function captureFrame() {
   const video = document.getElementById('camera-video');
-  const canvas = document.createElement('canvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
+  const { rawCanvas, processedCanvas } = buildCanvases(video, video.videoWidth, video.videoHeight);
+
   if (cameraStream) {
     cameraStream.getTracks().forEach(t => t.stop());
     cameraStream = null;
   }
-  canvas.toBlob(blob => uploadRawImage(blob), 'image/jpeg', 0.92);
+
+  goToStep('processing');
+
+  rawCanvas.toBlob(rawBlob => {
+    processedCanvas.toBlob(processedBlob => {
+      uploadImages(rawBlob, processedBlob);
+    }, 'image/jpeg', 0.85);
+  }, 'image/jpeg', 0.92);
 }
 
-async function uploadRawImage(blob) {
+async function uploadImages(rawBlob, processedBlob) {
   const id = crypto.randomUUID();
-  const path = RAW_PATH(id);
+  const rawPath = RAW_PATH(id);
+  const processedPath = PROCESSED_PATH(id);
 
-  const { error: uploadError } = await db.storage
+  const { error: rawError } = await db.storage
     .from('raw-uploads')
-    .upload(path, blob, { contentType: 'image/jpeg' });
+    .upload(rawPath, rawBlob, { contentType: 'image/jpeg' });
 
-  if (uploadError) {
-    showCameraError(`Upload failed — ${uploadError.message}`);
-    console.error('[uploadRawImage] upload', uploadError);
+  if (rawError) {
+    showProcessingError();
+    console.error('[uploadImages] raw', rawError);
+    return;
+  }
+
+  const { error: processedError } = await db.storage
+    .from('processed-images')
+    .upload(processedPath, processedBlob, { contentType: 'image/jpeg' });
+
+  if (processedError) {
+    showProcessingError();
+    console.error('[uploadImages] processed', processedError);
     return;
   }
 
   const { error: insertError } = await db
     .from('submissions')
-    .insert({ id, raw_image_path: path, is_verified: false, name: '', email: '' });
+    .insert({ id, raw_image_path: rawPath, processed_image_path: processedPath, is_verified: false, name: '', email: '' });
 
   if (insertError) {
-    showCameraError(`Something went wrong — ${insertError.message}`);
-    console.error('[uploadRawImage] insert', insertError);
+    showProcessingError();
+    console.error('[uploadImages] insert', insertError);
     return;
   }
 
   state.submissionId = id;
-  state.rawImagePath = path;
-  goToStep('processing');
+  state.rawImagePath = rawPath;
+  state.processedImageUrl = PROCESSED_URL(id);
+
+  // Reveal animation before transitioning to reveal step
+  document.getElementById('processing-reveal-img').src = state.processedImageUrl;
+  document.querySelector('.processing-body').classList.add('is-hidden');
+  const revealEl = document.querySelector('.processing-reveal');
+  revealEl.classList.remove('is-hidden');
+  revealEl.classList.add('processing-reveal--animating');
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(() => goToStep('reveal'), reducedMotion ? 0 : 600);
 }
 
 function showCameraError(msg) {
@@ -198,38 +248,12 @@ function showCameraError(msg) {
 // PROCESSING
 // =============================================================================
 
-async function startProcessing() {
-  // Reset to loading state
+// Resets processing UI to loading state — called on step entry and on retake.
+function startProcessing() {
   document.querySelector('.processing-body').classList.remove('is-hidden');
   document.querySelector('.processing-reveal').classList.add('is-hidden');
   document.querySelector('.processing-reveal').classList.remove('processing-reveal--animating');
   document.querySelector('.processing-error').classList.add('is-hidden');
-
-  const { data, error } = await db.functions.invoke('process-image', {
-    body: {
-      rawImagePath: state.rawImagePath,
-      submissionId: state.submissionId,
-    },
-  });
-
-  if (error || !data?.success) {
-    console.error('[startProcessing]', error || data?.error);
-    showProcessingError();
-    return;
-  }
-
-  state.processedImageUrl = data.data.processedImageUrl;
-
-  const img = document.getElementById('processing-reveal-img');
-  img.src = state.processedImageUrl;
-
-  document.querySelector('.processing-body').classList.add('is-hidden');
-  const revealEl = document.querySelector('.processing-reveal');
-  revealEl.classList.remove('is-hidden');
-  revealEl.classList.add('processing-reveal--animating');
-
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  setTimeout(() => goToStep('reveal'), reducedMotion ? 0 : 600);
 }
 
 function showProcessingError() {
@@ -278,7 +302,20 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('camera-fallback')
     ?.addEventListener('change', (e) => {
       const file = e.target.files[0];
-      if (file) uploadRawImage(file);
+      if (!file) return;
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const { rawCanvas, processedCanvas } = buildCanvases(img, img.naturalWidth, img.naturalHeight);
+        goToStep('processing');
+        rawCanvas.toBlob(rawBlob => {
+          processedCanvas.toBlob(processedBlob => {
+            uploadImages(rawBlob, processedBlob);
+          }, 'image/jpeg', 0.85);
+        }, 'image/jpeg', 0.92);
+      };
+      img.src = url;
     });
 
   document.querySelector('[data-action="processing-retake"]')
