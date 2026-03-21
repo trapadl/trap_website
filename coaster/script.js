@@ -127,12 +127,104 @@ function recordVote(submissionId) {
 }
 
 // =============================================================================
+// OPENCV — Lazy-loaded for coaster circle detection
+// Loaded in background when camera opens; detectCoaster() times out after 5s
+// and falls back to centre-crop if OpenCV isn't ready or finds no circle.
+// CDN: @techstark/opencv-js (maintained jsDelivr build of OpenCV 4.10)
+// =============================================================================
+
+let cvLoadPromise = null;
+
+function ensureOpenCV() {
+  if (cvLoadPromise) return cvLoadPromise;
+  cvLoadPromise = new Promise((resolve, reject) => {
+    if (window.cv?.Mat) { resolve(window.cv); return; }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@techstark/opencv-js@4.10.0-release.1/dist/opencv.js';
+    script.async = true;
+    script.onerror = () => reject(new Error('opencv_load_failed'));
+    script.onload = () => {
+      if (window.cv?.Mat) { resolve(window.cv); return; }
+      window.cv.onRuntimeInitialized = () => resolve(window.cv);
+    };
+    document.head.appendChild(script);
+  });
+  return cvLoadPromise;
+}
+
+// Detect the largest circle in the frame and return a canvas cropped to it.
+// Falls back to original canvas if no circle found or OpenCV times out.
+async function detectCoaster(canvas) {
+  let cv;
+  try {
+    cv = await Promise.race([
+      ensureOpenCV(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('opencv_timeout')), 5000)),
+    ]);
+  } catch (e) {
+    console.warn('[detectCoaster] skipped:', e.message);
+    return canvas;
+  }
+
+  let src, gray, circles;
+  try {
+    src = cv.imread(canvas);
+    gray = new cv.Mat();
+    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
+    cv.GaussianBlur(gray, gray, new cv.Size(9, 9), 2, 2);
+
+    circles = new cv.Mat();
+    const short = Math.min(gray.rows, gray.cols);
+    cv.HoughCircles(
+      gray, circles, cv.HOUGH_GRADIENT,
+      1,            // dp
+      short / 4,    // minDist between circle centres
+      120,          // param1: Canny upper threshold
+      35,           // param2: accumulator threshold (lower = more detections)
+      short * 0.20, // minRadius: coaster must be ≥20% of short side
+      short * 0.55, // maxRadius: coaster ≤55% of short side
+    );
+
+    if (circles.cols === 0) {
+      console.log('[detectCoaster] no circle found — using centre crop');
+      return canvas;
+    }
+
+    const cx = circles.data32F[0];
+    const cy = circles.data32F[1];
+    const r  = circles.data32F[2];
+    console.log(`[detectCoaster] circle at (${Math.round(cx)}, ${Math.round(cy)}) r=${Math.round(r)}`);
+
+    // Crop to detected circle with 6% padding, preserving full resolution
+    const pad  = r * 0.06;
+    const side = (r + pad) * 2;
+    const sx   = cx - r - pad;
+    const sy   = cy - r - pad;
+
+    const out = document.createElement('canvas');
+    out.width  = Math.round(side);
+    out.height = Math.round(side);
+    out.getContext('2d').drawImage(canvas, sx, sy, side, side, 0, 0, out.width, out.height);
+    return out;
+
+  } catch (e) {
+    console.warn('[detectCoaster] processing error — using original:', e);
+    return canvas;
+  } finally {
+    src?.delete();
+    gray?.delete();
+    circles?.delete();
+  }
+}
+
+// =============================================================================
 // CAMERA
 // =============================================================================
 
 let cameraStream = null;
 
 async function startCamera() {
+  ensureOpenCV(); // start loading in background while user looks at viewfinder
   try {
     cameraStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1080 } }
@@ -149,7 +241,7 @@ async function startCamera() {
   }
 }
 
-function captureFrame() {
+async function captureFrame() {
   const video = document.getElementById('camera-video');
   const rawCanvas = document.createElement('canvas');
   rawCanvas.width = video.videoWidth;
@@ -161,7 +253,10 @@ function captureFrame() {
     cameraStream = null;
   }
 
-  rawCanvas.toBlob(rawBlob => {
+  // Detect coaster circle and crop to it; falls back to original if not found
+  const detected = await detectCoaster(rawCanvas);
+
+  detected.toBlob(rawBlob => {
     state.pendingRawBlob = rawBlob;
     goToStep('processing');
   }, 'image/jpeg', 0.92);
@@ -301,18 +396,19 @@ document.addEventListener('DOMContentLoaded', () => {
     ?.addEventListener('click', captureFrame);
 
   document.getElementById('camera-fallback')
-    ?.addEventListener('change', (e) => {
+    ?.addEventListener('change', async (e) => {
       const file = e.target.files[0];
       if (!file) return;
       const img = new Image();
       const url = URL.createObjectURL(file);
-      img.onload = () => {
+      img.onload = async () => {
         URL.revokeObjectURL(url);
         const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
         canvas.getContext('2d').drawImage(img, 0, 0);
-        canvas.toBlob(rawBlob => {
+        const detected = await detectCoaster(canvas);
+        detected.toBlob(rawBlob => {
           state.pendingRawBlob = rawBlob;
           goToStep('processing');
         }, 'image/jpeg', 0.92);
