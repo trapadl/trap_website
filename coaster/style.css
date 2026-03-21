@@ -581,6 +581,12 @@ select {
   max-width: 480px;
 }
 
+/* Override thumb size for reveal step — larger for quality check */
+.step--reveal .circle-frame--thumb {
+  width: 160px;
+  height: 160px;
+}
+
 /* Reset button styles for thumbnail tap trigger */
 .reveal-thumb-btn {
   background: none;
