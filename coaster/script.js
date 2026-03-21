@@ -35,6 +35,7 @@ const state = {
   submissionId: null,       // UUID of pending submissions record
   userEmail: null,          // Stored for OTP verify call
   shareId: null,            // UUID from ?id= param; used by Story 3.4
+  pendingRawBlob: null,     // Raw image blob waiting to be uploaded in startProcessing
 };
 
 // =============================================================================
@@ -61,6 +62,7 @@ function goToStep(stepName) {
     state.rawImagePath = null;
     state.submissionId = null;
     state.processedImageUrl = null;
+    state.pendingRawBlob = null;
     if (cameraStream) {
       cameraStream.getTracks().forEach(t => t.stop());
       cameraStream = null;
@@ -76,6 +78,9 @@ function goToStep(stepName) {
   }
   if (stepName === 'processing') {
     startProcessing();
+  }
+  if (stepName === 'reveal') {
+    initRevealStep();
   }
 }
 
@@ -144,96 +149,22 @@ async function startCamera() {
   }
 }
 
-// Build raw canvas (full-res) + processed canvas (800×800 circular crop) from any drawable source.
-function buildCanvases(source, srcWidth, srcHeight) {
-  const rawCanvas = document.createElement('canvas');
-  rawCanvas.width = srcWidth;
-  rawCanvas.height = srcHeight;
-  rawCanvas.getContext('2d').drawImage(source, 0, 0);
-
-  const size = Math.min(srcWidth, srcHeight);
-  const sx = (srcWidth - size) / 2;
-  const sy = (srcHeight - size) / 2;
-
-  const processedCanvas = document.createElement('canvas');
-  processedCanvas.width = 800;
-  processedCanvas.height = 800;
-  const pCtx = processedCanvas.getContext('2d');
-  pCtx.beginPath();
-  pCtx.arc(400, 400, 400, 0, Math.PI * 2);
-  pCtx.closePath();
-  pCtx.clip();
-  pCtx.drawImage(source, sx, sy, size, size, 0, 0, 800, 800);
-
-  return { rawCanvas, processedCanvas };
-}
-
 function captureFrame() {
   const video = document.getElementById('camera-video');
-  const { rawCanvas, processedCanvas } = buildCanvases(video, video.videoWidth, video.videoHeight);
+  const rawCanvas = document.createElement('canvas');
+  rawCanvas.width = video.videoWidth;
+  rawCanvas.height = video.videoHeight;
+  rawCanvas.getContext('2d').drawImage(video, 0, 0);
 
   if (cameraStream) {
     cameraStream.getTracks().forEach(t => t.stop());
     cameraStream = null;
   }
 
-  goToStep('processing');
-
   rawCanvas.toBlob(rawBlob => {
-    processedCanvas.toBlob(processedBlob => {
-      uploadImages(rawBlob, processedBlob);
-    }, 'image/jpeg', 0.85);
+    state.pendingRawBlob = rawBlob;
+    goToStep('processing');
   }, 'image/jpeg', 0.92);
-}
-
-async function uploadImages(rawBlob, processedBlob) {
-  const id = crypto.randomUUID();
-  const rawPath = RAW_PATH(id);
-  const processedPath = PROCESSED_PATH(id);
-
-  const { error: rawError } = await db.storage
-    .from('raw-uploads')
-    .upload(rawPath, rawBlob, { contentType: 'image/jpeg' });
-
-  if (rawError) {
-    showProcessingError();
-    console.error('[uploadImages] raw', rawError);
-    return;
-  }
-
-  const { error: processedError } = await db.storage
-    .from('processed-images')
-    .upload(processedPath, processedBlob, { contentType: 'image/jpeg' });
-
-  if (processedError) {
-    showProcessingError();
-    console.error('[uploadImages] processed', processedError);
-    return;
-  }
-
-  const { error: insertError } = await db
-    .from('submissions')
-    .insert({ id, raw_image_path: rawPath, processed_image_path: processedPath, is_verified: false, name: '', email: '' });
-
-  if (insertError) {
-    showProcessingError();
-    console.error('[uploadImages] insert', insertError);
-    return;
-  }
-
-  state.submissionId = id;
-  state.rawImagePath = rawPath;
-  state.processedImageUrl = PROCESSED_URL(id);
-
-  // Reveal animation before transitioning to reveal step
-  document.getElementById('processing-reveal-img').src = state.processedImageUrl;
-  document.querySelector('.processing-body').classList.add('is-hidden');
-  const revealEl = document.querySelector('.processing-reveal');
-  revealEl.classList.remove('is-hidden');
-  revealEl.classList.add('processing-reveal--animating');
-
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  setTimeout(() => goToStep('reveal'), reducedMotion ? 0 : 600);
 }
 
 function showCameraError(msg) {
@@ -248,18 +179,88 @@ function showCameraError(msg) {
 // PROCESSING
 // =============================================================================
 
-// Resets processing UI to loading state — called on step entry and on retake.
-function startProcessing() {
+// Called automatically on step entry via goToStep('processing').
+// Uploads raw image, creates submission record, then calls the edge function
+// to process server-side. On success shows reveal animation.
+async function startProcessing() {
   document.querySelector('.processing-body').classList.remove('is-hidden');
   document.querySelector('.processing-reveal').classList.add('is-hidden');
   document.querySelector('.processing-reveal').classList.remove('processing-reveal--animating');
   document.querySelector('.processing-error').classList.add('is-hidden');
+
+  // 1. Upload raw image to private bucket
+  const id = crypto.randomUUID();
+  const rawPath = RAW_PATH(id);
+
+  const { error: rawError } = await db.storage
+    .from('raw-uploads')
+    .upload(rawPath, state.pendingRawBlob, { contentType: 'image/jpeg' });
+
+  if (rawError) {
+    console.error('[startProcessing] upload', rawError);
+    showProcessingError();
+    return;
+  }
+
+  // 2. Create submission record
+  const { error: insertError } = await db
+    .from('submissions')
+    .insert({ id, raw_image_path: rawPath, is_verified: false, name: '', email: '' });
+
+  if (insertError) {
+    console.error('[startProcessing] insert', insertError);
+    showProcessingError();
+    return;
+  }
+
+  state.submissionId = id;
+  state.rawImagePath = rawPath;
+
+  // 3. Call edge function — processes image server-side and returns CDN URL
+  const { data, error } = await db.functions.invoke('process-image', {
+    body: { rawImagePath: state.rawImagePath, submissionId: state.submissionId },
+  });
+
+  if (error || !data?.success) {
+    console.error('[startProcessing]', error || data?.error);
+    showProcessingError();
+    return;
+  }
+
+  state.processedImageUrl = data.data.processedImageUrl;
+
+  // 4. Reveal animation before transitioning to reveal step
+  document.getElementById('processing-reveal-img').src = state.processedImageUrl;
+  document.querySelector('.processing-body').classList.add('is-hidden');
+  const revealEl = document.querySelector('.processing-reveal');
+  revealEl.classList.remove('is-hidden');
+  revealEl.classList.add('processing-reveal--animating');
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(() => goToStep('reveal'), reducedMotion ? 0 : 600);
 }
 
 function showProcessingError() {
   document.querySelector('.processing-body').classList.add('is-hidden');
   document.querySelector('.processing-reveal').classList.add('is-hidden');
   document.querySelector('.processing-error').classList.remove('is-hidden');
+}
+
+// =============================================================================
+// REVEAL STEP
+// =============================================================================
+
+function initRevealStep() {
+  // Populate images with processed URL
+  document.getElementById('reveal-thumb-img').src = state.processedImageUrl;
+  document.getElementById('reveal-full-img').src = state.processedImageUrl;
+  // Reset checkbox and button state
+  const checkbox = document.getElementById('reveal-checkbox');
+  const confirmBtn = document.getElementById('reveal-confirm-btn');
+  checkbox.checked = false;
+  confirmBtn.disabled = true;
+  // Hide lightbox
+  document.getElementById('reveal-lightbox').classList.add('is-hidden');
 }
 
 // =============================================================================
@@ -307,18 +308,41 @@ document.addEventListener('DOMContentLoaded', () => {
       const url = URL.createObjectURL(file);
       img.onload = () => {
         URL.revokeObjectURL(url);
-        const { rawCanvas, processedCanvas } = buildCanvases(img, img.naturalWidth, img.naturalHeight);
-        goToStep('processing');
-        rawCanvas.toBlob(rawBlob => {
-          processedCanvas.toBlob(processedBlob => {
-            uploadImages(rawBlob, processedBlob);
-          }, 'image/jpeg', 0.85);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        canvas.getContext('2d').drawImage(img, 0, 0);
+        canvas.toBlob(rawBlob => {
+          state.pendingRawBlob = rawBlob;
+          goToStep('processing');
         }, 'image/jpeg', 0.92);
       };
       img.src = url;
     });
 
   document.querySelector('[data-action="processing-retake"]')
+    ?.addEventListener('click', () => goToStep('camera'));
+
+  // Reveal step
+  document.querySelector('[data-action="reveal-enlarge"]')
+    ?.addEventListener('click', () => {
+      document.getElementById('reveal-lightbox').classList.remove('is-hidden');
+    });
+
+  document.getElementById('reveal-lightbox')
+    ?.addEventListener('click', () => {
+      document.getElementById('reveal-lightbox').classList.add('is-hidden');
+    });
+
+  document.getElementById('reveal-checkbox')
+    ?.addEventListener('change', (e) => {
+      document.getElementById('reveal-confirm-btn').disabled = !e.target.checked;
+    });
+
+  document.querySelector('[data-action="reveal-confirm"]')
+    ?.addEventListener('click', () => goToStep('form'));
+
+  document.querySelector('[data-action="reveal-retake"]')
     ?.addEventListener('click', () => goToStep('camera'));
 
   // URL routing

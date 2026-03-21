@@ -101,7 +101,36 @@
     <!-- Step: Reveal (image confirmation) -->
     <section class="step step--reveal" aria-labelledby="step-reveal-heading">
       <h1 id="step-reveal-heading" class="sr-only">Confirm your coaster</h1>
-      <!-- Populated in Story 2.3 -->
+
+      <div class="reveal-content">
+        <!-- Tappable thumbnail — tap to enlarge -->
+        <button class="reveal-thumb-btn" data-action="reveal-enlarge" aria-label="View full size">
+          <div class="circle-frame circle-frame--thumb" role="img" aria-label="Your processed coaster">
+            <img id="reveal-thumb-img" alt="" src="">
+          </div>
+        </button>
+
+        <!-- Confirmation checkbox -->
+        <label class="reveal-checkbox-row">
+          <input type="checkbox" id="reveal-checkbox" class="reveal-checkbox">
+          <span class="reveal-checkbox-label">I confirm I'm happy with the design of this coaster</span>
+        </label>
+
+        <!-- Primary CTA — disabled until checkbox ticked -->
+        <button class="btn btn--primary" id="reveal-confirm-btn" data-action="reveal-confirm" disabled>
+          Looks good
+        </button>
+
+        <!-- Retake link -->
+        <button class="btn btn--tertiary" data-action="reveal-retake">Retake photo</button>
+      </div>
+
+      <!-- Lightbox overlay — tap outside circle to dismiss -->
+      <div class="reveal-lightbox is-hidden" id="reveal-lightbox" role="dialog" aria-modal="true" aria-label="Full size coaster preview">
+        <div class="circle-frame circle-frame--full">
+          <img id="reveal-full-img" alt="Your processed coaster, full size" src="">
+        </div>
+      </div>
     </section>
 
     <!-- Step: Form (submission details) -->

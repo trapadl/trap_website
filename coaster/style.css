@@ -561,3 +561,67 @@ select {
     display: none;
   }
 }
+
+/* =============================================================================
+   REVEAL STEP (Story 2.3) — Image confirmation before form
+   ============================================================================= */
+
+.step--reveal {
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6) var(--space-5);
+}
+
+.reveal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 480px;
+}
+
+/* Reset button styles for thumbnail tap trigger */
+.reveal-thumb-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+}
+
+.reveal-checkbox-row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  cursor: pointer;
+  width: 100%;
+}
+
+.reveal-checkbox {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: pointer;
+  accent-color: var(--color-white);
+  margin-top: 2px;
+}
+
+.reveal-checkbox-label {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+  line-height: 1.4;
+}
+
+/* Lightbox overlay */
+.reveal-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  z-index: 100;
+  cursor: pointer;
+}
