@@ -72,7 +72,30 @@
     <!-- Step: Processing -->
     <section class="step step--processing" aria-labelledby="step-processing-heading">
       <h1 id="step-processing-heading" class="sr-only">Processing your coaster</h1>
-      <!-- Populated in Story 2.2 -->
+
+      <!-- Loading state -->
+      <div class="processing-body">
+        <svg class="processing-spinner" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="#333" stroke-width="2"/>
+          <circle class="processing-spinner__arc" cx="50" cy="50" r="45"
+            fill="none" stroke="white" stroke-width="2"
+            stroke-dasharray="283" stroke-dashoffset="283" stroke-linecap="round"/>
+        </svg>
+        <p class="processing-copy">cleaning up your coaster...</p>
+      </div>
+
+      <!-- Reveal: image shown with animation before transitioning to reveal step -->
+      <div class="processing-reveal is-hidden">
+        <div class="circle-frame circle-frame--full">
+          <img id="processing-reveal-img" alt="Your processed coaster" src="">
+        </div>
+      </div>
+
+      <!-- Error state -->
+      <div class="processing-error is-hidden">
+        <p class="processing-error__msg">Something went wrong — let's try that again</p>
+        <button class="btn btn--primary" data-action="processing-retake">Retake</button>
+      </div>
     </section>
 
     <!-- Step: Reveal (image confirmation) -->

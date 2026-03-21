@@ -384,6 +384,75 @@ select {
 }
 
 /* =============================================================================
+   PROCESSING STEP
+   ============================================================================= */
+
+.step--processing {
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+}
+
+.processing-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.processing-spinner {
+  width: 120px;
+  height: 120px;
+  transform: rotate(-90deg); /* start arc at top */
+}
+
+@keyframes processing-arc {
+  0%   { stroke-dashoffset: 283; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.processing-spinner__arc {
+  animation: processing-arc 2s linear infinite;
+}
+
+.processing-copy {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+  margin: 0;
+}
+
+.processing-reveal {
+  width: 100%;
+  max-width: 480px;
+  padding: 0 var(--space-5);
+}
+
+@keyframes reveal-scale {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+.processing-reveal--animating {
+  animation: reveal-scale 600ms ease-out forwards;
+}
+
+.processing-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  max-width: 400px;
+  width: 100%;
+}
+
+.processing-error__msg {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+  margin: 0;
+}
+
+/* =============================================================================
    LANDING STEP
    ============================================================================= */
 

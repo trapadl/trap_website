@@ -60,6 +60,7 @@ function goToStep(stepName) {
     document.querySelector('.site-header')?.classList.remove('is-hidden');
     state.rawImagePath = null;
     state.submissionId = null;
+    state.processedImageUrl = null;
     if (cameraStream) {
       cameraStream.getTracks().forEach(t => t.stop());
       cameraStream = null;
@@ -72,6 +73,9 @@ function goToStep(stepName) {
     currentStep = stepName;
   } else {
     console.error(`[goToStep] Step not found: ${stepName}`);
+  }
+  if (stepName === 'processing') {
+    startProcessing();
   }
 }
 
@@ -191,6 +195,50 @@ function showCameraError(msg) {
 }
 
 // =============================================================================
+// PROCESSING
+// =============================================================================
+
+async function startProcessing() {
+  // Reset to loading state
+  document.querySelector('.processing-body').classList.remove('is-hidden');
+  document.querySelector('.processing-reveal').classList.add('is-hidden');
+  document.querySelector('.processing-reveal').classList.remove('processing-reveal--animating');
+  document.querySelector('.processing-error').classList.add('is-hidden');
+
+  const { data, error } = await db.functions.invoke('process-image', {
+    body: {
+      rawImagePath: state.rawImagePath,
+      submissionId: state.submissionId,
+    },
+  });
+
+  if (error || !data?.success) {
+    console.error('[startProcessing]', error || data?.error);
+    showProcessingError();
+    return;
+  }
+
+  state.processedImageUrl = data.data.processedImageUrl;
+
+  const img = document.getElementById('processing-reveal-img');
+  img.src = state.processedImageUrl;
+
+  document.querySelector('.processing-body').classList.add('is-hidden');
+  const revealEl = document.querySelector('.processing-reveal');
+  revealEl.classList.remove('is-hidden');
+  revealEl.classList.add('processing-reveal--animating');
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(() => goToStep('reveal'), reducedMotion ? 0 : 600);
+}
+
+function showProcessingError() {
+  document.querySelector('.processing-body').classList.add('is-hidden');
+  document.querySelector('.processing-reveal').classList.add('is-hidden');
+  document.querySelector('.processing-error').classList.remove('is-hidden');
+}
+
+// =============================================================================
 // URL ROUTING — Reads params on DOMContentLoaded and routes to correct mode
 // /coaster/             → feed mode (5 sections, no submission UI)
 // /coaster/?mode=submit → submission mode (camera → form → OTP → share)
@@ -232,6 +280,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const file = e.target.files[0];
       if (file) uploadRawImage(file);
     });
+
+  document.querySelector('[data-action="processing-retake"]')
+    ?.addEventListener('click', () => goToStep('camera'));
 
   // URL routing
   const params = new URLSearchParams(window.location.search);
