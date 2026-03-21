@@ -35,7 +35,7 @@ const state = {
   submissionId: null,       // UUID of pending submissions record
   userEmail: null,          // Stored for OTP verify call
   shareId: null,            // UUID from ?id= param; used by Story 3.4
-  pendingRawCanvas: null,   // Raw captured canvas — detectCoaster runs on this in startProcessing
+  pendingRawBlob: null,     // Raw image blob waiting to be uploaded in startProcessing
 };
 
 // =============================================================================
@@ -62,7 +62,7 @@ function goToStep(stepName) {
     state.rawImagePath = null;
     state.submissionId = null;
     state.processedImageUrl = null;
-    state.pendingRawCanvas = null;
+    state.pendingRawBlob = null;
     if (cameraStream) {
       cameraStream.getTracks().forEach(t => t.stop());
       cameraStream = null;
@@ -127,97 +127,6 @@ function recordVote(submissionId) {
 }
 
 // =============================================================================
-// OPENCV — Lazy-loaded for coaster circle detection
-// Loaded in background when camera opens; detectCoaster() times out after 5s
-// and falls back to centre-crop if OpenCV isn't ready or finds no circle.
-// CDN: @techstark/opencv-js (maintained jsDelivr build of OpenCV 4.10)
-// =============================================================================
-
-let cvLoadPromise = null;
-
-function ensureOpenCV() {
-  if (cvLoadPromise) return cvLoadPromise;
-  cvLoadPromise = new Promise((resolve, reject) => {
-    if (window.cv?.Mat) { resolve(window.cv); return; }
-    const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/@techstark/opencv-js@4.10.0-release.1/dist/opencv.js';
-    script.async = true;
-    script.onerror = () => reject(new Error('opencv_load_failed'));
-    script.onload = () => {
-      if (window.cv?.Mat) { resolve(window.cv); return; }
-      window.cv.onRuntimeInitialized = () => resolve(window.cv);
-    };
-    document.head.appendChild(script);
-  });
-  return cvLoadPromise;
-}
-
-// Detect the largest circle in the frame and return a canvas cropped to it.
-// Falls back to original canvas if no circle found or OpenCV times out.
-async function detectCoaster(canvas) {
-  let cv;
-  try {
-    cv = await Promise.race([
-      ensureOpenCV(),
-      new Promise((_, reject) => setTimeout(() => reject(new Error('opencv_timeout')), 5000)),
-    ]);
-  } catch (e) {
-    console.warn('[detectCoaster] skipped:', e.message);
-    return canvas;
-  }
-
-  let src, gray, circles;
-  try {
-    src = cv.imread(canvas);
-    gray = new cv.Mat();
-    cv.cvtColor(src, gray, cv.COLOR_RGBA2GRAY);
-    cv.GaussianBlur(gray, gray, new cv.Size(9, 9), 2, 2);
-
-    circles = new cv.Mat();
-    const short = Math.min(gray.rows, gray.cols);
-    cv.HoughCircles(
-      gray, circles, cv.HOUGH_GRADIENT,
-      1,            // dp
-      short / 4,    // minDist between circle centres
-      120,          // param1: Canny upper threshold
-      35,           // param2: accumulator threshold (lower = more detections)
-      short * 0.20, // minRadius: coaster must be ≥20% of short side
-      short * 0.55, // maxRadius: coaster ≤55% of short side
-    );
-
-    if (circles.cols === 0) {
-      console.log('[detectCoaster] no circle found — using centre crop');
-      return canvas;
-    }
-
-    const cx = circles.data32F[0];
-    const cy = circles.data32F[1];
-    const r  = circles.data32F[2];
-    console.log(`[detectCoaster] circle at (${Math.round(cx)}, ${Math.round(cy)}) r=${Math.round(r)}`);
-
-    // Crop to detected circle with 6% padding, preserving full resolution
-    const pad  = r * 0.06;
-    const side = (r + pad) * 2;
-    const sx   = cx - r - pad;
-    const sy   = cy - r - pad;
-
-    const out = document.createElement('canvas');
-    out.width  = Math.round(side);
-    out.height = Math.round(side);
-    out.getContext('2d').drawImage(canvas, sx, sy, side, side, 0, 0, out.width, out.height);
-    return out;
-
-  } catch (e) {
-    console.warn('[detectCoaster] processing error — using original:', e);
-    return canvas;
-  } finally {
-    src?.delete();
-    gray?.delete();
-    circles?.delete();
-  }
-}
-
-// =============================================================================
 // CAMERA
 // =============================================================================
 
@@ -252,9 +161,10 @@ function captureFrame() {
     cameraStream = null;
   }
 
-  // Store canvas and navigate immediately — detection runs inside startProcessing
-  state.pendingRawCanvas = rawCanvas;
-  goToStep('processing');
+  rawCanvas.toBlob(rawBlob => {
+    state.pendingRawBlob = rawBlob;
+    goToStep('processing');
+  }, 'image/jpeg', 0.92);
 }
 
 function showCameraError(msg) {
@@ -278,19 +188,13 @@ async function startProcessing() {
   document.querySelector('.processing-reveal').classList.remove('processing-reveal--animating');
   document.querySelector('.processing-error').classList.add('is-hidden');
 
-  // 1. Detect coaster circle and crop (OpenCV, with fallback) then get blob
-  const detected = await detectCoaster(state.pendingRawCanvas);
-  const rawBlob = await new Promise(resolve =>
-    detected.toBlob(resolve, 'image/jpeg', 0.92)
-  );
-
-  // 2. Upload raw image to private bucket
+  // 1. Upload raw image to private bucket
   const id = crypto.randomUUID();
   const rawPath = RAW_PATH(id);
 
   const { error: rawError } = await db.storage
     .from('raw-uploads')
-    .upload(rawPath, rawBlob, { contentType: 'image/jpeg' });
+    .upload(rawPath, state.pendingRawBlob, { contentType: 'image/jpeg' });
 
   if (rawError) {
     console.error('[startProcessing] upload', rawError);
@@ -298,7 +202,7 @@ async function startProcessing() {
     return;
   }
 
-  // 3. Create submission record
+  // 2. Create submission record
   const { error: insertError } = await db
     .from('submissions')
     .insert({ id, raw_image_path: rawPath, is_verified: false, name: '', email: '' });
@@ -312,7 +216,7 @@ async function startProcessing() {
   state.submissionId = id;
   state.rawImagePath = rawPath;
 
-  // 4. Call edge function — processes image server-side and returns CDN URL
+  // 3. Call edge function — processes image server-side and returns CDN URL
   const { data, error } = await db.functions.invoke('process-image', {
     body: { rawImagePath: state.rawImagePath, submissionId: state.submissionId },
   });
@@ -325,7 +229,7 @@ async function startProcessing() {
 
   state.processedImageUrl = data.data.processedImageUrl;
 
-  // 5. Reveal animation before transitioning to reveal step
+  // 4. Reveal animation before transitioning to reveal step
   document.getElementById('processing-reveal-img').src = state.processedImageUrl;
   document.querySelector('.processing-body').classList.add('is-hidden');
   const revealEl = document.querySelector('.processing-reveal');
@@ -388,10 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Event listeners
   document.querySelector('[data-action="submit-cta"]')
-    ?.addEventListener('click', () => {
-      ensureOpenCV(); // start loading in background while user sees camera step
-      goToStep('camera');
-    });
+    ?.addEventListener('click', () => goToStep('camera'));
 
   document.querySelector('[data-action="open-camera"]')
     ?.addEventListener('click', startCamera);
@@ -411,8 +312,10 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
         canvas.getContext('2d').drawImage(img, 0, 0);
-        state.pendingRawCanvas = canvas;
-        goToStep('processing');
+        canvas.toBlob(rawBlob => {
+          state.pendingRawBlob = rawBlob;
+          goToStep('processing');
+        }, 'image/jpeg', 0.92);
       };
       img.src = url;
     });
