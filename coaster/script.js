@@ -36,6 +36,8 @@ const state = {
   userEmail: null,          // Stored for OTP verify call
   shareId: null,            // UUID from ?id= param; used by Story 3.4
   pendingRawBlob: null,     // Raw image blob waiting to be uploaded in startProcessing
+  userName: null,           // Stored on form submit; passed to verify-submission in Story 2.5
+  userInstagram: null,      // Stored on form submit; WITHOUT @ prefix
 };
 
 // =============================================================================
@@ -63,6 +65,9 @@ function goToStep(stepName) {
     state.submissionId = null;
     state.processedImageUrl = null;
     state.pendingRawBlob = null;
+    state.userEmail = null;
+    state.userName = null;
+    state.userInstagram = null;
     if (cameraStream) {
       cameraStream.getTracks().forEach(t => t.stop());
       cameraStream = null;
@@ -264,6 +269,92 @@ function initRevealStep() {
 }
 
 // =============================================================================
+// FORM STEP (Story 2.4)
+// =============================================================================
+
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function validateForm() {
+  let valid = true;
+
+  const nameVal = document.getElementById('form-name').value.trim();
+  const nameError = document.getElementById('form-name-error');
+  const nameInput = document.getElementById('form-name');
+  if (!nameVal) {
+    nameError.classList.remove('is-hidden');
+    nameInput.classList.add('form-input--error');
+    valid = false;
+  } else {
+    nameError.classList.add('is-hidden');
+    nameInput.classList.remove('form-input--error');
+  }
+
+  const emailVal = document.getElementById('form-email').value.trim();
+  const emailError = document.getElementById('form-email-error');
+  const emailInput = document.getElementById('form-email');
+  if (!emailVal || !validateEmail(emailVal)) {
+    emailError.classList.remove('is-hidden');
+    emailInput.classList.add('form-input--error');
+    valid = false;
+  } else {
+    emailError.classList.add('is-hidden');
+    emailInput.classList.remove('form-input--error');
+  }
+
+  return valid;
+}
+
+async function onSubmitForm() {
+  if (!validateForm()) return;
+
+  if (!state.rawImagePath) {
+    const submitError = document.getElementById('form-submit-error');
+    submitError.textContent = 'Please take a photo first.';
+    submitError.classList.remove('is-hidden');
+    return;
+  }
+
+  const btn = document.getElementById('form-submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  btn.style.opacity = '0.6';
+  document.getElementById('form-submit-error').classList.add('is-hidden');
+
+  state.userName = document.getElementById('form-name').value.trim();
+  state.userEmail = document.getElementById('form-email').value.trim();
+  state.userInstagram = document.getElementById('form-instagram').value.trim();
+
+  const { data, error } = await db.functions.invoke('check-email', {
+    body: { email: state.userEmail },
+  });
+
+  if (error || !data?.success) {
+    console.error('[onSubmitForm] check-email', error || data);
+    btn.disabled = false;
+    btn.textContent = 'Submit';
+    btn.style.opacity = '';
+    document.getElementById('form-submit-error').classList.remove('is-hidden');
+    return;
+  }
+
+  // data.data.verified: true = returning user fast-path; false = full OTP flow
+  // Story 2.5 will implement the OTP step and fast-path routing
+  goToStep('otp');
+}
+
+function updateCharCounter(inputEl, counterEl, limit) {
+  const remaining = limit - inputEl.value.length;
+  if (remaining <= 10) {
+    counterEl.textContent = `${remaining} characters remaining`;
+    counterEl.classList.remove('is-hidden');
+  } else {
+    counterEl.classList.add('is-hidden');
+  }
+}
+
+// =============================================================================
 // URL ROUTING — Reads params on DOMContentLoaded and routes to correct mode
 // /coaster/             → feed mode (5 sections, no submission UI)
 // /coaster/?mode=submit → submission mode (camera → form → OTP → share)
@@ -344,6 +435,56 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('[data-action="reveal-retake"]')
     ?.addEventListener('click', () => goToStep('camera'));
+
+  // Form step
+  document.querySelector('[data-action="submit-form"]')
+    ?.addEventListener('click', onSubmitForm);
+
+  document.getElementById('form-name')
+    ?.addEventListener('blur', () => {
+      const val = document.getElementById('form-name').value.trim();
+      const nameError = document.getElementById('form-name-error');
+      const nameInput = document.getElementById('form-name');
+      if (!val) {
+        nameError.classList.remove('is-hidden');
+        nameInput.classList.add('form-input--error');
+      } else {
+        nameError.classList.add('is-hidden');
+        nameInput.classList.remove('form-input--error');
+      }
+    });
+
+  document.getElementById('form-email')
+    ?.addEventListener('blur', () => {
+      const val = document.getElementById('form-email').value.trim();
+      const emailError = document.getElementById('form-email-error');
+      const emailInput = document.getElementById('form-email');
+      if (val && !validateEmail(val)) {
+        emailError.classList.remove('is-hidden');
+        emailInput.classList.add('form-input--error');
+      } else {
+        emailError.classList.add('is-hidden');
+        emailInput.classList.remove('form-input--error');
+      }
+    });
+
+  document.getElementById('form-name')
+    ?.addEventListener('input', () => {
+      updateCharCounter(
+        document.getElementById('form-name'),
+        document.getElementById('form-name-counter'),
+        60
+      );
+    });
+
+  document.getElementById('form-instagram')
+    ?.addEventListener('input', () => {
+      updateCharCounter(
+        document.getElementById('form-instagram'),
+        document.getElementById('form-instagram-counter'),
+        30
+      );
+    });
 
   // URL routing
   const params = new URLSearchParams(window.location.search);

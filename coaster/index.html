@@ -136,7 +136,77 @@
     <!-- Step: Form (submission details) -->
     <section class="step step--form" aria-labelledby="step-form-heading">
       <h1 id="step-form-heading" class="sr-only">Your details</h1>
-      <!-- Populated in Story 2.4 -->
+
+      <div class="form-content">
+        <h2 class="form-heading">Your details</h2>
+
+        <!-- Name field -->
+        <div class="form-field">
+          <label class="form-label" for="form-name">Name</label>
+          <input
+            class="form-input"
+            type="text"
+            id="form-name"
+            name="name"
+            maxlength="60"
+            enterkeyhint="next"
+            autocomplete="name"
+            required
+          >
+          <span class="form-char-count is-hidden" id="form-name-counter" aria-live="polite"></span>
+          <p class="form-error is-hidden" id="form-name-error">Please enter your name.</p>
+        </div>
+
+        <!-- Email field -->
+        <div class="form-field">
+          <label class="form-label" for="form-email">Email address</label>
+          <input
+            class="form-input"
+            type="email"
+            id="form-email"
+            name="email"
+            inputmode="email"
+            autocomplete="email"
+            enterkeyhint="next"
+            required
+          >
+          <p class="form-error is-hidden" id="form-email-error">Please enter a valid email address.</p>
+        </div>
+
+        <!-- Instagram handle field -->
+        <div class="form-field">
+          <label class="form-label" for="form-instagram">
+            Instagram handle
+            <span class="form-label__optional"> (optional)</span>
+          </label>
+          <span class="form-label__cta">Add your Instagram — we'll tag you if you make the wall.</span>
+          <div class="form-instagram-wrapper">
+            <span class="form-instagram-prefix" aria-hidden="true">@</span>
+            <input
+              class="form-instagram-input"
+              type="text"
+              id="form-instagram"
+              name="instagram"
+              maxlength="30"
+              enterkeyhint="done"
+              autocomplete="off"
+              inputmode="text"
+              aria-label="Instagram handle (without @)"
+            >
+          </div>
+          <span class="form-char-count is-hidden" id="form-instagram-counter" aria-live="polite"></span>
+        </div>
+
+        <!-- Privacy disclosure -->
+        <p class="form-privacy">
+          Your details are only used for coaster submissions.
+          <a href="/privacy" target="_blank" rel="noopener">Privacy policy</a>.
+        </p>
+
+        <!-- Submit -->
+        <p class="form-error is-hidden" id="form-submit-error">Something went wrong. Please try again.</p>
+        <button class="btn btn--primary" id="form-submit-btn" data-action="submit-form">Submit</button>
+      </div>
     </section>
 
     <!-- Step: OTP verification -->
