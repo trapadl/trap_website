@@ -28,7 +28,7 @@
       <div class="landing__content">
         <!-- Mobile: submission CTA -->
         <div class="landing__mobile">
-          <h2 class="landing__headline">Think yours is good enough for the wall?</h2>
+          <h2 class="landing__headline">think your coaster is good enough for the wall?</h2>
           <button class="btn btn--primary" data-action="submit-cta">Submit yours</button>
         </div>
 
@@ -205,7 +205,10 @@
 
         <!-- Submit -->
         <p class="form-error is-hidden" id="form-submit-error">Something went wrong. Please try again.</p>
-        <button class="btn btn--primary" id="form-submit-btn" data-action="submit-form">Submit</button>
+        <button class="btn btn--primary" id="form-submit-btn" data-action="submit-form">
+          <span class="btn-spinner is-hidden" aria-hidden="true"></span>
+          <span id="form-submit-label">Submit</span>
+        </button>
       </div>
     </section>
 

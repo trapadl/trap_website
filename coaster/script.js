@@ -327,9 +327,11 @@ async function onSubmitForm() {
   }
 
   const btn = document.getElementById('form-submit-btn');
+  const btnLabel = document.getElementById('form-submit-label');
+  const btnSpinner = btn.querySelector('.btn-spinner');
   btn.disabled = true;
-  btn.textContent = 'Sending...';
-  btn.style.opacity = '0.6';
+  btnLabel.textContent = 'Please wait...';
+  btnSpinner.classList.remove('is-hidden');
   document.getElementById('form-submit-error').classList.add('is-hidden');
 
   state.userName = document.getElementById('form-name').value.trim();
@@ -343,8 +345,8 @@ async function onSubmitForm() {
   if (error || !data?.success) {
     console.error('[onSubmitForm] check-email', error || data);
     btn.disabled = false;
-    btn.textContent = 'Submit';
-    btn.style.opacity = '';
+    btnLabel.textContent = 'Submit';
+    btnSpinner.classList.add('is-hidden');
     document.getElementById('form-submit-error').classList.remove('is-hidden');
     return;
   }
@@ -357,8 +359,8 @@ async function onSubmitForm() {
     if (otpError) {
       console.error('[onSubmitForm] signInWithOtp', otpError);
       btn.disabled = false;
-      btn.textContent = 'Submit';
-      btn.style.opacity = '';
+      btnLabel.textContent = 'Submit';
+      btnSpinner.classList.add('is-hidden');
       document.getElementById('form-submit-error').classList.remove('is-hidden');
       return;
     }
