@@ -764,3 +764,117 @@ select {
   color: var(--color-grey);
   text-decoration: underline;
 }
+
+/* =============================================================================
+   OTP STEP (Story 2.5) — 6-digit code verification
+   ============================================================================= */
+
+.step--otp {
+  justify-content: center;
+  align-items: center;
+  padding: 80px var(--space-5) var(--space-6);
+  text-align: center;
+}
+
+.otp-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 400px;
+}
+
+.otp-label {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+  line-height: var(--leading-normal);
+}
+
+.otp-input {
+  width: 200px;
+  text-align: center;
+  font-size: var(--text-xl);
+  font-family: monospace;
+  letter-spacing: 0.2em;
+  padding: var(--space-4);
+  background: var(--color-mid);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-input);
+  color: var(--color-white);
+  caret-color: var(--color-white);
+  min-height: 44px;
+}
+
+.otp-input:focus {
+  outline: none;
+  border-color: var(--color-white);
+}
+
+.otp-input--error {
+  border-color: var(--color-error);
+}
+
+.otp-error {
+  font-size: var(--text-sm);
+  color: var(--color-error);
+}
+
+.otp-resend-confirm {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+}
+
+/* =============================================================================
+   CONFIRMATION STEP (Story 2.5) — Share screen
+   ============================================================================= */
+
+.step--confirmation {
+  justify-content: center;
+  align-items: center;
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+}
+
+.confirmation-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: 400px;
+}
+
+.confirmation-heading {
+  font-family: var(--font-heading);
+  font-size: var(--text-xl);
+  line-height: var(--leading-tight);
+  color: var(--color-white);
+}
+
+.confirmation-sub {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+}
+
+.confirmation-url {
+  font-size: var(--text-xs);
+  color: var(--color-grey);
+  word-break: break-all;
+}
+
+/* Toast — fixed overlay, auto-hidden after 2s via JS */
+.confirmation-toast {
+  position: fixed;
+  top: var(--space-7);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-input);
+  z-index: 200;
+  white-space: nowrap;
+}

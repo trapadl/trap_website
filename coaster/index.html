@@ -212,13 +212,56 @@
     <!-- Step: OTP verification -->
     <section class="step step--otp" aria-labelledby="step-otp-heading">
       <h1 id="step-otp-heading" class="sr-only">Verify your email</h1>
-      <!-- Populated in Story 2.5 -->
+
+      <div class="otp-body">
+        <p class="otp-label" id="otp-email-label">We've sent a 6-digit code to your email.</p>
+
+        <input
+          class="otp-input"
+          type="text"
+          id="otp-input"
+          inputmode="numeric"
+          maxlength="6"
+          autocomplete="one-time-code"
+          pattern="[0-9]*"
+          aria-label="6-digit verification code"
+        >
+
+        <p class="otp-error is-hidden" id="otp-error">Incorrect code — try again.</p>
+
+        <button class="btn btn--tertiary is-hidden" id="otp-resend" data-action="otp-resend">
+          Resend code
+        </button>
+        <p class="otp-resend-confirm is-hidden" id="otp-resend-confirm">Code resent.</p>
+      </div>
     </section>
 
     <!-- Step: Confirmation / share screen -->
     <section class="step step--confirmation" aria-labelledby="step-confirmation-heading">
       <h1 id="step-confirmation-heading" class="sr-only">You're in</h1>
-      <!-- Populated in Story 2.5 -->
+
+      <!-- Toast — auto-hides after 2s -->
+      <div class="confirmation-toast is-hidden" id="confirmation-toast" role="status" aria-live="polite">
+        Submitted!
+      </div>
+
+      <div class="confirmation-body">
+        <!-- Processed coaster image -->
+        <div class="circle-frame circle-frame--hero">
+          <img id="confirmation-img" alt="Your submitted coaster" src="">
+        </div>
+
+        <h2 class="confirmation-heading">you're in.</h2>
+        <p class="confirmation-sub">share this with your mates and get them to vote.</p>
+
+        <!-- Share URL displayed as text -->
+        <p class="confirmation-url" id="confirmation-url"></p>
+
+        <!-- Action buttons -->
+        <button class="btn btn--primary" data-action="share-instagram">Share on Instagram</button>
+        <button class="btn btn--secondary" id="copy-link-btn" data-action="copy-link">Copy link</button>
+        <button class="btn btn--tertiary" data-action="see-feed">See how others voted</button>
+      </div>
     </section>
 
     <!-- ===================== FEED VIEW ===================== -->

@@ -38,6 +38,8 @@ const state = {
   pendingRawBlob: null,     // Raw image blob waiting to be uploaded in startProcessing
   userName: null,           // Stored on form submit; passed to verify-submission in Story 2.5
   userInstagram: null,      // Stored on form submit; WITHOUT @ prefix
+  checkEmailVerified: null, // bool from check-email response; true = fast-path (Story 2.6)
+  otpAttempts: 0,           // wrong OTP attempt counter; reset on initOtpStep and resend
 };
 
 // =============================================================================
@@ -68,6 +70,8 @@ function goToStep(stepName) {
     state.userEmail = null;
     state.userName = null;
     state.userInstagram = null;
+    state.checkEmailVerified = null;
+    state.otpAttempts = 0;
     if (cameraStream) {
       cameraStream.getTracks().forEach(t => t.stop());
       cameraStream = null;
@@ -86,6 +90,12 @@ function goToStep(stepName) {
   }
   if (stepName === 'reveal') {
     initRevealStep();
+  }
+  if (stepName === 'otp') {
+    initOtpStep();
+  }
+  if (stepName === 'confirmation') {
+    initConfirmationStep();
   }
 }
 
@@ -339,8 +349,21 @@ async function onSubmitForm() {
     return;
   }
 
-  // data.data.verified: true = returning user fast-path; false = full OTP flow
-  // Story 2.5 will implement the OTP step and fast-path routing
+  state.checkEmailVerified = data.data.verified;
+
+  if (!data.data.verified) {
+    // New user — send OTP before showing OTP step
+    const { error: otpError } = await db.auth.signInWithOtp({ email: state.userEmail });
+    if (otpError) {
+      console.error('[onSubmitForm] signInWithOtp', otpError);
+      btn.disabled = false;
+      btn.textContent = 'Submit';
+      btn.style.opacity = '';
+      document.getElementById('form-submit-error').classList.remove('is-hidden');
+      return;
+    }
+  }
+  // verified=true: Story 2.6 will add fast-path bypass here
   goToStep('otp');
 }
 
@@ -352,6 +375,150 @@ function updateCharCounter(inputEl, counterEl, limit) {
   } else {
     counterEl.classList.add('is-hidden');
   }
+}
+
+// =============================================================================
+// OTP STEP (Story 2.5)
+// =============================================================================
+
+function initOtpStep() {
+  document.getElementById('otp-email-label').textContent =
+    `We've sent a 6-digit code to ${state.userEmail}.`;
+
+  const input = document.getElementById('otp-input');
+  input.value = '';
+  input.classList.remove('otp-input--error');
+  input.disabled = false;
+
+  document.getElementById('otp-error').textContent = 'Incorrect code — try again.';
+  document.getElementById('otp-error').classList.add('is-hidden');
+  document.getElementById('otp-resend').classList.add('is-hidden');
+  document.getElementById('otp-resend-confirm').classList.add('is-hidden');
+  state.otpAttempts = 0;
+
+  // Delayed focus — immediate focus can be swallowed by iOS Safari during step transition
+  setTimeout(() => input.focus(), 300);
+}
+
+async function onOtpComplete(code) {
+  const input = document.getElementById('otp-input');
+  input.disabled = true; // prevent double-submit while verifying
+
+  const { error } = await db.auth.verifyOtp({
+    email: state.userEmail,
+    token: code,
+    type: 'email',
+  });
+
+  input.disabled = false;
+
+  if (error) {
+    input.value = '';
+    input.classList.add('otp-input--error');
+
+    const expired = error.message && error.message.toLowerCase().includes('expired');
+    if (expired) {
+      document.getElementById('otp-error').textContent = 'Your code has expired — request a new one.';
+      document.getElementById('otp-resend').classList.remove('is-hidden');
+    } else {
+      state.otpAttempts += 1;
+      document.getElementById('otp-error').textContent = 'Incorrect code — try again.';
+      if (state.otpAttempts >= 3) {
+        document.getElementById('otp-resend').classList.remove('is-hidden');
+      }
+    }
+
+    document.getElementById('otp-error').classList.remove('is-hidden');
+    setTimeout(() => input.focus(), 50);
+    return;
+  }
+
+  await callVerifySubmission();
+}
+
+async function callVerifySubmission() {
+  const { data, error } = await db.functions.invoke('verify-submission', {
+    body: {
+      submissionId: state.submissionId,
+      email: state.userEmail,
+      name: state.userName,
+      instagram: state.userInstagram || null,
+    },
+  });
+
+  if (error || !data?.success) {
+    console.error('[callVerifySubmission]', error || data);
+    const errEl = document.getElementById('otp-error');
+    if (errEl) {
+      errEl.textContent = 'Something went wrong. Please try again.';
+      errEl.classList.remove('is-hidden');
+    }
+    return;
+  }
+
+  goToStep('confirmation');
+}
+
+async function resendOtp() {
+  const { error } = await db.auth.signInWithOtp({ email: state.userEmail });
+  if (error) {
+    console.error('[resendOtp]', error);
+    return;
+  }
+
+  state.otpAttempts = 0;
+  const input = document.getElementById('otp-input');
+  input.value = '';
+  input.classList.remove('otp-input--error');
+  document.getElementById('otp-error').classList.add('is-hidden');
+  document.getElementById('otp-resend').classList.add('is-hidden');
+
+  const confirm = document.getElementById('otp-resend-confirm');
+  confirm.classList.remove('is-hidden');
+  setTimeout(() => confirm.classList.add('is-hidden'), 2000);
+  setTimeout(() => input.focus(), 50);
+}
+
+// =============================================================================
+// CONFIRMATION STEP (Story 2.5)
+// =============================================================================
+
+function initConfirmationStep() {
+  document.getElementById('confirmation-img').src = state.processedImageUrl;
+
+  const shareUrl = `https://trapadl.com/coaster/?id=${state.submissionId}`;
+  document.getElementById('confirmation-url').textContent = shareUrl;
+
+  // Show "Submitted!" toast for 2s then auto-hide
+  const toast = document.getElementById('confirmation-toast');
+  toast.classList.remove('is-hidden');
+  setTimeout(() => toast.classList.add('is-hidden'), 2000);
+}
+
+function onShareInstagram() {
+  const shareUrl = `https://trapadl.com/coaster/?id=${state.submissionId}`;
+  const shareData = { url: shareUrl, text: 'Check out my coaster — vote for it!' };
+
+  if (navigator.share) {
+    navigator.share(shareData).catch(err => {
+      if (err.name !== 'AbortError') {
+        navigator.clipboard.writeText(shareUrl).catch(() => {});
+      }
+    });
+  } else {
+    navigator.clipboard.writeText(shareUrl).catch(() => {});
+  }
+}
+
+function onCopyLink() {
+  const shareUrl = `https://trapadl.com/coaster/?id=${state.submissionId}`;
+  const btn = document.getElementById('copy-link-btn');
+  navigator.clipboard.writeText(shareUrl).then(() => {
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = 'Copy link'; }, 2000);
+  }).catch(err => {
+    console.error('[onCopyLink]', err);
+  });
 }
 
 // =============================================================================
@@ -485,6 +652,25 @@ document.addEventListener('DOMContentLoaded', () => {
         30
       );
     });
+
+  // OTP step
+  document.getElementById('otp-input')
+    ?.addEventListener('input', (e) => {
+      if (e.target.value.length === 6) onOtpComplete(e.target.value);
+    });
+
+  document.querySelector('[data-action="otp-resend"]')
+    ?.addEventListener('click', resendOtp);
+
+  // Confirmation step
+  document.querySelector('[data-action="share-instagram"]')
+    ?.addEventListener('click', onShareInstagram);
+
+  document.querySelector('[data-action="copy-link"]')
+    ?.addEventListener('click', onCopyLink);
+
+  document.querySelector('[data-action="see-feed"]')
+    ?.addEventListener('click', initFeedMode);
 
   // URL routing
   const params = new URLSearchParams(window.location.search);
