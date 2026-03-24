@@ -656,7 +656,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // OTP step
   document.getElementById('otp-input')
     ?.addEventListener('input', (e) => {
-      if (e.target.value.length === 6) onOtpComplete(e.target.value);
+      if (e.target.value.length === 8) onOtpComplete(e.target.value);
     });
 
   document.querySelector('[data-action="otp-resend"]')
