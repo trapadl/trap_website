@@ -385,7 +385,7 @@ function updateCharCounter(inputEl, counterEl, limit) {
 
 function initOtpStep() {
   document.getElementById('otp-email-label').textContent =
-    `We've sent a 6-digit code to ${state.userEmail}.`;
+    `We've sent an 8-digit code to ${state.userEmail}.`;
 
   const input = document.getElementById('otp-input');
   input.value = '';
