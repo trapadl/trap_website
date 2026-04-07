@@ -161,6 +161,8 @@ async function startCamera() {
     });
     const video = document.getElementById('camera-video');
     video.srcObject = cameraStream;
+    // Explicit play() needed on Chrome iOS to start rendering frames
+    await video.play().catch(() => {});
     document.querySelector('.camera-trigger').classList.add('is-hidden');
     document.querySelector('.camera-viewfinder').classList.remove('is-hidden');
     document.querySelector('.site-header').classList.add('is-hidden');
@@ -173,20 +175,41 @@ async function startCamera() {
 
 function captureFrame() {
   const video = document.getElementById('camera-video');
-  const rawCanvas = document.createElement('canvas');
-  rawCanvas.width = video.videoWidth;
-  rawCanvas.height = video.videoHeight;
-  rawCanvas.getContext('2d').drawImage(video, 0, 0);
 
-  if (cameraStream) {
-    cameraStream.getTracks().forEach(t => t.stop());
-    cameraStream = null;
+  // Chrome iOS sometimes reports 0 dimensions before the first frame renders.
+  // Wait up to 2s for valid dimensions before giving up.
+  function doCapture() {
+    if (video.videoWidth === 0 || video.videoHeight === 0) {
+      if ((doCapture._waited || 0) < 2000) {
+        doCapture._waited = (doCapture._waited || 0) + 100;
+        setTimeout(doCapture, 100);
+        return;
+      }
+      showCameraError('Could not read camera frame. Please try again.');
+      return;
+    }
+
+    const rawCanvas = document.createElement('canvas');
+    rawCanvas.width = video.videoWidth;
+    rawCanvas.height = video.videoHeight;
+    rawCanvas.getContext('2d').drawImage(video, 0, 0);
+
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(t => t.stop());
+      cameraStream = null;
+    }
+
+    rawCanvas.toBlob(rawBlob => {
+      if (!rawBlob) {
+        showCameraError('Could not capture photo. Please try again.');
+        return;
+      }
+      state.pendingRawBlob = rawBlob;
+      goToStep('crop');
+    }, 'image/jpeg', 0.92);
   }
 
-  rawCanvas.toBlob(rawBlob => {
-    state.pendingRawBlob = rawBlob;
-    goToStep('crop');
-  }, 'image/jpeg', 0.92);
+  doCapture();
 }
 
 // =============================================================================
