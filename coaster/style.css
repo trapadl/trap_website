@@ -484,6 +484,12 @@ select {
   max-width: 400px;
 }
 
+.landing__mobile {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .landing__headline {
   font-family: var(--font-heading);
   font-size: var(--text-xl);
