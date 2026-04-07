@@ -479,6 +479,121 @@ function disableAllVoteButtons(submissionId, voteValue) {
 }
 
 /**
+ * Returns the display name for a submitter, falling back to anonymous label.
+ */
+function displayName(name) {
+  return name || 'random trap. lover';
+}
+
+// =============================================================================
+// COASTER MODAL — tapping a card opens a full-size view with vote buttons
+// =============================================================================
+
+let _coasterModal = null;
+
+function getOrCreateCoasterModal() {
+  if (_coasterModal) return _coasterModal;
+
+  _coasterModal = document.createElement('div');
+  _coasterModal.className = 'coaster-modal is-hidden';
+  _coasterModal.setAttribute('role', 'dialog');
+  _coasterModal.setAttribute('aria-modal', 'true');
+  _coasterModal.setAttribute('aria-label', 'Coaster details');
+
+  const inner = document.createElement('div');
+  inner.className = 'coaster-modal__inner';
+  _coasterModal.appendChild(inner);
+  document.body.appendChild(_coasterModal);
+
+  // Tap backdrop to close
+  _coasterModal.addEventListener('click', (e) => {
+    if (e.target === _coasterModal) closeCoasterModal();
+  });
+
+  return _coasterModal;
+}
+
+function openCoasterModal(row) {
+  const modal = getOrCreateCoasterModal();
+  const inner = modal.querySelector('.coaster-modal__inner');
+  inner.innerHTML = '';
+
+  // Close button
+  const closeBtn = document.createElement('button');
+  closeBtn.className = 'coaster-modal__close';
+  closeBtn.setAttribute('aria-label', 'Close');
+  closeBtn.textContent = '×';
+  closeBtn.addEventListener('click', closeCoasterModal);
+  inner.appendChild(closeBtn);
+
+  // Circle frame
+  const circle = document.createElement('div');
+  circle.className = 'coaster-modal__circle circle-frame circle-frame--loading';
+  const img = document.createElement('img');
+  img.alt = `Coaster by ${displayName(row.name)}`;
+  img.src = getProcessedImageUrl(row.id);
+  img.onload = () => circle.classList.remove('circle-frame--loading');
+  img.onerror = () => circle.classList.remove('circle-frame--loading');
+  circle.appendChild(img);
+  inner.appendChild(circle);
+
+  // Name
+  const nameEl = document.createElement('p');
+  nameEl.className = 'coaster-modal__name';
+  nameEl.textContent = displayName(row.name);
+  inner.appendChild(nameEl);
+
+  // Instagram
+  if (row.instagram_handle) {
+    const igEl = document.createElement('a');
+    igEl.className = 'coaster-modal__instagram';
+    igEl.href = `https://instagram.com/${row.instagram_handle}`;
+    igEl.target = '_blank';
+    igEl.rel = 'noopener noreferrer';
+    igEl.textContent = `@${row.instagram_handle}`;
+    inner.appendChild(igEl);
+  }
+
+  // Vote buttons
+  const alreadyVoted = hasVoted(row.id);
+  const votesEl = document.createElement('div');
+  votesEl.className = 'coaster-modal__votes';
+  votesEl.setAttribute('role', 'group');
+  votesEl.setAttribute('aria-label', 'Vote');
+
+  const upBtn = document.createElement('button');
+  upBtn.className = 'vote-btn vote-btn--up';
+  upBtn.setAttribute('aria-label', 'Thumbs up');
+  upBtn.textContent = '👍';
+
+  const downBtn = document.createElement('button');
+  downBtn.className = 'vote-btn vote-btn--down';
+  downBtn.setAttribute('aria-label', 'Thumbs down');
+  downBtn.textContent = '👎';
+
+  if (alreadyVoted) {
+    upBtn.disabled = true;
+    downBtn.disabled = true;
+    upBtn.classList.add('vote-btn--voted');
+  } else {
+    upBtn.addEventListener('click', () => { onVote(row.id, 1, upBtn, downBtn); closeCoasterModal(); });
+    downBtn.addEventListener('click', () => { onVote(row.id, -1, upBtn, downBtn); closeCoasterModal(); });
+  }
+
+  votesEl.appendChild(upBtn);
+  votesEl.appendChild(downBtn);
+  inner.appendChild(votesEl);
+
+  modal.classList.remove('is-hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCoasterModal() {
+  _coasterModal?.classList.add('is-hidden');
+  document.body.style.overflow = '';
+}
+
+/**
  * Returns the public CDN URL for a processed coaster image.
  * All feed rendering MUST use this — never build the path ad-hoc.
  * @param {string} submissionId - UUID of the submission
@@ -513,17 +628,28 @@ function createCoasterCard(row) {
   circleDiv.className = 'circle-frame circle-frame--thumb circle-frame--loading';
 
   const img = document.createElement('img');
-  img.alt = `Coaster by ${row.name}`;
+  img.alt = `Coaster by ${displayName(row.name)}`;
   img.src = getProcessedImageUrl(row.id);
   img.onload = () => circleDiv.classList.remove('circle-frame--loading');
   img.onerror = () => circleDiv.classList.remove('circle-frame--loading');
   circleDiv.appendChild(img);
+
+  // Tap circle to open full-size modal
+  circleDiv.style.cursor = 'pointer';
+  circleDiv.setAttribute('role', 'button');
+  circleDiv.setAttribute('tabindex', '0');
+  circleDiv.setAttribute('aria-label', `View ${displayName(row.name)}'s coaster`);
+  circleDiv.addEventListener('click', () => openCoasterModal(row));
+  circleDiv.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCoasterModal(row); }
+  });
+
   card.appendChild(circleDiv);
 
   // Submitter name
   const nameEl = document.createElement('p');
   nameEl.className = 'coaster-card__name';
-  nameEl.textContent = row.name;
+  nameEl.textContent = displayName(row.name);
   card.appendChild(nameEl);
 
   // Instagram handle (optional) — tappable link
@@ -693,7 +819,7 @@ function showVotingCard(row) {
   circle.className = 'circle-frame circle-frame--full circle-frame--loading';
 
   const img = document.createElement('img');
-  img.alt = `Coaster by ${row.name}`;
+  img.alt = `Coaster by ${displayName(row.name)}`;
   img.src = getProcessedImageUrl(row.id);
   img.onload = () => circle.classList.remove('circle-frame--loading');
   img.onerror = () => circle.classList.remove('circle-frame--loading');
@@ -708,7 +834,7 @@ function showVotingCard(row) {
 
   const nameEl = document.createElement('p');
   nameEl.className = 'voting-card__name';
-  nameEl.textContent = row.name;
+  nameEl.textContent = displayName(row.name);
   card.appendChild(nameEl);
 
   if (row.instagram_handle) {
@@ -851,7 +977,7 @@ function renderFeaturedCoaster(containerEl, row) {
   circle.className = 'circle-frame circle-frame--hero circle-frame--loading';
 
   const img = document.createElement('img');
-  img.alt = `Coaster by ${row.name}`;
+  img.alt = `Coaster by ${displayName(row.name)}`;
   img.src = getProcessedImageUrl(row.id);
   img.onload = () => circle.classList.remove('circle-frame--loading');
   img.onerror = () => circle.classList.remove('circle-frame--loading');
@@ -866,7 +992,7 @@ function renderFeaturedCoaster(containerEl, row) {
 
   const nameEl = document.createElement('p');
   nameEl.className = 'featured-coaster__name';
-  nameEl.textContent = row.name;
+  nameEl.textContent = displayName(row.name);
   containerEl.appendChild(nameEl);
 
   if (row.instagram_handle) {
@@ -916,6 +1042,11 @@ function renderFeaturedCoaster(containerEl, row) {
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('[Coaster] Supabase client initialised');
+
+  // Escape key closes the coaster modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeCoasterModal();
+  });
 
   // Event listeners
   document.querySelector('[data-action="submit-cta"]')

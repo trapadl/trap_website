@@ -1186,3 +1186,92 @@ select {
   align-items: center;
   justify-content: center;
 }
+
+/* =============================================================================
+   COASTER MODAL — Full-size view with voting (opens on card tap)
+   ============================================================================= */
+
+.coaster-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.92);
+  z-index: 400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+}
+
+.coaster-modal__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+}
+
+.coaster-modal__close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--color-grey);
+  font-size: 1.75rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: var(--space-1);
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.coaster-modal__close:hover {
+  color: var(--color-white);
+}
+
+.coaster-modal__circle {
+  width: 260px;
+  height: 260px;
+  margin-top: var(--space-6);
+}
+
+@media (min-width: 480px) {
+  .coaster-modal__circle {
+    width: 340px;
+    height: 340px;
+  }
+}
+
+.coaster-modal__name {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--color-white);
+  text-align: center;
+  margin: 0;
+}
+
+.coaster-modal__instagram {
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+  text-decoration: none;
+  text-align: center;
+}
+
+.coaster-modal__votes {
+  display: flex;
+  gap: var(--space-5);
+  align-items: center;
+  justify-content: center;
+}
+
+.coaster-modal__votes .vote-btn {
+  width: 56px;
+  height: 56px;
+  font-size: 1.5rem;
+  border-width: 2px;
+}
