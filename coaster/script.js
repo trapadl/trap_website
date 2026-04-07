@@ -1013,6 +1013,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('[data-action="submit-cta"]')
     ?.addEventListener('click', () => goToStep('camera'));
 
+  document.querySelector('[data-action="browse-feed"]')
+    ?.addEventListener('click', initFeedMode);
+
   document.querySelector('[data-action="open-camera"]')
     ?.addEventListener('click', startCamera);
 
