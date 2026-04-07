@@ -47,7 +47,7 @@ const state = {
 // All submission flow steps; goToStep() is the only screen transition function.
 // =============================================================================
 
-const STEPS = ['landing', 'camera', 'processing', 'reveal', 'form', 'otp', 'confirmation'];
+const STEPS = ['landing', 'camera', 'crop', 'processing', 'reveal', 'form', 'otp', 'confirmation'];
 
 let currentStep = null;
 
@@ -88,6 +88,9 @@ function goToStep(stepName) {
     currentStep = stepName;
   } else {
     console.error(`[goToStep] Step not found: ${stepName}`);
+  }
+  if (stepName === 'crop') {
+    initCropStep();
   }
   if (stepName === 'processing') {
     startProcessing();
@@ -182,6 +185,170 @@ function captureFrame() {
 
   rawCanvas.toBlob(rawBlob => {
     state.pendingRawBlob = rawBlob;
+    goToStep('crop');
+  }, 'image/jpeg', 0.92);
+}
+
+// =============================================================================
+// CROP STEP — user drags/resizes a circle over their photo before processing
+// =============================================================================
+
+const cropState = {
+  cx: 0, cy: 0, r: 0,
+  wrapW: 0, wrapH: 0,
+  dragMode: null, // 'move' | 'resize'
+  startPx: 0, startPy: 0,
+  startCx: 0, startCy: 0, startR: 0,
+};
+
+function clamp(val, min, max) {
+  return Math.min(Math.max(val, min), max);
+}
+
+function initCropStep() {
+  const imgEl = document.getElementById('crop-img');
+  const wrapEl = document.getElementById('crop-wrap');
+
+  const url = URL.createObjectURL(state.pendingRawBlob);
+  imgEl.onload = () => {
+    URL.revokeObjectURL(url);
+    const wrapW = wrapEl.clientWidth;
+    const wrapH = wrapEl.clientHeight;
+    cropState.wrapW = wrapW;
+    cropState.wrapH = wrapH;
+    cropState.cx = wrapW / 2;
+    cropState.cy = wrapH / 2;
+    cropState.r = Math.min(wrapW, wrapH) * 0.4;
+    updateCropOverlay();
+    setupCropInteraction();
+  };
+  imgEl.src = url;
+}
+
+function updateCropOverlay() {
+  const { cx, cy, r, wrapW, wrapH } = cropState;
+  const svgEl = document.getElementById('crop-svg');
+  svgEl.setAttribute('viewBox', `0 0 ${wrapW} ${wrapH}`);
+
+  // Evenodd path: outer rect minus circle = dark overlay with transparent hole
+  document.getElementById('crop-path').setAttribute('d',
+    `M 0 0 H ${wrapW} V ${wrapH} H 0 Z ` +
+    `M ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx - r} ${cy} A ${r} ${r} 0 1 0 ${cx + r} ${cy} Z`
+  );
+
+  const borderEl = document.getElementById('crop-border');
+  borderEl.setAttribute('cx', cx);
+  borderEl.setAttribute('cy', cy);
+  borderEl.setAttribute('r', r);
+
+  // Resize handle sits at the bottom of the circle
+  const handleEl = document.getElementById('crop-handle');
+  handleEl.setAttribute('cx', cx);
+  handleEl.setAttribute('cy', cy + r);
+}
+
+function setupCropInteraction() {
+  const svgEl = document.getElementById('crop-svg');
+  // Remove previous listeners by cloning
+  const fresh = svgEl.cloneNode(true);
+  svgEl.parentNode.replaceChild(fresh, svgEl);
+
+  fresh.addEventListener('pointerdown', (e) => {
+    const rect = fresh.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const { cx, cy, r } = cropState;
+
+    const handleDist = Math.hypot(px - cx, py - (cy + r));
+    const edgeDist = Math.abs(Math.hypot(px - cx, py - cy) - r);
+    const insideCircle = Math.hypot(px - cx, py - cy) < r;
+
+    if (handleDist < 30 || edgeDist < 24) {
+      cropState.dragMode = 'resize';
+    } else if (insideCircle) {
+      cropState.dragMode = 'move';
+    } else {
+      return;
+    }
+
+    cropState.startPx = px;
+    cropState.startPy = py;
+    cropState.startCx = cx;
+    cropState.startCy = cy;
+    cropState.startR = r;
+    fresh.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+
+  fresh.addEventListener('pointermove', (e) => {
+    if (!cropState.dragMode) return;
+    const rect = fresh.getBoundingClientRect();
+    const px = e.clientX - rect.left;
+    const py = e.clientY - rect.top;
+    const { wrapW, wrapH, startCx, startCy, startPx, startPy } = cropState;
+
+    if (cropState.dragMode === 'move') {
+      cropState.cx = clamp(startCx + (px - startPx), cropState.r, wrapW - cropState.r);
+      cropState.cy = clamp(startCy + (py - startPy), cropState.r, wrapH - cropState.r);
+    } else {
+      const newR = Math.hypot(px - cropState.cx, py - cropState.cy);
+      const maxR = Math.min(cropState.cx, cropState.cy, wrapW - cropState.cx, wrapH - cropState.cy);
+      cropState.r = clamp(newR, 40, maxR);
+    }
+
+    updateCropOverlay();
+    e.preventDefault();
+  });
+
+  fresh.addEventListener('pointerup', () => { cropState.dragMode = null; });
+  fresh.addEventListener('pointercancel', () => { cropState.dragMode = null; });
+}
+
+function applyCrop() {
+  const imgEl = document.getElementById('crop-img');
+  const wrapEl = document.getElementById('crop-wrap');
+
+  const wrapW = wrapEl.clientWidth;
+  const wrapH = wrapEl.clientHeight;
+  const naturalW = imgEl.naturalWidth;
+  const naturalH = imgEl.naturalHeight;
+
+  // Map display circle → natural image coords, accounting for object-fit: contain
+  const naturalAspect = naturalW / naturalH;
+  const wrapAspect = wrapW / wrapH;
+  let displayW, displayH, offsetX, offsetY;
+  if (naturalAspect > wrapAspect) {
+    displayW = wrapW;
+    displayH = wrapW / naturalAspect;
+    offsetX = 0;
+    offsetY = (wrapH - displayH) / 2;
+  } else {
+    displayH = wrapH;
+    displayW = wrapH * naturalAspect;
+    offsetX = (wrapW - displayW) / 2;
+    offsetY = 0;
+  }
+
+  const scale = displayW / naturalW;
+  const { cx, cy, r } = cropState;
+  const naturalCx = (cx - offsetX) / scale;
+  const naturalCy = (cy - offsetY) / scale;
+  const naturalR = r / scale;
+
+  const size = Math.max(Math.round(naturalR * 2), 100);
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  ctx.beginPath();
+  ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
+  ctx.clip();
+
+  ctx.drawImage(imgEl, naturalCx - naturalR, naturalCy - naturalR, naturalR * 2, naturalR * 2, 0, 0, size, size);
+
+  canvas.toBlob(blob => {
+    state.pendingRawBlob = blob;
     goToStep('processing');
   }, 'image/jpeg', 0.92);
 }
@@ -1072,11 +1239,17 @@ document.addEventListener('DOMContentLoaded', () => {
         canvas.getContext('2d').drawImage(img, 0, 0);
         canvas.toBlob(rawBlob => {
           state.pendingRawBlob = rawBlob;
-          goToStep('processing');
+          goToStep('crop');
         }, 'image/jpeg', 0.92);
       };
       img.src = url;
     });
+
+  document.querySelector('[data-action="crop-confirm"]')
+    ?.addEventListener('click', applyCrop);
+
+  document.querySelector('[data-action="crop-retake"]')
+    ?.addEventListener('click', () => goToStep('camera'));
 
   document.querySelector('[data-action="processing-retake"]')
     ?.addEventListener('click', () => goToStep('camera'));

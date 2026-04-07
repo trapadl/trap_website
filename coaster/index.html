@@ -51,14 +51,6 @@
       <!-- Viewfinder: shown after camera starts -->
       <div class="camera-viewfinder is-hidden">
         <video id="camera-video" autoplay playsinline muted></video>
-
-        <!-- Dashed circle guide overlay — decorative only -->
-        <svg class="camera-overlay" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="white" stroke-width="0.5" stroke-dasharray="3 2" />
-        </svg>
-
-        <p class="camera-instruction">centre your coaster in the circle</p>
-
         <button class="camera-shutter" data-action="capture" aria-label="Capture photo"></button>
       </div>
 
@@ -67,6 +59,26 @@
         <p class="camera-error__msg">Camera access was denied.</p>
         <label class="btn btn--secondary" for="camera-fallback">Choose a photo instead</label>
         <input type="file" accept="image/*" id="camera-fallback" class="sr-only">
+      </div>
+    </section>
+
+    <!-- Step: Crop — user positions circle over the coaster -->
+    <section class="step step--crop" aria-labelledby="step-crop-heading">
+      <h1 id="step-crop-heading" class="sr-only">Crop your coaster</h1>
+
+      <div class="crop-wrap" id="crop-wrap">
+        <img class="crop-img" id="crop-img" alt="Your photo" src="" draggable="false">
+        <svg class="crop-svg" id="crop-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path id="crop-path" fill="rgba(0,0,0,0.65)" fill-rule="evenodd"/>
+          <circle id="crop-border" fill="none" stroke="white" stroke-width="2" stroke-dasharray="6 3"/>
+          <circle id="crop-handle" r="14" fill="white" opacity="0.85"/>
+        </svg>
+      </div>
+
+      <div class="crop-footer">
+        <p class="crop-instruction">drag to move · drag the white dot to resize</p>
+        <button class="btn btn--primary" data-action="crop-confirm">Crop coaster</button>
+        <button class="btn btn--tertiary" data-action="crop-retake">Retake photo</button>
       </div>
     </section>
 

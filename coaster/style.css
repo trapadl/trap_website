@@ -400,6 +400,61 @@ select {
 }
 
 /* =============================================================================
+   CROP STEP — circular crop selection over the captured photo
+   ============================================================================= */
+
+.step--crop {
+  flex-direction: column;
+  padding: 0;
+}
+
+.crop-wrap {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: var(--color-black);
+  min-height: 0; /* allow flex shrink */
+}
+
+.crop-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.crop-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+
+.crop-svg:active {
+  cursor: grabbing;
+}
+
+.crop-footer {
+  flex-shrink: 0;
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--color-black);
+}
+
+.crop-instruction {
+  font-size: var(--text-xs);
+  color: var(--color-grey);
+  text-align: center;
+  margin: 0;
+}
+
+/* =============================================================================
    PROCESSING STEP
    ============================================================================= */
 
