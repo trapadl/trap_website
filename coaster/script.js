@@ -441,16 +441,41 @@ function onCopyLink() {
  */
 async function onVote(submissionId, voteValue, upBtn, downBtn) {
   recordVote(submissionId);
-  upBtn.disabled = true;
-  downBtn.disabled = true;
-  if (voteValue === 1) upBtn.classList.add('vote-btn--voted');
-  else downBtn.classList.add('vote-btn--voted');
+
+  // Disable buttons on every card with this submission ID across all feed sections
+  disableAllVoteButtons(submissionId, voteValue);
 
   const { error } = await db.from('votes').insert({
     submission_id: submissionId,
     vote_value: voteValue,
   });
   if (error) console.warn('[onVote] insert failed', error);
+}
+
+function disableAllVoteButtons(submissionId, voteValue) {
+  document.querySelectorAll(`.coaster-card[data-submission-id="${submissionId}"]`).forEach(card => {
+    const up = card.querySelector('.vote-btn--up');
+    const down = card.querySelector('.vote-btn--down');
+    if (!up || !down) return;
+    up.disabled = true;
+    down.disabled = true;
+    if (voteValue === 1) up.classList.add('vote-btn--voted');
+    else down.classList.add('vote-btn--voted');
+  });
+
+  // Also handle the featured coaster if it matches
+  const featured = document.getElementById('featured-coaster-body');
+  if (featured?.closest('[data-submission-id]')?.dataset.submissionId === submissionId ||
+      featured?.parentElement?.id === 'featured-coaster-section') {
+    const up = featured?.querySelector('.vote-btn--up');
+    const down = featured?.querySelector('.vote-btn--down');
+    if (up && down) {
+      up.disabled = true;
+      down.disabled = true;
+      if (voteValue === 1) up.classList.add('vote-btn--voted');
+      else down.classList.add('vote-btn--voted');
+    }
+  }
 }
 
 /**
