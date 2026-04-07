@@ -203,6 +203,7 @@ select {
   aspect-ratio: 1;
   background: var(--color-mid);
   flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
 .circle-frame img {
