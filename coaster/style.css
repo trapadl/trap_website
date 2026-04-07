@@ -539,6 +539,12 @@ select {
 @media (min-width: 768px) {
   .feed-section__grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-5);
+  }
+
+  .feed-section__grid .circle-frame--thumb {
+    width: 160px;
+    height: 160px;
   }
 }
 

@@ -342,37 +342,7 @@ async function onSubmitForm() {
   state.userEmail = document.getElementById('form-email').value.trim();
   state.userInstagram = document.getElementById('form-instagram').value.trim();
 
-  let checkData = null;
-  try {
-    const { data: cd, error: ce } = await db.functions.invoke('check-email', {
-      body: { email: state.userEmail },
-    });
-    if (!ce && cd?.success) checkData = cd;
-    else console.warn('[onSubmitForm] check-email non-success, falling back to OTP', ce || cd);
-  } catch (checkErr) {
-    // Network error — fail open, use OTP path
-    console.warn('[onSubmitForm] check-email threw, falling back to OTP', checkErr);
-  }
-
-  state.checkEmailVerified = checkData?.data?.verified ?? false;
-
-  if (checkData?.data?.verified) {
-    // Fast-path: returning user — skip OTP entirely
-    await callVerifySubmission();
-    return;
-  }
-
-  // New user (or check-email failed) — send OTP before showing OTP step
-  const { error: otpError } = await db.auth.signInWithOtp({ email: state.userEmail });
-  if (otpError) {
-    console.error('[onSubmitForm] signInWithOtp', otpError);
-    btn.disabled = false;
-    btnLabel.textContent = 'Submit';
-    btnSpinner.classList.add('is-hidden');
-    document.getElementById('form-submit-error').classList.remove('is-hidden');
-    return;
-  }
-  goToStep('otp');
+  await callVerifySubmission();
 }
 
 function updateCharCounter(inputEl, counterEl, limit) {
@@ -385,64 +355,6 @@ function updateCharCounter(inputEl, counterEl, limit) {
   }
 }
 
-// =============================================================================
-// OTP STEP (Story 2.5)
-// =============================================================================
-
-function initOtpStep() {
-  document.getElementById('otp-email-label').textContent =
-    `We've sent an 8-digit code to ${state.userEmail}.`;
-
-  const input = document.getElementById('otp-input');
-  input.value = '';
-  input.classList.remove('otp-input--error');
-  input.disabled = false;
-
-  document.getElementById('otp-error').textContent = 'Incorrect code — try again.';
-  document.getElementById('otp-error').classList.add('is-hidden');
-  document.getElementById('otp-resend').classList.add('is-hidden');
-  document.getElementById('otp-resend-confirm').classList.add('is-hidden');
-  state.otpAttempts = 0;
-
-  // Delayed focus — immediate focus can be swallowed by iOS Safari during step transition
-  setTimeout(() => input.focus(), 300);
-}
-
-async function onOtpComplete(code) {
-  const input = document.getElementById('otp-input');
-  input.disabled = true; // prevent double-submit while verifying
-
-  const { error } = await db.auth.verifyOtp({
-    email: state.userEmail,
-    token: code,
-    type: 'email',
-  });
-
-  input.disabled = false;
-
-  if (error) {
-    input.value = '';
-    input.classList.add('otp-input--error');
-
-    const expired = error.message && error.message.toLowerCase().includes('expired');
-    if (expired) {
-      document.getElementById('otp-error').textContent = 'Your code has expired — request a new one.';
-      document.getElementById('otp-resend').classList.remove('is-hidden');
-    } else {
-      state.otpAttempts += 1;
-      document.getElementById('otp-error').textContent = 'Incorrect code — try again.';
-      if (state.otpAttempts >= 3) {
-        document.getElementById('otp-resend').classList.remove('is-hidden');
-      }
-    }
-
-    document.getElementById('otp-error').classList.remove('is-hidden');
-    setTimeout(() => input.focus(), 50);
-    return;
-  }
-
-  await callVerifySubmission();
-}
 
 async function callVerifySubmission() {
   const { data, error } = await db.functions.invoke('verify-submission', {
@@ -456,23 +368,13 @@ async function callVerifySubmission() {
 
   if (error || !data?.success) {
     console.error('[callVerifySubmission]', error || data);
-    if (currentStep === 'form') {
-      // Fast-path context: restore form button
-      const btn = document.getElementById('form-submit-btn');
-      const btnLabel = document.getElementById('form-submit-label');
-      const btnSpinner = btn?.querySelector('.btn-spinner');
-      if (btn) btn.disabled = false;
-      if (btnLabel) btnLabel.textContent = 'Submit';
-      if (btnSpinner) btnSpinner.classList.add('is-hidden');
-      document.getElementById('form-submit-error')?.classList.remove('is-hidden');
-    } else {
-      // OTP context: show OTP error
-      const errEl = document.getElementById('otp-error');
-      if (errEl) {
-        errEl.textContent = 'Something went wrong. Please try again.';
-        errEl.classList.remove('is-hidden');
-      }
-    }
+    const btn = document.getElementById('form-submit-btn');
+    const btnLabel = document.getElementById('form-submit-label');
+    const btnSpinner = btn?.querySelector('.btn-spinner');
+    if (btn) btn.disabled = false;
+    if (btnLabel) btnLabel.textContent = 'Submit';
+    if (btnSpinner) btnSpinner.classList.add('is-hidden');
+    document.getElementById('form-submit-error')?.classList.remove('is-hidden');
     return;
   }
 
@@ -480,25 +382,6 @@ async function callVerifySubmission() {
   initVotingFeed();
 }
 
-async function resendOtp() {
-  const { error } = await db.auth.signInWithOtp({ email: state.userEmail });
-  if (error) {
-    console.error('[resendOtp]', error);
-    return;
-  }
-
-  state.otpAttempts = 0;
-  const input = document.getElementById('otp-input');
-  input.value = '';
-  input.classList.remove('otp-input--error');
-  document.getElementById('otp-error').classList.add('is-hidden');
-  document.getElementById('otp-resend').classList.add('is-hidden');
-
-  const confirm = document.getElementById('otp-resend-confirm');
-  confirm.classList.remove('is-hidden');
-  setTimeout(() => confirm.classList.add('is-hidden'), 2000);
-  setTimeout(() => input.focus(), 50);
-}
 
 // =============================================================================
 // CONFIRMATION STEP (Story 2.5)
@@ -1013,9 +896,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelector('[data-action="submit-cta"]')
     ?.addEventListener('click', () => goToStep('camera'));
 
-  document.querySelector('[data-action="browse-feed"]')
-    ?.addEventListener('click', initFeedMode);
-
   document.querySelector('[data-action="open-camera"]')
     ?.addEventListener('click', startCamera);
 
@@ -1116,15 +996,6 @@ document.addEventListener('DOMContentLoaded', () => {
         30
       );
     });
-
-  // OTP step
-  document.getElementById('otp-input')
-    ?.addEventListener('input', (e) => {
-      if (e.target.value.length === 8) onOtpComplete(e.target.value);
-    });
-
-  document.querySelector('[data-action="otp-resend"]')
-    ?.addEventListener('click', resendOtp);
 
   // Confirmation step
   document.querySelector('[data-action="share-instagram"]')
