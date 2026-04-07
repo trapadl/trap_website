@@ -76,6 +76,10 @@ function goToStep(stepName) {
       cameraStream.getTracks().forEach(t => t.stop());
       cameraStream = null;
     }
+    document.getElementById('share-toast')?.classList.add('is-hidden');
+    document.getElementById('voting-feed')?.classList.add('is-hidden');
+    const feedView = document.getElementById('feed-view');
+    if (feedView) feedView.hidden = true;
   }
   document.querySelectorAll('.step').forEach(el => el.classList.remove('step--active'));
   const target = document.querySelector(`.step--${stepName}`);
@@ -338,34 +342,36 @@ async function onSubmitForm() {
   state.userEmail = document.getElementById('form-email').value.trim();
   state.userInstagram = document.getElementById('form-instagram').value.trim();
 
-  const { data, error } = await db.functions.invoke('check-email', {
-    body: { email: state.userEmail },
-  });
+  let checkData = null;
+  try {
+    const { data: cd, error: ce } = await db.functions.invoke('check-email', {
+      body: { email: state.userEmail },
+    });
+    if (!ce && cd?.success) checkData = cd;
+    else console.warn('[onSubmitForm] check-email non-success, falling back to OTP', ce || cd);
+  } catch (checkErr) {
+    // Network error — fail open, use OTP path
+    console.warn('[onSubmitForm] check-email threw, falling back to OTP', checkErr);
+  }
 
-  if (error || !data?.success) {
-    console.error('[onSubmitForm] check-email', error || data);
+  state.checkEmailVerified = checkData?.data?.verified ?? false;
+
+  if (checkData?.data?.verified) {
+    // Fast-path: returning user — skip OTP entirely
+    await callVerifySubmission();
+    return;
+  }
+
+  // New user (or check-email failed) — send OTP before showing OTP step
+  const { error: otpError } = await db.auth.signInWithOtp({ email: state.userEmail });
+  if (otpError) {
+    console.error('[onSubmitForm] signInWithOtp', otpError);
     btn.disabled = false;
     btnLabel.textContent = 'Submit';
     btnSpinner.classList.add('is-hidden');
     document.getElementById('form-submit-error').classList.remove('is-hidden');
     return;
   }
-
-  state.checkEmailVerified = data.data.verified;
-
-  if (!data.data.verified) {
-    // New user — send OTP before showing OTP step
-    const { error: otpError } = await db.auth.signInWithOtp({ email: state.userEmail });
-    if (otpError) {
-      console.error('[onSubmitForm] signInWithOtp', otpError);
-      btn.disabled = false;
-      btnLabel.textContent = 'Submit';
-      btnSpinner.classList.add('is-hidden');
-      document.getElementById('form-submit-error').classList.remove('is-hidden');
-      return;
-    }
-  }
-  // verified=true: Story 2.6 will add fast-path bypass here
   goToStep('otp');
 }
 
@@ -450,15 +456,28 @@ async function callVerifySubmission() {
 
   if (error || !data?.success) {
     console.error('[callVerifySubmission]', error || data);
-    const errEl = document.getElementById('otp-error');
-    if (errEl) {
-      errEl.textContent = 'Something went wrong. Please try again.';
-      errEl.classList.remove('is-hidden');
+    if (currentStep === 'form') {
+      // Fast-path context: restore form button
+      const btn = document.getElementById('form-submit-btn');
+      const btnLabel = document.getElementById('form-submit-label');
+      const btnSpinner = btn?.querySelector('.btn-spinner');
+      if (btn) btn.disabled = false;
+      if (btnLabel) btnLabel.textContent = 'Submit';
+      if (btnSpinner) btnSpinner.classList.add('is-hidden');
+      document.getElementById('form-submit-error')?.classList.remove('is-hidden');
+    } else {
+      // OTP context: show OTP error
+      const errEl = document.getElementById('otp-error');
+      if (errEl) {
+        errEl.textContent = 'Something went wrong. Please try again.';
+        errEl.classList.remove('is-hidden');
+      }
     }
     return;
   }
 
-  goToStep('confirmation');
+  showShareToast();
+  initVotingFeed();
 }
 
 async function resendOtp() {
@@ -524,6 +543,352 @@ function onCopyLink() {
 }
 
 // =============================================================================
+// FEED DATA LAYER (Stories 3.1 – 3.4)
+// Helpers, section config, and rendering for the 5-section public feed.
+// =============================================================================
+
+/**
+ * Shared vote handler — used by feed grid cards (3.3) and featured coaster (3.4).
+ * Optimistic: cookie written + buttons disabled immediately.
+ * DB insert is async and silently fails.
+ * @param {string} submissionId
+ * @param {number} voteValue — 1 or -1
+ * @param {HTMLElement} upBtn
+ * @param {HTMLElement} downBtn
+ */
+async function onVote(submissionId, voteValue, upBtn, downBtn) {
+  recordVote(submissionId);
+  upBtn.disabled = true;
+  downBtn.disabled = true;
+  if (voteValue === 1) upBtn.classList.add('vote-btn--voted');
+  else downBtn.classList.add('vote-btn--voted');
+
+  const { error } = await db.from('votes').insert({
+    submission_id: submissionId,
+    vote_value: voteValue,
+  });
+  if (error) console.warn('[onVote] insert failed', error);
+}
+
+/**
+ * Returns the public CDN URL for a processed coaster image.
+ * All feed rendering MUST use this — never build the path ad-hoc.
+ * @param {string} submissionId - UUID of the submission
+ * @returns {string} Full CDN URL
+ */
+function getProcessedImageUrl(submissionId) {
+  return `${SUPABASE_URL}/storage/v1/object/public/processed-images/${submissionId}/processed.webp`;
+}
+
+const FEED_SECTIONS = [
+  { id: 'feed-section-best-all-time', heading: 'best of all time',  query: 'best_all_time'  },
+  { id: 'feed-section-best-month',    heading: 'best this month',   query: 'best_month'     },
+  { id: 'feed-section-most-recent',   heading: 'most recent',       query: 'most_recent'    },
+  { id: 'feed-section-random',        heading: 'random picks',      query: 'random'         },
+  { id: 'feed-section-worst',         heading: 'worst of all time', query: 'worst_all_time' },
+];
+
+let feedLoaded = false;
+
+/**
+ * Creates a coaster thumbnail card DOM element.
+ * @param {Object} row - Row from submission_scores view
+ * @returns {HTMLElement}
+ */
+function createCoasterCard(row) {
+  const card = document.createElement('div');
+  card.className = 'coaster-card';
+  card.dataset.submissionId = row.id;
+
+  // Circle thumbnail with shimmer while loading
+  const circleDiv = document.createElement('div');
+  circleDiv.className = 'circle-frame circle-frame--thumb circle-frame--loading';
+
+  const img = document.createElement('img');
+  img.alt = `Coaster by ${row.name}`;
+  img.src = getProcessedImageUrl(row.id);
+  img.onload = () => circleDiv.classList.remove('circle-frame--loading');
+  img.onerror = () => circleDiv.classList.remove('circle-frame--loading');
+  circleDiv.appendChild(img);
+  card.appendChild(circleDiv);
+
+  // Submitter name
+  const nameEl = document.createElement('p');
+  nameEl.className = 'coaster-card__name';
+  nameEl.textContent = row.name;
+  card.appendChild(nameEl);
+
+  // Instagram handle (optional) — tappable link
+  if (row.instagram_handle) {
+    const igEl = document.createElement('a');
+    igEl.className = 'coaster-card__instagram';
+    igEl.href = `https://instagram.com/${row.instagram_handle}`;
+    igEl.target = '_blank';
+    igEl.rel = 'noopener noreferrer';
+    igEl.textContent = `@${row.instagram_handle}`;
+    card.appendChild(igEl);
+  }
+
+  // Vote buttons (Story 3.3)
+  const alreadyVoted = hasVoted(row.id);
+  const votesEl = document.createElement('div');
+  votesEl.className = 'coaster-card__votes';
+  votesEl.setAttribute('role', 'group');
+  votesEl.setAttribute('aria-label', 'Vote');
+
+  const upBtn = document.createElement('button');
+  upBtn.className = 'vote-btn vote-btn--up';
+  upBtn.setAttribute('aria-label', 'Thumbs up');
+  upBtn.textContent = '👍';
+
+  const downBtn = document.createElement('button');
+  downBtn.className = 'vote-btn vote-btn--down';
+  downBtn.setAttribute('aria-label', 'Thumbs down');
+  downBtn.textContent = '👎';
+
+  if (alreadyVoted) {
+    upBtn.disabled = true;
+    downBtn.disabled = true;
+    upBtn.classList.add('vote-btn--voted');
+  } else {
+    upBtn.addEventListener('click', () => onVote(row.id, 1, upBtn, downBtn));
+    downBtn.addEventListener('click', () => onVote(row.id, -1, upBtn, downBtn));
+  }
+
+  votesEl.appendChild(upBtn);
+  votesEl.appendChild(downBtn);
+  card.appendChild(votesEl);
+
+  return card;
+}
+
+/**
+ * Renders query results into a feed section grid.
+ * @param {HTMLElement} gridEl - The .feed-section__grid container
+ * @param {Array|null} rows - Query results (null or empty → empty state)
+ * @param {Error|null} error - Supabase query error, if any
+ */
+function renderFeedSection(gridEl, rows, error) {
+  if (error || !rows?.length) {
+    gridEl.innerHTML = '<p class="feed-section__empty">nothing here yet</p>';
+    return;
+  }
+  rows.forEach(row => gridEl.appendChild(createCoasterCard(row)));
+}
+
+/**
+ * Loads all 5 feed sections in parallel and renders results.
+ * Guarded by feedLoaded flag — safe to call multiple times.
+ */
+async function loadFeedSections() {
+  if (feedLoaded) return;
+  feedLoaded = true;
+
+  const feedEl = document.getElementById('feed-view');
+
+  // Build skeleton sections in DOM immediately so shimmer shows while loading
+  FEED_SECTIONS.forEach(section => {
+    const sectionEl = document.createElement('section');
+    sectionEl.className = 'feed-section';
+    sectionEl.id = section.id;
+    sectionEl.innerHTML =
+      `<h2 class="feed-section__heading">${section.heading}</h2>` +
+      `<div class="feed-section__grid"></div>`;
+    feedEl.appendChild(sectionEl);
+  });
+
+  // Start of current month (UTC) for "best this month" query
+  const now = new Date();
+  const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)).toISOString();
+
+  // 5 parallel queries
+  const [bestAll, bestMonth, mostRecent, random, worstAll] = await Promise.all([
+    db.from('submission_scores').select('*').order('net_score', { ascending: false }).limit(5),
+    db.from('submission_scores').select('*').gte('created_at', startOfMonth).order('net_score', { ascending: false }).limit(5),
+    db.from('submission_scores').select('*').order('created_at', { ascending: false }).limit(5),
+    db.rpc('random_submissions', { n: 5 }),
+    db.from('submission_scores').select('*').order('net_score', { ascending: true }).limit(5),
+  ]);
+
+  const results = [bestAll, bestMonth, mostRecent, random, worstAll];
+
+  FEED_SECTIONS.forEach((section, i) => {
+    const { data, error } = results[i];
+    const gridEl = document.getElementById(section.id)?.querySelector('.feed-section__grid');
+    if (!gridEl) return;
+    renderFeedSection(gridEl, data, error);
+  });
+}
+
+// =============================================================================
+// SHARE TOAST (Story 2.6)
+// Shown after successful submission — overlays the feed view.
+// =============================================================================
+
+function showShareToast() {
+  const shareUrl = `https://trapadl.com/coaster/?id=${state.submissionId}`;
+  document.getElementById('share-toast-url').textContent = shareUrl;
+  document.getElementById('share-toast').classList.remove('is-hidden');
+}
+
+// =============================================================================
+// VOTING FEED (Story 3.2)
+// Sequential card-by-card voting shown after submission.
+// Loads as a full-screen overlay above the 5-section feed.
+// =============================================================================
+
+let votingDeck = [];
+let votingIndex = 0;
+
+async function initVotingFeed() {
+  const overlay = document.getElementById('voting-feed');
+  overlay.innerHTML = '';
+  overlay.classList.remove('is-hidden');
+
+  // Load the 5-section feed behind the overlay simultaneously
+  initFeedMode();
+
+  const { data, error } = await db.rpc('random_submissions', { n: 20 });
+
+  if (error || !data?.length) {
+    showVotingEndState();
+    return;
+  }
+
+  // Filter own submission and already-voted coasters
+  votingDeck = data.filter(row =>
+    row.id !== state.submissionId && !hasVoted(row.id)
+  );
+  votingIndex = 0;
+
+  if (!votingDeck.length) {
+    showVotingEndState();
+    return;
+  }
+
+  showVotingCard(votingDeck[0]);
+}
+
+function showVotingCard(row) {
+  const overlay = document.getElementById('voting-feed');
+  overlay.innerHTML = '';
+
+  const card = document.createElement('div');
+  card.className = 'voting-card';
+  card.dataset.submissionId = row.id;
+
+  // Score wrap + hero circle
+  const scoreWrap = document.createElement('div');
+  scoreWrap.className = 'voting-card__score-wrap';
+
+  const circle = document.createElement('div');
+  circle.className = 'circle-frame circle-frame--full circle-frame--loading';
+
+  const img = document.createElement('img');
+  img.alt = `Coaster by ${row.name}`;
+  img.src = getProcessedImageUrl(row.id);
+  img.onload = () => circle.classList.remove('circle-frame--loading');
+  img.onerror = () => circle.classList.remove('circle-frame--loading');
+  circle.appendChild(img);
+  scoreWrap.appendChild(circle);
+
+  const scoreBadge = document.createElement('span');
+  scoreBadge.className = 'voting-card__score';
+  scoreBadge.textContent = `${row.net_score > 0 ? '+' : ''}${row.net_score}`;
+  scoreWrap.appendChild(scoreBadge);
+  card.appendChild(scoreWrap);
+
+  const nameEl = document.createElement('p');
+  nameEl.className = 'voting-card__name';
+  nameEl.textContent = row.name;
+  card.appendChild(nameEl);
+
+  if (row.instagram_handle) {
+    const igEl = document.createElement('a');
+    igEl.className = 'voting-card__instagram';
+    igEl.href = `https://instagram.com/${row.instagram_handle}`;
+    igEl.target = '_blank';
+    igEl.rel = 'noopener noreferrer';
+    igEl.textContent = `@${row.instagram_handle}`;
+    card.appendChild(igEl);
+  }
+
+  // Vote buttons
+  const votesEl = document.createElement('div');
+  votesEl.className = 'voting-card__votes';
+  votesEl.setAttribute('role', 'group');
+  votesEl.setAttribute('aria-label', 'Vote');
+
+  const upBtn = document.createElement('button');
+  upBtn.className = 'vote-btn vote-btn--up';
+  upBtn.setAttribute('aria-label', 'Thumbs up');
+  upBtn.textContent = '👍';
+
+  const downBtn = document.createElement('button');
+  downBtn.className = 'vote-btn vote-btn--down';
+  downBtn.setAttribute('aria-label', 'Thumbs down');
+  downBtn.textContent = '👎';
+
+  upBtn.addEventListener('click', () => onVotingCardVote(row.id, 1, card, upBtn, downBtn));
+  downBtn.addEventListener('click', () => onVotingCardVote(row.id, -1, card, upBtn, downBtn));
+
+  votesEl.appendChild(upBtn);
+  votesEl.appendChild(downBtn);
+  card.appendChild(votesEl);
+
+  overlay.appendChild(card);
+}
+
+async function onVotingCardVote(submissionId, voteValue, cardEl, upBtn, downBtn) {
+  // Optimistic: cookie + filled button immediately
+  recordVote(submissionId);
+  upBtn.disabled = true;
+  downBtn.disabled = true;
+  if (voteValue === 1) upBtn.classList.add('vote-btn--voted');
+  else downBtn.classList.add('vote-btn--voted');
+
+  // Async DB insert — silent fail
+  db.from('votes').insert({ submission_id: submissionId, vote_value: voteValue })
+    .then(({ error }) => { if (error) console.warn('[onVotingCardVote] insert failed', error); });
+
+  // Brief pause so the filled state is visible before advancing
+  setTimeout(() => advanceVotingCard(cardEl), 250);
+}
+
+function advanceVotingCard(cardEl) {
+  cardEl.classList.add('is-exiting');
+  setTimeout(() => {
+    votingIndex += 1;
+    if (votingIndex >= votingDeck.length) {
+      showVotingEndState();
+    } else {
+      showVotingCard(votingDeck[votingIndex]);
+    }
+  }, 300);
+}
+
+function showVotingEndState() {
+  const overlay = document.getElementById('voting-feed');
+  overlay.innerHTML = '';
+
+  const endEl = document.createElement('div');
+  endEl.className = 'voting-feed__end';
+
+  const msg = document.createElement('p');
+  msg.className = 'voting-feed__end-message';
+  msg.textContent = "you've voted on everything. check back later.";
+  endEl.appendChild(msg);
+
+  const browseBtn = document.createElement('button');
+  browseBtn.className = 'btn btn--tertiary';
+  browseBtn.textContent = 'browse the feed';
+  browseBtn.addEventListener('click', () => overlay.classList.add('is-hidden'));
+  endEl.appendChild(browseBtn);
+
+  overlay.appendChild(endEl);
+}
+
+// =============================================================================
 // URL ROUTING — Reads params on DOMContentLoaded and routes to correct mode
 // /coaster/             → feed mode (5 sections, no submission UI)
 // /coaster/?mode=submit → submission mode (camera → form → OTP → share)
@@ -536,11 +901,105 @@ function initSubmissionMode() {
 
 function initFeedMode() {
   document.getElementById('feed-view').hidden = false;
+  loadFeedSections();
 }
 
-function initShareLinkMode(shareId) {
+async function initShareLinkMode(shareId) {
   state.shareId = shareId;
-  document.getElementById('feed-view').hidden = false;
+  const feedEl = document.getElementById('feed-view');
+  feedEl.hidden = false;
+
+  // Inject featured coaster placeholder at top before sections load
+  const featuredSection = document.createElement('section');
+  featuredSection.className = 'feed-section featured-coaster';
+  featuredSection.id = 'featured-coaster-section';
+  featuredSection.innerHTML =
+    `<h2 class="feed-section__heading">featured coaster</h2>` +
+    `<div id="featured-coaster-body" class="featured-coaster__body"></div>`;
+  feedEl.insertBefore(featuredSection, feedEl.firstChild);
+
+  // Fetch the linked coaster and load 5 sections in parallel
+  const [{ data, error }] = await Promise.all([
+    db.from('submission_scores').select('*').eq('id', shareId).maybeSingle(),
+    loadFeedSections(),
+  ]);
+
+  const bodyEl = document.getElementById('featured-coaster-body');
+
+  if (error || !data) {
+    // Coaster not found or hidden — silently remove the featured section
+    featuredSection.remove();
+    return;
+  }
+
+  renderFeaturedCoaster(bodyEl, data);
+}
+
+function renderFeaturedCoaster(containerEl, row) {
+  const scoreWrap = document.createElement('div');
+  scoreWrap.className = 'featured-coaster__score-wrap';
+
+  const circle = document.createElement('div');
+  circle.className = 'circle-frame circle-frame--hero circle-frame--loading';
+
+  const img = document.createElement('img');
+  img.alt = `Coaster by ${row.name}`;
+  img.src = getProcessedImageUrl(row.id);
+  img.onload = () => circle.classList.remove('circle-frame--loading');
+  img.onerror = () => circle.classList.remove('circle-frame--loading');
+  circle.appendChild(img);
+  scoreWrap.appendChild(circle);
+
+  const scoreBadge = document.createElement('span');
+  scoreBadge.className = 'featured-coaster__score';
+  scoreBadge.textContent = `${row.net_score > 0 ? '+' : ''}${row.net_score}`;
+  scoreWrap.appendChild(scoreBadge);
+  containerEl.appendChild(scoreWrap);
+
+  const nameEl = document.createElement('p');
+  nameEl.className = 'featured-coaster__name';
+  nameEl.textContent = row.name;
+  containerEl.appendChild(nameEl);
+
+  if (row.instagram_handle) {
+    const igEl = document.createElement('a');
+    igEl.className = 'featured-coaster__instagram';
+    igEl.href = `https://instagram.com/${row.instagram_handle}`;
+    igEl.target = '_blank';
+    igEl.rel = 'noopener noreferrer';
+    igEl.textContent = `@${row.instagram_handle}`;
+    containerEl.appendChild(igEl);
+  }
+
+  const alreadyVoted = hasVoted(row.id);
+  const votesEl = document.createElement('div');
+  votesEl.className = 'featured-coaster__votes';
+  votesEl.setAttribute('role', 'group');
+  votesEl.setAttribute('aria-label', 'Vote');
+
+  const upBtn = document.createElement('button');
+  upBtn.className = 'vote-btn vote-btn--up';
+  upBtn.setAttribute('aria-label', 'Thumbs up');
+  upBtn.textContent = '👍';
+
+  const downBtn = document.createElement('button');
+  downBtn.className = 'vote-btn vote-btn--down';
+  downBtn.setAttribute('aria-label', 'Thumbs down');
+  downBtn.textContent = '👎';
+
+  if (alreadyVoted) {
+    upBtn.disabled = true;
+    downBtn.disabled = true;
+    upBtn.classList.add('vote-btn--voted');
+  } else {
+    // No advance on featured coaster — just disable after voting
+    upBtn.addEventListener('click', () => onVote(row.id, 1, upBtn, downBtn));
+    downBtn.addEventListener('click', () => onVote(row.id, -1, upBtn, downBtn));
+  }
+
+  votesEl.appendChild(upBtn);
+  votesEl.appendChild(downBtn);
+  containerEl.appendChild(votesEl);
 }
 
 // =============================================================================
@@ -672,7 +1131,34 @@ document.addEventListener('DOMContentLoaded', () => {
     ?.addEventListener('click', onCopyLink);
 
   document.querySelector('[data-action="see-feed"]')
-    ?.addEventListener('click', initFeedMode);
+    ?.addEventListener('click', initVotingFeed);
+
+  // Share toast (Story 2.6)
+  document.querySelector('[data-action="dismiss-share-toast"]')
+    ?.addEventListener('click', () => {
+      document.getElementById('share-toast').classList.add('is-hidden');
+    });
+
+  document.querySelector('[data-action="share-coaster"]')
+    ?.addEventListener('click', () => {
+      const shareUrl = `https://trapadl.com/coaster/?id=${state.submissionId}`;
+      if (navigator.share) {
+        navigator.share({ url: shareUrl, text: 'Vote for my coaster on trapadl.com!' })
+          .catch(err => { if (err.name !== 'AbortError') navigator.clipboard.writeText(shareUrl).catch(() => {}); });
+      } else {
+        navigator.clipboard.writeText(shareUrl).catch(() => {});
+      }
+    });
+
+  document.querySelector('[data-action="copy-share-link"]')
+    ?.addEventListener('click', () => {
+      const shareUrl = `https://trapadl.com/coaster/?id=${state.submissionId}`;
+      const copyBtn = document.getElementById('share-toast-copy-btn');
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        copyBtn.textContent = 'Copied!';
+        setTimeout(() => { copyBtn.textContent = 'Copy link'; }, 2000);
+      }).catch(() => {});
+    });
 
   // URL routing
   const params = new URLSearchParams(window.location.search);

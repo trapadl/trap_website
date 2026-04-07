@@ -270,11 +270,22 @@
     <!-- ===================== FEED VIEW ===================== -->
 
     <!-- Feed view: shown in feed mode and share-link mode (not a step) -->
-    <div class="feed-view" id="feed-view" hidden>
-      <!-- Populated in Stories 3.2, 3.3, 3.4 -->
-    </div>
+    <div class="feed-view" id="feed-view" hidden></div>
+
+    <!-- Voting feed overlay — shown after submission (Story 3.2) -->
+    <div class="voting-feed is-hidden" id="voting-feed" role="region" aria-label="Vote on coasters"></div>
 
   </main>
+
+  <!-- Share toast — shown after successful submission (Story 2.6) -->
+  <div class="share-toast is-hidden" id="share-toast" role="dialog" aria-label="Share your coaster">
+    <button class="share-toast__close" data-action="dismiss-share-toast" aria-label="Dismiss">×</button>
+    <h2 class="share-toast__heading">you're in.</h2>
+    <p class="share-toast__sub">get your mates to vote for your coaster</p>
+    <p class="share-toast__url" id="share-toast-url"></p>
+    <button class="btn btn--primary share-toast__share" data-action="share-coaster">Share</button>
+    <button class="btn btn--secondary share-toast__copy" id="share-toast-copy-btn" data-action="copy-share-link">Copy link</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
