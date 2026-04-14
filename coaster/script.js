@@ -217,158 +217,194 @@ function captureFrame() {
 }
 
 // =============================================================================
-// CROP STEP — user drags/resizes a circle over their photo before processing
+// CROP STEP — fixed circle mask, user pans/zooms/rotates the image beneath it
 // =============================================================================
 
 const cropState = {
-  cx: 0, cy: 0, r: 0,
+  imgX: 0, imgY: 0,       // pan offset from wrap centre (display px)
+  scale: 1,                // user zoom multiplier (on top of initScale)
+  rotation: 0,             // degrees
+  initScale: 1,            // scale that makes the image cover the circle at rest
   wrapW: 0, wrapH: 0,
-  dragMode: null, // 'move' | 'resize'
-  startPx: 0, startPy: 0,
-  startCx: 0, startCy: 0, startR: 0,
+  circleR: 0,
+  naturalW: 0, naturalH: 0,
+  activePointers: {},      // pointerId → { x, y }
+  prevPinch: null,         // { midX, midY, dist, angle } from last 2-pointer frame
+  gestureTimeout: null,
 };
 
 function clamp(val, min, max) {
   return Math.min(Math.max(val, min), max);
 }
 
+function getPinchInfo(p0, p1) {
+  return {
+    midX: (p0.x + p1.x) / 2,
+    midY: (p0.y + p1.y) / 2,
+    dist: Math.hypot(p1.x - p0.x, p1.y - p0.y),
+    angle: Math.atan2(p1.y - p0.y, p1.x - p0.x) * 180 / Math.PI,
+  };
+}
+
+function applyImageTransform() {
+  const imgEl = document.getElementById('crop-img');
+  const { imgX, imgY, scale, rotation } = cropState;
+  imgEl.style.transform =
+    `translate(${imgX}px, ${imgY}px) rotate(${rotation}deg) scale(${scale})`;
+}
+
+function renderFixedMask() {
+  const { wrapW, wrapH, circleR } = cropState;
+  const cx = wrapW / 2, cy = wrapH / 2, r = circleR;
+  const svgEl = document.getElementById('crop-svg');
+  svgEl.setAttribute('viewBox', `0 0 ${wrapW} ${wrapH}`);
+  document.getElementById('crop-path').setAttribute('d',
+    `M 0 0 H ${wrapW} V ${wrapH} H 0 Z ` +
+    `M ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx - r} ${cy} A ${r} ${r} 0 1 0 ${cx + r} ${cy} Z`
+  );
+  const borderEl = document.getElementById('crop-border');
+  borderEl.setAttribute('cx', cx);
+  borderEl.setAttribute('cy', cy);
+  borderEl.setAttribute('r', r);
+}
+
 function initCropStep() {
   const imgEl = document.getElementById('crop-img');
   const wrapEl = document.getElementById('crop-wrap');
+
+  // Reset state
+  cropState.imgX = 0;
+  cropState.imgY = 0;
+  cropState.scale = 1;
+  cropState.rotation = 0;
+  cropState.activePointers = {};
+  cropState.prevPinch = null;
 
   const url = URL.createObjectURL(state.pendingRawBlob);
   imgEl.onload = () => {
     URL.revokeObjectURL(url);
     const wrapW = wrapEl.clientWidth;
     const wrapH = wrapEl.clientHeight;
+    const naturalW = imgEl.naturalWidth;
+    const naturalH = imgEl.naturalHeight;
+    const circleR = Math.min(wrapW, wrapH) * 0.4;
+
+    // Scale image so it covers the circle at rest
+    const circleDiam = circleR * 2;
+    const initScale = Math.max(circleDiam / naturalW, circleDiam / naturalH);
+
     cropState.wrapW = wrapW;
     cropState.wrapH = wrapH;
-    cropState.cx = wrapW / 2;
-    cropState.cy = wrapH / 2;
-    cropState.r = Math.min(wrapW, wrapH) * 0.4;
-    updateCropOverlay();
+    cropState.circleR = circleR;
+    cropState.naturalW = naturalW;
+    cropState.naturalH = naturalH;
+    cropState.initScale = initScale;
+
+    // Size and centre the image
+    const dispW = naturalW * initScale;
+    const dispH = naturalH * initScale;
+    imgEl.style.width = dispW + 'px';
+    imgEl.style.height = dispH + 'px';
+    imgEl.style.left = (wrapW - dispW) / 2 + 'px';
+    imgEl.style.top = (wrapH - dispH) / 2 + 'px';
+    imgEl.style.transform = 'translate(0,0) rotate(0deg) scale(1)';
+
+    renderFixedMask();
     setupCropInteraction();
   };
   imgEl.src = url;
 }
 
-function updateCropOverlay() {
-  const { cx, cy, r, wrapW, wrapH } = cropState;
-  const svgEl = document.getElementById('crop-svg');
-  svgEl.setAttribute('viewBox', `0 0 ${wrapW} ${wrapH}`);
-
-  // Evenodd path: outer rect minus circle = dark overlay with transparent hole
-  document.getElementById('crop-path').setAttribute('d',
-    `M 0 0 H ${wrapW} V ${wrapH} H 0 Z ` +
-    `M ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx - r} ${cy} A ${r} ${r} 0 1 0 ${cx + r} ${cy} Z`
-  );
-
-  const borderEl = document.getElementById('crop-border');
-  borderEl.setAttribute('cx', cx);
-  borderEl.setAttribute('cy', cy);
-  borderEl.setAttribute('r', r);
-
-  // Resize handle sits at the bottom of the circle
-  const handleEl = document.getElementById('crop-handle');
-  handleEl.setAttribute('cx', cx);
-  handleEl.setAttribute('cy', cy + r);
-}
-
 function setupCropInteraction() {
+  const wrapEl = document.getElementById('crop-wrap');
   const svgEl = document.getElementById('crop-svg');
-  // Remove previous listeners by cloning
-  const fresh = svgEl.cloneNode(true);
-  svgEl.parentNode.replaceChild(fresh, svgEl);
+
+  // Remove previous listeners by cloning the wrap's event target
+  const fresh = wrapEl.cloneNode(false);
+  // Move children into the clone
+  while (wrapEl.firstChild) fresh.appendChild(wrapEl.firstChild);
+  wrapEl.parentNode.replaceChild(fresh, wrapEl);
+
+  function setMaskActive(active) {
+    clearTimeout(cropState.gestureTimeout);
+    if (active) {
+      svgEl.classList.add('crop-svg--active');
+    } else {
+      cropState.gestureTimeout = setTimeout(() => {
+        svgEl.classList.remove('crop-svg--active');
+      }, 300);
+    }
+  }
 
   fresh.addEventListener('pointerdown', (e) => {
-    const rect = fresh.getBoundingClientRect();
-    const px = e.clientX - rect.left;
-    const py = e.clientY - rect.top;
-    const { cx, cy, r } = cropState;
-
-    const handleDist = Math.hypot(px - cx, py - (cy + r));
-    const edgeDist = Math.abs(Math.hypot(px - cx, py - cy) - r);
-    const insideCircle = Math.hypot(px - cx, py - cy) < r;
-
-    if (handleDist < 30 || edgeDist < 24) {
-      cropState.dragMode = 'resize';
-    } else if (insideCircle) {
-      cropState.dragMode = 'move';
-    } else {
-      return;
-    }
-
-    cropState.startPx = px;
-    cropState.startPy = py;
-    cropState.startCx = cx;
-    cropState.startCy = cy;
-    cropState.startR = r;
     fresh.setPointerCapture(e.pointerId);
+    cropState.activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+    setMaskActive(true);
     e.preventDefault();
   });
 
   fresh.addEventListener('pointermove', (e) => {
-    if (!cropState.dragMode) return;
-    const rect = fresh.getBoundingClientRect();
-    const px = e.clientX - rect.left;
-    const py = e.clientY - rect.top;
-    const { wrapW, wrapH, startCx, startCy, startPx, startPy } = cropState;
+    if (!cropState.activePointers[e.pointerId]) return;
+    const prev = cropState.activePointers[e.pointerId];
+    cropState.activePointers[e.pointerId] = { x: e.clientX, y: e.clientY };
+    e.preventDefault();
 
-    if (cropState.dragMode === 'move') {
-      cropState.cx = clamp(startCx + (px - startPx), cropState.r, wrapW - cropState.r);
-      cropState.cy = clamp(startCy + (py - startPy), cropState.r, wrapH - cropState.r);
-    } else {
-      const newR = Math.hypot(px - cropState.cx, py - cropState.cy);
-      const maxR = Math.min(cropState.cx, cropState.cy, wrapW - cropState.cx, wrapH - cropState.cy);
-      cropState.r = clamp(newR, 40, maxR);
+    const pointers = Object.values(cropState.activePointers);
+
+    if (pointers.length === 1) {
+      // Pan
+      cropState.imgX += e.clientX - prev.x;
+      cropState.imgY += e.clientY - prev.y;
+      cropState.prevPinch = null;
+    } else if (pointers.length === 2) {
+      // Pinch + rotate + pan
+      const [p0, p1] = pointers;
+      const cur = getPinchInfo(p0, p1);
+      if (cropState.prevPinch) {
+        const prev2 = cropState.prevPinch;
+        cropState.scale = clamp(cropState.scale * (cur.dist / prev2.dist), 0.5, 5);
+        cropState.rotation += cur.angle - prev2.angle;
+        cropState.imgX += cur.midX - prev2.midX;
+        cropState.imgY += cur.midY - prev2.midY;
+      }
+      cropState.prevPinch = cur;
     }
 
-    updateCropOverlay();
-    e.preventDefault();
+    applyImageTransform();
   });
 
-  fresh.addEventListener('pointerup', () => { cropState.dragMode = null; });
-  fresh.addEventListener('pointercancel', () => { cropState.dragMode = null; });
+  fresh.addEventListener('pointerup', (e) => {
+    delete cropState.activePointers[e.pointerId];
+    if (Object.keys(cropState.activePointers).length === 0) {
+      cropState.prevPinch = null;
+      setMaskActive(false);
+    }
+  });
+
+  fresh.addEventListener('pointercancel', (e) => {
+    delete cropState.activePointers[e.pointerId];
+    if (Object.keys(cropState.activePointers).length === 0) {
+      cropState.prevPinch = null;
+      setMaskActive(false);
+    }
+  });
 }
 
 function applyCrop() {
   const imgEl = document.getElementById('crop-img');
-  const wrapEl = document.getElementById('crop-wrap');
+  const { imgX, imgY, scale, rotation, initScale, circleR, naturalW, naturalH } = cropState;
 
-  const wrapW = wrapEl.clientWidth;
-  const wrapH = wrapEl.clientHeight;
-  const naturalW = imgEl.naturalWidth;
-  const naturalH = imgEl.naturalHeight;
-
-  // Map display circle → natural image coords, accounting for object-fit: contain
-  const naturalAspect = naturalW / naturalH;
-  const wrapAspect = wrapW / wrapH;
-  let displayW, displayH, offsetX, offsetY;
-  if (naturalAspect > wrapAspect) {
-    displayW = wrapW;
-    displayH = wrapW / naturalAspect;
-    offsetX = 0;
-    offsetY = (wrapH - displayH) / 2;
-  } else {
-    displayH = wrapH;
-    displayW = wrapH * naturalAspect;
-    offsetX = (wrapW - displayW) / 2;
-    offsetY = 0;
-  }
-
-  const scale = displayW / naturalW;
-  const { cx, cy, r } = cropState;
-  const naturalCx = (cx - offsetX) / scale;
-  const naturalCy = (cy - offsetY) / scale;
-  const naturalR = r / scale;
-
-  const size = Math.max(Math.round(naturalR * 2), 100);
+  const size = Math.max(Math.round(circleR * 2), 100);
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d');
 
-  ctx.drawImage(imgEl, naturalCx - naturalR, naturalCy - naturalR, naturalR * 2, naturalR * 2, 0, 0, size, size);
+  // Replicate CSS transform relative to canvas centre (= circle centre)
+  ctx.translate(size / 2 + imgX, size / 2 + imgY);
+  ctx.rotate(rotation * Math.PI / 180);
+  ctx.scale(scale * initScale, scale * initScale);
+  ctx.drawImage(imgEl, -naturalW / 2, -naturalH / 2, naturalW, naturalH);
 
   canvas.toBlob(blob => {
     state.pendingRawBlob = blob;
