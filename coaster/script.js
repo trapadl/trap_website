@@ -262,10 +262,6 @@ function renderFixedMask() {
     `M 0 0 H ${wrapW} V ${wrapH} H 0 Z ` +
     `M ${cx + r} ${cy} A ${r} ${r} 0 1 0 ${cx - r} ${cy} A ${r} ${r} 0 1 0 ${cx + r} ${cy} Z`
   );
-  const borderEl = document.getElementById('crop-border');
-  borderEl.setAttribute('cx', cx);
-  borderEl.setAttribute('cy', cy);
-  borderEl.setAttribute('r', r);
 }
 
 function initCropStep() {

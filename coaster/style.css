@@ -446,6 +446,7 @@ select {
   opacity: 0.5;
 }
 
+
 .crop-footer {
   flex-shrink: 0;
   padding: var(--space-4) var(--space-5) var(--space-6);
