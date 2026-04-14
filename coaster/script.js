@@ -836,6 +836,12 @@ function createCoasterCard(row) {
 
   card.appendChild(circleDiv);
 
+  // Rating label (net score: up votes − down votes)
+  const ratingEl = document.createElement('p');
+  ratingEl.className = 'coaster-card__rating';
+  ratingEl.textContent = `${row.net_score > 0 ? '+' : ''}${row.net_score ?? 0}`;
+  card.appendChild(ratingEl);
+
   // Submitter name
   const nameEl = document.createElement('p');
   nameEl.className = 'coaster-card__name';
