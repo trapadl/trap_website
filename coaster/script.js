@@ -733,6 +733,18 @@ async function generateShareImage(processedImageUrl) {
   const cR = 380;
   const cX = W / 2;
   const cY = y + cR;
+  // Draw shadow first (must be outside clip to remain visible)
+  ctx.save();
+  ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
+  ctx.shadowBlur = 48;
+  ctx.shadowOffsetY = 14;
+  ctx.beginPath();
+  ctx.arc(cX, cY, cR, 0, Math.PI * 2);
+  ctx.fillStyle = '#000';
+  ctx.fill();
+  ctx.restore();
+
+  // Draw clipped coaster image on top
   ctx.save();
   ctx.beginPath();
   ctx.arc(cX, cY, cR, 0, Math.PI * 2);
