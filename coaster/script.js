@@ -675,7 +675,7 @@ async function goToShareImageStep() {
     const blob    = await generateShareImage(_shareFlowImageUrl);
     const blobUrl = URL.createObjectURL(blob);
     preview.src           = blobUrl;
-    preview.style.display = '';
+    preview.style.display = 'block';
     loading.style.display = 'none';
 
     // Show native share button only if the browser supports sharing files
@@ -757,12 +757,12 @@ async function generateShareImage(processedImageUrl) {
   ctx.restore();
   y = cY + cR + 70;
 
-  // "all i got was this" / "handdrawn coaster" (two lines)
+  // "all i got was this" / "hand-drawn coaster" (two lines)
   ctx.fillStyle = '#000000';
   ctx.font = '64px "Acumin Pro Bold"';
   ctx.fillText('all i got was this', W / 2, y);
   y += 64 + 12;
-  ctx.fillText('handdrawn coaster', W / 2, y);
+  ctx.fillText('hand-drawn coaster', W / 2, y);
   y += 64 + 50;
 
   // "— vote below —"
