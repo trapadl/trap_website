@@ -1360,6 +1360,11 @@ select {
   border-width: 2px;
 }
 
+.coaster-modal .btn--secondary {
+  color: var(--color-white);
+  border-color: var(--color-white);
+}
+
 /* =============================================================================
    SHARE MODAL
    ============================================================================= */
