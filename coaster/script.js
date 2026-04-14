@@ -663,22 +663,29 @@ async function goToShareImageStep() {
   document.getElementById('share-step-copy').classList.add('is-hidden');
   document.getElementById('share-step-image').classList.remove('is-hidden');
 
-  const preview = document.getElementById('share-modal-preview');
-  const loading = document.getElementById('share-modal-loading');
-  const downloadBtn = document.getElementById('share-modal-download');
+  const preview   = document.getElementById('share-modal-preview');
+  const loading   = document.getElementById('share-modal-loading');
+  const nativeBtn = document.getElementById('share-modal-native-share');
 
   preview.style.display = 'none';
   loading.style.display = '';
-  downloadBtn.classList.add('is-hidden');
+  nativeBtn.classList.add('is-hidden');
 
   try {
-    const blob = await generateShareImage(_shareFlowImageUrl);
+    const blob    = await generateShareImage(_shareFlowImageUrl);
     const blobUrl = URL.createObjectURL(blob);
-    preview.src = blobUrl;
+    preview.src           = blobUrl;
     preview.style.display = '';
     loading.style.display = 'none';
-    downloadBtn.href = blobUrl;
-    downloadBtn.classList.remove('is-hidden');
+
+    // Show native share button only if the browser supports sharing files
+    const file = new File([blob], 'coaster-share.png', { type: 'image/png' });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      nativeBtn.classList.remove('is-hidden');
+      nativeBtn.onclick = () => {
+        navigator.share({ files: [file] }).catch(() => {});
+      };
+    }
   } catch (err) {
     console.error('[goToShareImageStep] image generation failed', err);
     loading.textContent = 'Could not generate image — try saving the link and sharing manually.';
@@ -693,10 +700,7 @@ async function goToShareImageStep() {
  * @returns {Promise<Blob>} PNG blob at full resolution
  */
 async function generateShareImage(processedImageUrl) {
-  await Promise.all([
-    document.fonts.load('72px "Futura Bold Italic"'),
-    document.fonts.load('48px "Acumin Pro Bold"'),
-  ]);
+  await document.fonts.load('72px "Acumin Pro Bold"');
 
   const W = 1080, H = 1920;
   const canvas = document.createElement('canvas');
@@ -725,7 +729,7 @@ async function generateShareImage(processedImageUrl) {
   ctx.fillStyle = '#000000';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
-  ctx.font = '72px "Futura Bold Italic"';
+  ctx.font = '72px "Acumin Pro Bold"';
   ctx.fillText('i went to @trap.adl and', W / 2, y);
   y += 72 + 60;
 
@@ -755,7 +759,7 @@ async function generateShareImage(processedImageUrl) {
 
   // "all i got was this" / "handdrawn coaster" (two lines)
   ctx.fillStyle = '#000000';
-  ctx.font = '64px "Futura Bold Italic"';
+  ctx.font = '64px "Acumin Pro Bold"';
   ctx.fillText('all i got was this', W / 2, y);
   y += 64 + 12;
   ctx.fillText('handdrawn coaster', W / 2, y);
@@ -1330,7 +1334,11 @@ function showVotingEndState() {
   const browseBtn = document.createElement('button');
   browseBtn.className = 'btn btn--tertiary';
   browseBtn.textContent = 'browse the feed';
-  browseBtn.addEventListener('click', () => overlay.classList.add('is-hidden'));
+  browseBtn.addEventListener('click', () => {
+    overlay.classList.add('is-hidden');
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('step--active'));
+    initFeedMode();
+  });
   endEl.appendChild(browseBtn);
 
   overlay.appendChild(endEl);

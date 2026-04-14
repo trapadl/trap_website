@@ -1463,6 +1463,20 @@ select {
   text-decoration: none;
 }
 
+.share-modal .btn--primary {
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.share-modal .btn--secondary {
+  color: var(--color-white);
+  border-color: var(--color-white);
+}
+
+.share-modal .btn--tertiary {
+  color: #aaa;
+}
+
 .share-modal__instructions {
   font-family: var(--font-body);
   font-size: 15px;
