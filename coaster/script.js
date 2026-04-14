@@ -1138,6 +1138,13 @@ async function loadFeedSections() {
 
   const feedEl = document.getElementById('feed-view');
 
+  // Populate total coaster count
+  db.from('submission_scores').select('id', { count: 'exact', head: true })
+    .then(({ count }) => {
+      const el = document.getElementById('feed-count');
+      if (el && count != null) el.textContent = count;
+    });
+
   // Build skeleton sections in DOM immediately so shimmer shows while loading
   FEED_SECTIONS.forEach(section => {
     const sectionEl = document.createElement('section');

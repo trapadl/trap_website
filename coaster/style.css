@@ -590,6 +590,28 @@ select {
   padding-bottom: var(--space-8);
 }
 
+.feed-header {
+  padding: var(--space-5) var(--space-4) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.feed-header__tagline {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-grey);
+  margin: 0;
+}
+
+.feed-header__count {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--color-black);
+  margin: 0;
+  font-weight: 600;
+}
+
 .feed-section {
   padding: var(--space-6) var(--space-4) var(--space-5);
 }

@@ -281,7 +281,12 @@
     <!-- ===================== FEED VIEW ===================== -->
 
     <!-- Feed view: shown in feed mode and share-link mode (not a step) -->
-    <div class="feed-view" id="feed-view" hidden></div>
+    <div class="feed-view" id="feed-view" hidden>
+      <div class="feed-header">
+        <p class="feed-header__tagline">every night at trap., guests draw a coaster. here's what they made.</p>
+        <p class="feed-header__count">total coasters drawn: <span id="feed-count">…</span></p>
+      </div>
+    </div>
 
     <!-- Voting feed overlay — shown after submission (Story 3.2) -->
     <div class="voting-feed is-hidden" id="voting-feed" role="region" aria-label="Vote on coasters"></div>
