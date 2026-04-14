@@ -582,6 +582,40 @@ select {
 }
 
 /* =============================================================================
+   FLOATING SUBMIT BUTTON
+   ============================================================================= */
+
+.fab-submit {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-5);
+  z-index: 200;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: #f5f0eb;
+  border: none;
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--color-black);
+  box-shadow:
+    0 6px 0 rgba(0, 0, 0, 0.18),
+    0 12px 32px rgba(0, 0, 0, 0.28);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fab-submit:active {
+  transform: translateY(3px);
+  box-shadow:
+    0 3px 0 rgba(0, 0, 0, 0.18),
+    0 6px 16px rgba(0, 0, 0, 0.22);
+}
+
+/* =============================================================================
    FEED VIEW — Public feed sections
    ============================================================================= */
 

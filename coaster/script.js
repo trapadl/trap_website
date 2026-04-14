@@ -1364,6 +1364,7 @@ function initSubmissionMode() {
 
 function initFeedMode() {
   document.getElementById('feed-view').hidden = false;
+  document.getElementById('fab-submit')?.classList.remove('is-hidden');
   loadFeedSections();
 }
 
@@ -1486,6 +1487,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event listeners
   document.querySelector('[data-action="submit-cta"]')
     ?.addEventListener('click', () => goToStep('camera'));
+
+  document.getElementById('fab-submit')
+    ?.addEventListener('click', () => {
+      document.getElementById('fab-submit').classList.add('is-hidden');
+      document.getElementById('feed-view').hidden = true;
+      goToStep('landing');
+    });
 
   document.querySelector('[data-action="open-camera"]')
     ?.addEventListener('click', startCamera);
