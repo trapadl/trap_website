@@ -42,6 +42,10 @@ const state = {
   otpAttempts: 0,           // wrong OTP attempt counter; reset on initOtpStep and resend
 };
 
+// Share flow state — set by openShareFlow(), read by modal event listeners
+let _shareFlowSubmissionId = null;
+let _shareFlowImageUrl = null;
+
 // =============================================================================
 // STEP SYSTEM
 // All submission flow steps; goToStep() is the only screen transition function.
@@ -586,18 +590,184 @@ function initConfirmationStep() {
 }
 
 function onShareInstagram() {
-  const shareUrl = `https://trapadl.com/coaster/?id=${state.submissionId}`;
-  const shareData = { url: shareUrl, text: 'Check out my coaster — vote for it!' };
+  openShareFlow(state.submissionId, state.processedImageUrl);
+}
 
-  if (navigator.share) {
-    navigator.share(shareData).catch(err => {
-      if (err.name !== 'AbortError') {
-        navigator.clipboard.writeText(shareUrl).catch(() => {});
-      }
-    });
-  } else {
-    navigator.clipboard.writeText(shareUrl).catch(() => {});
+// =============================================================================
+// SHARE FLOW
+// Two-step guided flow: copy link → save branded 9:16 image → post to Instagram Story
+// =============================================================================
+
+/**
+ * Opens the share modal for any coaster.
+ * Called from confirmation step, featured coaster, and coaster modal.
+ * @param {string} submissionId
+ * @param {string} processedImageUrl — full public CDN URL
+ */
+function openShareFlow(submissionId, processedImageUrl) {
+  _shareFlowSubmissionId = submissionId;
+  _shareFlowImageUrl = processedImageUrl;
+
+  const shareUrl = `https://trapadl.com/coaster/?id=${submissionId}`;
+  document.getElementById('share-modal-url').textContent = shareUrl;
+
+  // Reset to step 1
+  document.getElementById('share-step-copy').classList.remove('is-hidden');
+  document.getElementById('share-step-image').classList.add('is-hidden');
+  document.getElementById('share-modal-copy-btn').textContent = 'Copy link';
+  document.getElementById('share-modal-next-btn').classList.add('is-hidden');
+
+  document.getElementById('share-modal').classList.remove('is-hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeShareFlow() {
+  document.getElementById('share-modal').classList.add('is-hidden');
+  document.body.style.overflow = '';
+}
+
+/** Transitions from step 1 to step 2 and generates the share image. */
+async function goToShareImageStep() {
+  document.getElementById('share-step-copy').classList.add('is-hidden');
+  document.getElementById('share-step-image').classList.remove('is-hidden');
+
+  const preview = document.getElementById('share-modal-preview');
+  const loading = document.getElementById('share-modal-loading');
+  const downloadBtn = document.getElementById('share-modal-download');
+
+  preview.style.display = 'none';
+  loading.style.display = '';
+  downloadBtn.classList.add('is-hidden');
+
+  try {
+    const blob = await generateShareImage(_shareFlowImageUrl);
+    const blobUrl = URL.createObjectURL(blob);
+    preview.src = blobUrl;
+    preview.style.display = '';
+    loading.style.display = 'none';
+    downloadBtn.href = blobUrl;
+    downloadBtn.classList.remove('is-hidden');
+  } catch (err) {
+    console.error('[goToShareImageStep] image generation failed', err);
+    loading.textContent = 'Could not generate image — try saving the link and sharing manually.';
   }
+}
+
+/**
+ * Generates the branded 1080×1920 Instagram Story share image on a canvas.
+ * Layout: trap logo → "i went to @trap.adl and" → circular coaster →
+ *         "all i got was this / handdrawn coaster" → "— vote below —" → pill placeholder
+ * @param {string} processedImageUrl — full public CDN URL
+ * @returns {Promise<Blob>} PNG blob at full resolution
+ */
+async function generateShareImage(processedImageUrl) {
+  await Promise.all([
+    document.fonts.load('72px "Futura Bold Italic"'),
+    document.fonts.load('48px "Acumin Pro Bold"'),
+  ]);
+
+  const W = 1080, H = 1920;
+  const canvas = document.createElement('canvas');
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // White background
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // Load logo and coaster image simultaneously
+  const [logo, coaster] = await Promise.all([
+    _loadImage('../assets/traplogo.png'),
+    _loadImageCORS(processedImageUrl),
+  ]);
+
+  // Trap logo — centered, 260px wide
+  const logoW = 260;
+  const logoH = Math.round(logo.naturalHeight * (logoW / logo.naturalWidth));
+  ctx.drawImage(logo, (W - logoW) / 2, 120, logoW, logoH);
+
+  let y = 120 + logoH + 80;
+
+  // "i went to @trap.adl and"
+  ctx.fillStyle = '#000000';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'top';
+  ctx.font = '72px "Futura Bold Italic"';
+  ctx.fillText('i went to @trap.adl and', W / 2, y);
+  y += 72 + 60;
+
+  // Circular coaster image — 760px diameter
+  const cR = 380;
+  const cX = W / 2;
+  const cY = y + cR;
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cX, cY, cR, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.drawImage(coaster, cX - cR, cY - cR, cR * 2, cR * 2);
+  ctx.restore();
+  y = cY + cR + 70;
+
+  // "all i got was this" / "handdrawn coaster" (two lines)
+  ctx.fillStyle = '#000000';
+  ctx.font = '64px "Futura Bold Italic"';
+  ctx.fillText('all i got was this', W / 2, y);
+  y += 64 + 12;
+  ctx.fillText('handdrawn coaster', W / 2, y);
+  y += 64 + 50;
+
+  // "— vote below —"
+  ctx.font = '48px "Acumin Pro Bold"';
+  ctx.fillText('— vote below —', W / 2, y);
+  y += 48 + 64;
+
+  // Pill-shaped dashed border — link sticker placeholder
+  const pW = 560, pH = 90, pR = 45;
+  const pX = (W - pW) / 2;
+  ctx.save();
+  ctx.strokeStyle = '#aaaaaa';
+  ctx.lineWidth = 4;
+  ctx.setLineDash([20, 14]);
+  ctx.beginPath();
+  ctx.moveTo(pX + pR, y);
+  ctx.lineTo(pX + pW - pR, y);
+  ctx.arcTo(pX + pW, y,      pX + pW, y + pR,       pR);
+  ctx.lineTo(pX + pW, y + pH - pR);
+  ctx.arcTo(pX + pW, y + pH, pX + pW - pR, y + pH,  pR);
+  ctx.lineTo(pX + pR, y + pH);
+  ctx.arcTo(pX, y + pH,      pX, y + pH - pR,        pR);
+  ctx.lineTo(pX, y + pR);
+  ctx.arcTo(pX, y,           pX + pR, y,              pR);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+
+  return new Promise((resolve, reject) => {
+    canvas.toBlob(
+      blob => (blob ? resolve(blob) : reject(new Error('toBlob returned null'))),
+      'image/png',
+    );
+  });
+}
+
+function _loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Image load failed: ${src}`));
+    img.src = src;
+  });
+}
+
+function _loadImageCORS(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`CORS image load failed: ${src}`));
+    img.src = src;
+  });
 }
 
 function onCopyLink() {
@@ -770,6 +940,12 @@ function openCoasterModal(row) {
   votesEl.appendChild(downBtn);
   inner.appendChild(votesEl);
 
+  const shareBtn = document.createElement('button');
+  shareBtn.className = 'btn btn--secondary coaster-modal__share';
+  shareBtn.textContent = 'share';
+  shareBtn.addEventListener('click', () => { closeCoasterModal(); openShareFlow(row.id, getProcessedImageUrl(row.id)); });
+  inner.appendChild(shareBtn);
+
   modal.classList.remove('is-hidden');
   document.body.style.overflow = 'hidden';
 }
@@ -834,8 +1010,10 @@ function createCoasterCard(row) {
 
   // Rating label (net score: up votes − down votes)
   const ratingEl = document.createElement('p');
-  ratingEl.className = 'coaster-card__rating';
-  ratingEl.textContent = `${row.net_score > 0 ? '+' : ''}${row.net_score ?? 0}`;
+  const score = row.net_score ?? 0;
+  ratingEl.className = 'coaster-card__rating' +
+    (score > 0 ? ' coaster-card__rating--positive' : score < 0 ? ' coaster-card__rating--negative' : '');
+  ratingEl.textContent = `${score > 0 ? '+' : ''}${score}`;
   card.appendChild(ratingEl);
 
   // Submitter name
@@ -1226,6 +1404,12 @@ function renderFeaturedCoaster(containerEl, row) {
   votesEl.appendChild(upBtn);
   votesEl.appendChild(downBtn);
   containerEl.appendChild(votesEl);
+
+  const shareBtn = document.createElement('button');
+  shareBtn.className = 'btn btn--secondary featured-coaster__share';
+  shareBtn.textContent = 'share';
+  shareBtn.addEventListener('click', () => openShareFlow(row.id, getProcessedImageUrl(row.id)));
+  containerEl.appendChild(shareBtn);
 }
 
 // =============================================================================
@@ -1368,15 +1552,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
   document.querySelector('[data-action="share-coaster"]')
-    ?.addEventListener('click', () => {
-      const shareUrl = `https://trapadl.com/coaster/?id=${state.submissionId}`;
-      if (navigator.share) {
-        navigator.share({ url: shareUrl, text: 'Vote for my coaster on trapadl.com!' })
-          .catch(err => { if (err.name !== 'AbortError') navigator.clipboard.writeText(shareUrl).catch(() => {}); });
-      } else {
-        navigator.clipboard.writeText(shareUrl).catch(() => {});
-      }
-    });
+    ?.addEventListener('click', () => openShareFlow(state.submissionId, state.processedImageUrl));
 
   document.querySelector('[data-action="copy-share-link"]')
     ?.addEventListener('click', () => {
@@ -1387,6 +1563,23 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { copyBtn.textContent = 'Copy link'; }, 2000);
       }).catch(() => {});
     });
+
+  // Share flow modal
+  document.getElementById('share-modal-close-1')?.addEventListener('click', closeShareFlow);
+  document.getElementById('share-modal-close-2')?.addEventListener('click', closeShareFlow);
+  document.getElementById('share-modal')?.addEventListener('click', (e) => {
+    if (e.target === document.getElementById('share-modal')) closeShareFlow();
+  });
+  document.getElementById('share-modal-copy-btn')?.addEventListener('click', () => {
+    const shareUrl = `https://trapadl.com/coaster/?id=${_shareFlowSubmissionId}`;
+    navigator.clipboard.writeText(shareUrl)
+      .catch(() => {})
+      .finally(() => {
+        document.getElementById('share-modal-copy-btn').textContent = 'Copied ✓';
+        document.getElementById('share-modal-next-btn').classList.remove('is-hidden');
+      });
+  });
+  document.getElementById('share-modal-next-btn')?.addEventListener('click', goToShareImageStep);
 
   // URL routing
   const params = new URLSearchParams(window.location.search);

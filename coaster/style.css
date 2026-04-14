@@ -1036,6 +1036,9 @@ select {
   letter-spacing: 0.03em;
 }
 
+.coaster-card__rating--positive { color: #4caf50; }
+.coaster-card__rating--negative { color: var(--color-error); }
+
 .coaster-card__name {
   font-family: var(--font-body);
   font-size: var(--text-sm);
@@ -1346,4 +1349,117 @@ select {
   height: 56px;
   font-size: 1.5rem;
   border-width: 2px;
+}
+
+/* =============================================================================
+   SHARE MODAL
+   ============================================================================= */
+
+.share-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  background: #000;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.share-modal.is-hidden { display: none; }
+
+.share-modal__inner {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 20px 60px;
+  gap: 20px;
+}
+
+.share-modal__step {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.share-modal__close {
+  align-self: flex-end;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 32px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+  font-family: var(--font-body);
+}
+
+.share-modal__heading {
+  font-family: var(--font-heading);
+  font-size: clamp(22px, 7vw, 32px);
+  color: #fff;
+  text-align: center;
+  margin: 0;
+}
+
+.share-modal__sub {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: #ccc;
+  text-align: center;
+  margin: 0;
+  max-width: 300px;
+}
+
+.share-modal__url {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: #aaa;
+  word-break: break-all;
+  text-align: center;
+  background: #111;
+  padding: 14px 16px;
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+.share-modal__preview-wrap {
+  width: 100%;
+  max-width: 260px;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-modal__preview {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(255,255,255,0.08);
+  display: none;
+}
+
+.share-modal__preview-loading {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: #666;
+  text-align: center;
+  margin: 0;
+}
+
+.share-modal__download {
+  text-decoration: none;
+}
+
+.share-modal__instructions {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: #bbb;
+  padding-left: 20px;
+  align-self: flex-start;
+  line-height: 2;
+  margin: 0;
 }

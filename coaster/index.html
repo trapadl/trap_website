@@ -300,6 +300,40 @@
     <button class="btn btn--secondary share-toast__copy" id="share-toast-copy-btn" data-action="copy-share-link">Copy link</button>
   </div>
 
+  <!-- Share flow modal -->
+  <div class="share-modal is-hidden" id="share-modal" role="dialog" aria-modal="true" aria-label="Share your coaster">
+    <div class="share-modal__inner">
+
+      <!-- Step 1: Copy link -->
+      <div class="share-modal__step" id="share-step-copy">
+        <button class="share-modal__close" id="share-modal-close-1" aria-label="Close">×</button>
+        <h2 class="share-modal__heading">share your coaster</h2>
+        <p class="share-modal__sub">first, copy your link</p>
+        <p class="share-modal__url" id="share-modal-url"></p>
+        <button class="btn btn--primary" id="share-modal-copy-btn">Copy link</button>
+        <button class="btn btn--primary is-hidden" id="share-modal-next-btn">Next →</button>
+      </div>
+
+      <!-- Step 2: Share image -->
+      <div class="share-modal__step is-hidden" id="share-step-image">
+        <button class="share-modal__close" id="share-modal-close-2" aria-label="Close">×</button>
+        <p class="share-modal__sub">save this image, then share it to your Instagram story</p>
+        <div class="share-modal__preview-wrap">
+          <img class="share-modal__preview" id="share-modal-preview" alt="Your share image" src="">
+          <p class="share-modal__preview-loading" id="share-modal-loading">Generating image…</p>
+        </div>
+        <a class="btn btn--primary share-modal__download is-hidden" id="share-modal-download" download="coaster-share.png">Save image</a>
+        <ol class="share-modal__instructions">
+          <li>Save the image above</li>
+          <li>Open Instagram and start a new Story</li>
+          <li>Upload the saved image</li>
+          <li>Tap the link sticker and paste your link</li>
+        </ol>
+      </div>
+
+    </div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
