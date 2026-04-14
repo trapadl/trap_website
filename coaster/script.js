@@ -364,10 +364,6 @@ function applyCrop() {
   canvas.height = size;
   const ctx = canvas.getContext('2d');
 
-  ctx.beginPath();
-  ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
-  ctx.clip();
-
   ctx.drawImage(imgEl, naturalCx - naturalR, naturalCy - naturalR, naturalR * 2, naturalR * 2, 0, 0, size, size);
 
   canvas.toBlob(blob => {
