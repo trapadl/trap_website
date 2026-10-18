@@ -142,6 +142,8 @@ function openBookingPopup(formUrl) {
   document.getElementById('bookingPopup').classList.add('active');
   document.body.style.overflow = 'hidden';
 
+  startBookingTracking(formUrl);
+
   // Set the iframe's src attribute to the form URL
   document.getElementById('bookingIframe').src = formUrl;
 }
@@ -151,7 +153,73 @@ function closeBookingPopup() {
   document.getElementById('bookingPopup').classList.remove('active');
   document.body.style.overflow = 'auto';
 
+  stopBookingTracking();
+
   // Reset the iframe's src attribute
   document.getElementById('bookingIframe').src = '';
 }
 
+// ---------------------------------------------------------------------------
+// Booking conversion tracking
+// The booking form is a single-page Google Form in a cross-origin iframe, so we
+// can't read its content. Load #1 of the iframe is the empty form; load #2 is the
+// "response recorded" screen after Submit. The counter is reset every time the
+// popup is opened (and stopped when it is closed), so the first load never counts
+// and a conversion fires at most once per popup open.
+// ---------------------------------------------------------------------------
+var BOOKING_FORM_ID = '1FAIpQLSe57gW9pysQn_LBf5PKRmur-yoccAw3rXOiFYUdNK2N3EszSQ';
+var bookingTracking = { active: false, loads: 0, fired: false, prefilled: false };
+
+function startBookingTracking(formUrl) {
+  bookingTracking.active = typeof formUrl === 'string' && formUrl.indexOf(BOOKING_FORM_ID) !== -1;
+  bookingTracking.loads = 0;
+  bookingTracking.fired = false;
+  bookingTracking.prefilled = bookingTracking.active && formUrl.indexOf('usp=pp_url') !== -1;
+}
+
+function stopBookingTracking() {
+  bookingTracking.active = false;
+  bookingTracking.loads = 0;
+  bookingTracking.fired = false;
+}
+
+function onBookingIframeLoad() {
+  var iframe = document.getElementById('bookingIframe');
+  if (!bookingTracking.active || bookingTracking.fired) return;
+  if (!iframe || !iframe.getAttribute('src')) return;
+
+  bookingTracking.loads += 1;
+  if (bookingTracking.loads < 2) return;
+
+  bookingTracking.fired = true;
+  trackBookingConversion(bookingTracking.prefilled);
+}
+
+function trackBookingConversion(prefilled) {
+  // lead_created: the form is a booking request that staff confirm, not a confirmed
+  // reservation or payment. Its "customer_action" data object takes no custom
+  // fields, and there is no price to report.
+  try {
+    if (typeof window.oaiq === 'function') {
+      window.oaiq('measure', 'lead_created', { type: 'customer_action' });
+    }
+  } catch (e) {}
+  try {
+    if (typeof window.fbq === 'function') {
+      window.fbq('track', 'Lead', { content_name: 'booking_form_submitted' });
+    }
+  } catch (e) {}
+  try {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'generate_lead', {
+        form_name: 'booking',
+        form_variant: prefilled ? 'welcome_popup_free_gin_mixer' : 'standard'
+      });
+    }
+  } catch (e) {}
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+  var iframe = document.getElementById('bookingIframe');
+  if (iframe) iframe.addEventListener('load', onBookingIframeLoad);
+});
