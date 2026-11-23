@@ -161,41 +161,127 @@ function closeBookingPopup() {
 
 // ---------------------------------------------------------------------------
 // Booking conversion tracking
-// The booking form is a single-page Google Form in a cross-origin iframe, so we
-// can't read its content. Load #1 of the iframe is the empty form; load #2 is the
-// "response recorded" screen after Submit. The counter is reset every time the
-// popup is opened (and stopped when it is closed), so the first load never counts
-// and a conversion fires at most once per popup open.
+// The booking form is a single-page Google Form in a cross-origin iframe, so
+// the parent page cannot read its document or URL. PR #1 counted iframe `load`
+// events and treated load #2 as a submit. That missed real bookings:
+//
+// 1. index.html preloads the form on #bookingIframe. The Book buttons then set
+//    the same URL again. In browsers that do not reload on a same-src
+//    assignment, the "empty form" load never happens after tracking starts, so
+//    a real submit is seen as load #1 and ignored.
+// 2. GTM-5SZ4LPWJ only fires a GA4 event named "Make a Booking" on clicks of
+//    https://forms.gle/YRD8qtPnJxGCTMdf8. The buttons call openBookingPopup()
+//    instead, so that tag never runs. It also never sent `generate_lead`.
+// 3. Google Forms validates required fields in-page (no iframe load). A
+//    completed submit is detected when the iframe later loads again, which is
+//    what happens when Google shows the confirmation view via navigation.
+//    An in-document XHR confirmation with no navigation cannot be seen from
+//    the parent; booking_click would still fire.
+//
+// Approach: fire `booking_click` when the popup opens. Ignore iframe loads
+// until the form has been quiet for BOOKING_SETTLE_MS and the popup has been
+// open for BOOKING_MIN_FILL_MS (longer than a display/reload, shorter than
+// filling this form). The next load is generate_lead + Meta Lead + OpenAI
+// lead_created, at most once per popup open. Validation-error reloads cannot
+// be distinguished from a confirmation if they ever start navigating; they
+// currently do not.
 // ---------------------------------------------------------------------------
 var BOOKING_FORM_ID = '1FAIpQLSe57gW9pysQn_LBf5PKRmur-yoccAw3rXOiFYUdNK2N3EszSQ';
-var bookingTracking = { active: false, loads: 0, fired: false, prefilled: false };
+var BOOKING_SETTLE_MS = 1500;
+var BOOKING_MIN_FILL_MS = 4000;
+var bookingTracking = {
+  active: false,
+  armed: false,
+  fired: false,
+  prefilled: false,
+  openedAt: 0,
+  settleTimer: null
+};
+
+function bookingFormVariant(prefilled) {
+  return prefilled ? 'welcome_popup_free_gin_mixer' : 'standard';
+}
+
+function sendGtagEvent(name, params) {
+  try {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', name, params);
+      return;
+    }
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push(['event', name, params]);
+  } catch (e) {}
+}
+
+function clearBookingSettleTimer() {
+  if (bookingTracking.settleTimer) {
+    clearTimeout(bookingTracking.settleTimer);
+    bookingTracking.settleTimer = null;
+  }
+}
+
+function armBookingTrackingAfterSettle() {
+  clearBookingSettleTimer();
+  if (!bookingTracking.active || bookingTracking.fired) return;
+  bookingTracking.settleTimer = setTimeout(function () {
+    bookingTracking.settleTimer = null;
+    if (bookingTracking.active && !bookingTracking.fired) {
+      bookingTracking.armed = true;
+    }
+  }, BOOKING_SETTLE_MS);
+}
 
 function startBookingTracking(formUrl) {
+  stopBookingTracking();
   bookingTracking.active = typeof formUrl === 'string' && formUrl.indexOf(BOOKING_FORM_ID) !== -1;
-  bookingTracking.loads = 0;
+  bookingTracking.armed = false;
   bookingTracking.fired = false;
   bookingTracking.prefilled = bookingTracking.active && formUrl.indexOf('usp=pp_url') !== -1;
+  bookingTracking.openedAt = Date.now();
+  if (bookingTracking.active) {
+    trackBookingClick(bookingTracking.prefilled);
+    armBookingTrackingAfterSettle();
+  }
 }
 
 function stopBookingTracking() {
+  clearBookingSettleTimer();
   bookingTracking.active = false;
-  bookingTracking.loads = 0;
+  bookingTracking.armed = false;
   bookingTracking.fired = false;
+  bookingTracking.openedAt = 0;
 }
 
 function onBookingIframeLoad() {
   var iframe = document.getElementById('bookingIframe');
+  var src;
   if (!bookingTracking.active || bookingTracking.fired) return;
-  if (!iframe || !iframe.getAttribute('src')) return;
+  if (!iframe) return;
+  src = iframe.getAttribute('src');
+  if (!src || src === 'about:blank') return;
 
-  bookingTracking.loads += 1;
-  if (bookingTracking.loads < 2) return;
+  // Display loads (initial form, same-src reload, extra Google redirects)
+  // arrive before the form could have been filled. Restart the quiet timer.
+  if (!bookingTracking.armed || Date.now() - bookingTracking.openedAt < BOOKING_MIN_FILL_MS) {
+    bookingTracking.armed = false;
+    armBookingTrackingAfterSettle();
+    return;
+  }
 
   bookingTracking.fired = true;
+  clearBookingSettleTimer();
   trackBookingConversion(bookingTracking.prefilled);
 }
 
+function trackBookingClick(prefilled) {
+  sendGtagEvent('booking_click', {
+    form_name: 'booking',
+    form_variant: bookingFormVariant(prefilled)
+  });
+}
+
 function trackBookingConversion(prefilled) {
+  var variant = bookingFormVariant(prefilled);
   // lead_created: the form is a booking request that staff confirm, not a confirmed
   // reservation or payment. Its "customer_action" data object takes no custom
   // fields, and there is no price to report.
@@ -209,14 +295,10 @@ function trackBookingConversion(prefilled) {
       window.fbq('track', 'Lead', { content_name: 'booking_form_submitted' });
     }
   } catch (e) {}
-  try {
-    if (typeof window.gtag === 'function') {
-      window.gtag('event', 'generate_lead', {
-        form_name: 'booking',
-        form_variant: prefilled ? 'welcome_popup_free_gin_mixer' : 'standard'
-      });
-    }
-  } catch (e) {}
+  sendGtagEvent('generate_lead', {
+    form_name: 'booking',
+    form_variant: variant
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
